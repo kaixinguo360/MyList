@@ -3,7 +3,6 @@ package com.my.list.controller;
 import com.my.list.Constants;
 import com.my.list.data.Token;
 import com.my.list.data.User;
-import com.my.list.json.JSON;
 import com.my.list.service.TokenService;
 import com.my.list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,8 +28,8 @@ public class TokenController {
         this.tokenService = tokenService;
     }
 
+    @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    @JSON(type = User.class, filter="password")
     public Object login(String name, String password) {
         if (!userService.checkUser(name, password)) {
             return new ResponseEntity<>("Incorrect Name Or Password!", HttpStatus.UNAUTHORIZED);
@@ -40,6 +40,7 @@ public class TokenController {
     }
 
     @Authorization
+    @ResponseBody
     @RequestMapping(method = RequestMethod.DELETE)
     public Object logout(HttpServletRequest request) {
         Object currentToken = request.getAttribute(Constants.CURRENT_TOKEN);

@@ -45,7 +45,9 @@ public class UserService {
             throw new Exception("Name Or Password Is Empty!");
         }
         if (!userRepository.existsByName(name)) {
-            User user = new User(0, name, encrypt(password));
+            User user = new User();
+            user.setName(name);
+            user.setPassword(encrypt(password));
             try {
                 userRepository.save(user);
                 return user.getId();
