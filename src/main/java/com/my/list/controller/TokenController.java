@@ -3,19 +3,19 @@ package com.my.list.controller;
 import com.my.list.Constants;
 import com.my.list.data.Token;
 import com.my.list.data.User;
+import com.my.list.json.JSON;
 import com.my.list.service.TokenService;
 import com.my.list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
+@Controller
 @RequestMapping("/tokens")
 public class TokenController {
 
@@ -29,19 +29,19 @@ public class TokenController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity login(@RequestParam String name, @RequestParam String password) {
+    @JSON(type = User.class, filter="password")
+    public Object login(String name, String password) {
         if (!userService.checkUser(name, password)) {
             return new ResponseEntity<>("Incorrect Name Or Password!", HttpStatus.UNAUTHORIZED);
         } else  {
             User user = userService.getUser(name);
-            Token token = tokenService.createToken(user);
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            return tokenService.createToken(user);
         }
     }
 
     @Authorization
     @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity logout(HttpServletRequest request) {
+    public Object logout(HttpServletRequest request) {
         Object currentToken = request.getAttribute(Constants.CURRENT_TOKEN);
         if (currentToken instanceof Token) {
             tokenService.removeToken(((Token) currentToken).getToken());
