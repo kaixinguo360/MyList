@@ -1,6 +1,6 @@
 package com.my.list.service;
 
-import com.my.list.data.UserRepository;
+import com.my.list.data.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +20,17 @@ public class UserServiceTests {
     @Before
     public void addUser() {
         try {
-            userService.addUser("test", "123");
-            userService.addUser("test", "1234");
+            User user1 = new User();
+            user1.setName("test");
+            user1.setPassword("123");
+            userService.addUser(user1);
+            User user2 = new User();
+            user2.setName("test");
+            user2.setPassword("1234");
+            userService.addUser(user2);
             assertTrue(true);
         } catch (Exception ignored) {}
-        userService.listUsers().forEach(user -> System.out.println(user.toString()));
+        userService.getAllUsers().forEach(user -> System.out.println(user.toString()));
     }
 
     @Test

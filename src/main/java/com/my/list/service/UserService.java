@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,48 +26,52 @@ public class UserService {
         this.msgDigest = MessageDigest.getInstance("SHA");
     }
 
+    @NotNull
+    public User getUser(@NotNull String name) throws DataException {
+        User user = userRepository.getByName(name);
+        if (user != null) {
+            return user;
+        } else {
+            logger.info("getUser: User(" + name + ") Not Exist");
+            throw new DataException("User(" + name + ") Not Exist", ErrorType.NOT_FOUND);
+        }
+    }
+
+    @NotNull
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void addUser(@NotNull User user) throws DataException {
+        if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getPassword())) {
+            logger.info("addUser: Name Or Password Is Null");
+            throw new DataException("Name Or Password Is Empty", ErrorType.BAD_REQUEST);
+        }
+        if (!userRepository.existsByName(user.getName())) {
+            try {
+                userRepository.save(user);
+            } catch (Exception e) {
+                logger.info("addUser: An Error Occurred: " + e.getMessage());
+                throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
+            }
+        } else {
+            logger.info("addUser: User Already Exist");
+            throw new DataException("User Already Exist", ErrorType.ALREADY_EXIST);
+        }
+    }
+
     public boolean checkUser(String name, String password) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(password)) {
-            logger.info("checkUser: Name Or Password Is Null!");
+            logger.info("checkUser: Name Or Password Is Null");
             return false;
         }
         try {
             User user = userRepository.getByName(name);
             return encrypt(password).equals(user.getPassword());
         } catch (Exception e) {
-            logger.info("checkUser: An Error Occur: " + e.getMessage());
+            logger.info("checkUser: An Error Occurred: " + e.getMessage());
             return false;
         }
-    }
-
-    public int addUser(String name, String password) throws Exception {
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(password)) {
-            logger.info("addUser: Name Or Password Is Null!");
-            throw new Exception("Name Or Password Is Empty!");
-        }
-        if (!userRepository.existsByName(name)) {
-            User user = new User();
-            user.setName(name);
-            user.setPassword(encrypt(password));
-            try {
-                userRepository.save(user);
-                return user.getId();
-            } catch (Exception e) {
-                logger.warn("addUser: An Error Occur: " + e.getMessage());
-                throw new Exception(e);
-            }
-        } else {
-            logger.warn("addUser: User Already Exist!");
-            throw new Exception("User Already Exist");
-        }
-    }
-
-    public User getUser(String name) {
-        return userRepository.getByName(name);
-    }
-
-    public Iterable<User> listUsers() {
-        return userRepository.findAll();
     }
 
     String encrypt(String message) {

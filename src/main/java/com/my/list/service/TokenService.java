@@ -5,13 +5,17 @@ import com.my.list.data.User;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class TokenService {
 
     private Map<String, Token> tokens = new HashMap<>();
 
+    @NotNull
     public Token createToken(@NotNull User user) {
         String token = UUID.randomUUID().toString();
         Token tokenEntity = new Token(token, user);

@@ -3,6 +3,7 @@ package com.my.list.controller;
 import com.my.list.Constants;
 import com.my.list.data.Token;
 import com.my.list.data.User;
+import com.my.list.service.DataException;
 import com.my.list.service.TokenService;
 import com.my.list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class TokenController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Token login(String name, String password) throws RequestException {
+    public Token login(String name, String password) throws RequestException, DataException {
         if (!userService.checkUser(name, password)) {
             throw new RequestException("Incorrect Name Or Password!", HttpStatus.UNAUTHORIZED);
         } else  {

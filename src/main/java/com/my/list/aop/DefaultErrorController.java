@@ -1,5 +1,6 @@
-package com.my.list.controller;
+package com.my.list.aop;
 
+import com.my.list.controller.RequestException;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

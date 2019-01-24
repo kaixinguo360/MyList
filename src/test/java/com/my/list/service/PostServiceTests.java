@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,7 +22,7 @@ public class PostServiceTests {
     private TagService tagService;
 
     @Test
-    public void test() {
+    public void test() throws DataException {
         User user1 = new User();
         user1.setId(1);
         User user2 = new User();
@@ -39,8 +40,8 @@ public class PostServiceTests {
         post2.setContent("Content2");
 
         //Add
-        assertTrue(postService.addPost(user1, post1));
-        assertTrue(postService.addPost(user1, post2));
+        postService.addPost(user1, post1);
+        postService.addPost(user1, post2);
 
         //Get
         assertEquals(postService.getPost(user1, post1.getId()).getTitle(), post1.getTitle());
@@ -52,8 +53,8 @@ public class PostServiceTests {
         //Update
         post1.setTitle("NewTitle1");
         post2.setTitle("NewTitle2");
-        assertTrue(postService.updatePost(user1, post1.getId(), post1));
-        assertTrue(postService.updatePost(user1, post2.getId(), post2));
+        postService.updatePost(user1, post1.getId(), post1);
+        postService.updatePost(user1, post2.getId(), post2);
 
         //Get
         assertEquals(postService.getPost(user1, post1.getId()).getTitle(), "NewTitle1");
@@ -63,21 +64,27 @@ public class PostServiceTests {
         postService.search(user1, "New").forEach(System.out::println);
 
         //Add Tag
-        assertTrue(tagService.addTag(user1, tag1));
-        assertTrue(postService.addTagToPost(user1, post2.getId(), tag1.getId()));
+        tagService.addTag(user1, tag1);
+        postService.addTagToPost(user1, post2.getId(), tag1.getId());
 
         //Remove Tag
-        assertTrue(postService.removeTagFromPost(user1, post2.getId(), tag1.getId()));
+        postService.removeTagFromPost(user1, post2.getId(), tag1.getId());
 
         //Get Tag
         assertEquals(tagService.getTag(user1, tag1.getId()).getTitle(), tag1.getTitle());
 
         //Remove
-        assertTrue(postService.removePost(user1, post1.getId()));
-        assertTrue(postService.removePost(user1, post2.getId()));
+        postService.removePost(user1, post1.getId());
+        postService.removePost(user1, post2.getId());
 
         //Get
-        assertNull(postService.getPost(user1, post1.getId()));
-        assertNull(postService.getPost(user1, post2.getId()));
+        try {
+            postService.getPost(user1, post1.getId());
+            fail();
+        } catch (DataException ignored) {}
+        try {
+            postService.getPost(user1, post2.getId());
+            fail();
+        } catch (DataException ignored) {}
     }
 }

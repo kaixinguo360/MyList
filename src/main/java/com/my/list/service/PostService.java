@@ -27,107 +27,83 @@ public class PostService {
         this.tagService = tagService;
     }
 
-    public Post getPost(@NotNull User user, int postId) {
+    //Get
+    @NotNull
+    public Post getPost(@NotNull User user, int postId) throws DataException {
         Post post = postRepository.findById(postId).orElse(null);
         if (post != null && post.getUserId() == user.getId()) {
             return post;
         } else {
-            logger.info("getPost: Post Not Exist!");
-            return null;
+            logger.info("getPost: Post(" + postId + ") Not Exist");
+            throw new DataException("Post(" + postId + ") Not Exist", ErrorType.NOT_FOUND);
         }
     }
 
+    //GetAll
+    @NotNull
     public Iterable<Post> getAllPosts(@NotNull User user) {
         return postRepository.findAllByUserId(user.getId());
     }
 
+    //GetAll - Tag Id
+    @NotNull
     public Iterable<Post> getPostsByTagId(@NotNull User user, int tagId) {
         return postRepository.findAllByUserIdAndTagId(user.getId(), tagId);
     }
 
-    public Iterable<Post> getPostsByTagTitle(@NotNull User user, @NotNull String tagTitle) {
-        return postRepository.findAllByUserIdAndTagTitle(user.getId(), tagTitle);
-    }
-
+    //Search
+    @NotNull
     public Iterable<Post> search(@NotNull User user, String title) {
         if(StringUtils.isEmpty(title))
             return new ArrayList<>();
         return postRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    public boolean addPost(@NotNull User user, @NotNull Post post) {
+    //Add
+    public void addPost(@NotNull User user, @NotNull Post post) throws DataException {
         try {
             post.setUserId(user.getId());
             postRepository.save(post);
-            return true;
         } catch (Exception e) {
-            logger.info("addPost: An Error Occur: " + e.getMessage());
-            return false;
+            logger.info("addPost: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
-    public boolean removePost(User user, int postId) {
+    //Remove
+    public void removePost(User user, int postId) throws DataException {
         try {
-            Post post = getPost(user, postId);
-            if (post != null) {
-                postRepository.deleteById(postId);
-                return true;
-            } else {
-                logger.info("removePost: Post Not Exist");
-                return false;
-            }
+            getPost(user, postId);
+            postRepository.deleteById(postId);
+        } catch (DataException e) {
+            throw e;
         } catch (Exception e) {
-            logger.info("removePost: An Error Occur: " + e.getMessage());
-            return false;
+            logger.info("removePost: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
+    //Update
     @Transactional
-    public boolean updatePost(@NotNull User user, int postId, @NotNull Post newPost) {
+    public void updatePost(@NotNull User user, int postId, @NotNull Post newPost) throws DataException {
         Post post = getPost(user, postId);
-        if (post != null) {
-            post.setTitle(newPost.getTitle());
-            post.setContent(newPost.getContent());
-            return true;
-        } else {
-            logger.info("updatePostTitle: Post Not Exist!");
-            return false;
-        }
+        post.setTitle(newPost.getTitle());
+        post.setContent(newPost.getContent());
     }
 
+    //Add - Tag
     @Transactional
-    public boolean addTagToPost(@NotNull User user, int postId, int tagId) {
+    public void addTagToPost(@NotNull User user, int postId, int tagId) throws DataException {
         Post post = getPost(user, postId);
-        if (post != null) {
-            Tag tag = tagService.getTag(user, tagId);
-            if (tag != null) {
-                post.getTags().add(tag);
-                return true;
-            } else {
-                logger.info("addTagToPost: Tag Not Exist!");
-                return false;
-            }
-        } else {
-            logger.info("addTagToPost: Post Not Exist!");
-            return false;
-        }
+        Tag tag = tagService.getTag(user, tagId);
+        post.getTags().add(tag);
     }
 
+    //Remove - Tag
     @Transactional
-    public boolean removeTagFromPost(@NotNull User user, int postId, int tagId) {
+    public void removeTagFromPost(@NotNull User user, int postId, int tagId) throws DataException {
         Post post = getPost(user, postId);
-        if (post != null) {
-            Tag tag = tagService.getTag(user, tagId);
-            if (tag != null) {
-                post.getTags().remove(tag);
-                return true;
-            } else {
-                logger.info("addTagToPost: Tag Not Exist!");
-                return false;
-            }
-        } else {
-            logger.info("addTagToPost: Post Not Exist!");
-            return false;
-        }
+        Tag tag = tagService.getTag(user, tagId);
+        post.getTags().remove(tag);
     }
 }

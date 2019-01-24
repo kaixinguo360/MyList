@@ -24,71 +24,67 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
 
-    public Tag getTag(@NotNull User user, int tagId) {
+    //Get
+    @NotNull
+    public Tag getTag(@NotNull User user, int tagId) throws DataException {
         Tag tag = tagRepository.findById(tagId).orElse(null);
         if (tag != null && tag.getUserId() == user.getId()) {
             return tag;
         } else {
-            logger.info("getTag: Tag Not Exist!");
-            return null;
+            logger.info("removeTag: Tag(" + tagId + ") Not Exist");
+            throw new DataException("removeTag: Tag(" + tagId + ") Not Exist", ErrorType.NOT_FOUND);
         }
     }
 
-    public Iterable<Tag> getTagByPostId(@NotNull User user, int postId) {
+    //GetAll - Post Id
+    @NotNull
+    public Iterable<Tag> getTagsByPostId(@NotNull User user, int postId) {
         return tagRepository.findAllByUserIdAndPostId(user.getId(), postId);
     }
 
-    public Iterable<Tag> getTagByPostTitle(@NotNull User user, @NotNull String postTitle) {
-        return tagRepository.findAllByUserIdAndPostTitle(user.getId(), postTitle);
-    }
-
+    //GetAll
+    @NotNull
     public Iterable<Tag> getAllTags(@NotNull User user) {
         return tagRepository.findAllByUserId(user.getId());
     }
 
+    //Search
+    @NotNull
     public Iterable<Tag> search(@NotNull User user, String title) {
         if(StringUtils.isEmpty(title))
             return new ArrayList<>();
         return tagRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    public boolean addTag(@NotNull User user, @NotNull Tag tag) {
+    //Add
+    public void addTag(@NotNull User user, @NotNull Tag tag) throws DataException {
         try {
             tag.setUserId(user.getId());
             tagRepository.save(tag);
-            return true;
         } catch (Exception e) {
-            logger.info("addTag: An Error Occur: " + e.getMessage());
-            return false;
+            logger.info("addTag: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
-    public boolean removeTag(User user, int tagId) {
+    //Remove
+    public void removeTag(User user, int tagId) throws DataException {
         try {
-            Tag tag = getTag(user, tagId);
-            if (tag != null) {
-                tagRepository.deleteById(tagId);
-                return true;
-            } else {
-                logger.info("removeTag: Tag Not Exist");
-                return false;
-            }
+            getTag(user, tagId);
+            tagRepository.deleteById(tagId);
+        } catch (DataException e) {
+            throw e;
         } catch (Exception e) {
-            logger.info("removeTag: An Error Occur: " + e.getMessage());
-            return false;
+            logger.info("removeTag: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
+    //Update
     @Transactional
-    public boolean updateTag(@NotNull User user, int tagId, @NotNull Tag newTag) {
+    public void updateTag(@NotNull User user, int tagId, @NotNull Tag newTag) throws DataException {
         Tag tag = getTag(user, tagId);
-        if (tag != null) {
-            tag.setTitle(newTag.getTitle());
-            tag.setInfo(newTag.getInfo());
-            return true;
-        } else {
-            logger.info("updateTagTitle: Tag Not Exist!");
-            return false;
-        }
+        tag.setTitle(newTag.getTitle());
+        tag.setInfo(newTag.getInfo());
     }
 }
