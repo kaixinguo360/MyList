@@ -30,16 +30,16 @@ public class PostController {
     // ------------------------------ Posts ------------------------------ //
 
     //Add
-    @ResponseBody
+    @JSON(type = Post.class, include = "id,title,content,createdTime,updatedTime")
     @RequestMapping(method = RequestMethod.POST)
-    public MessageResponse addPost(@CurrentUser User user,
+    public Post addPost(@CurrentUser User user,
                                    @RequestParam String title,
                                    @RequestParam(required = false) String content) throws DataException {
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content != null ? content : "");
         postService.addPost(user, post);
-        return new MessageResponse("Add Post Successful");
+        return post;
     }
 
     //Remove
@@ -79,6 +79,14 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET)
     public Iterable<Post> getPosts(@CurrentUser User user) {
         return postService.getAllPosts(user);
+    }
+
+    //Search
+    @JSON(type = Post.class, include = "id,title,content,createdTime,updatedTime")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public Iterable<Post> searchPosts(@CurrentUser User user,
+                                      @RequestParam String title) {
+        return postService.search(user, title);
     }
 
 

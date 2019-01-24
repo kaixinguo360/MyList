@@ -30,16 +30,16 @@ public class TagController {
     // ------------------------------ Tags ------------------------------ //
 
     //Add
-    @ResponseBody
+    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
     @RequestMapping(method = RequestMethod.POST)
-    public MessageResponse addTag(@CurrentUser User user,
+    public Tag addTag(@CurrentUser User user,
                                   @RequestParam String title,
                                   @RequestParam(required = false) String info) throws DataException {
         Tag tag = new Tag();
         tag.setTitle(title);
         tag.setInfo(info != null ? info : "");
         tagService.addTag(user, tag);
-        return new MessageResponse("Add Tag Successful");
+        return tag;
     }
 
     //Remove
@@ -74,10 +74,18 @@ public class TagController {
     }
 
     //GetAll
-    @JSON(type = Tag.class, include = "id,title,info")
+    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
     @RequestMapping(method = RequestMethod.GET)
     public Iterable<Tag> getTags(@CurrentUser User user) {
         return tagService.getAllTags(user);
+    }
+
+    //Search
+    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public Iterable<Tag> searchTags(@CurrentUser User user,
+                                    @RequestParam String title) {
+        return tagService.search(user, title);
     }
 
 
