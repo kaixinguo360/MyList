@@ -72,7 +72,12 @@ public class PostController {
         if (post != null) {
             post.setTitle(title);
             post.setContent(content != null ? content : "");
-            return new MessageResponse("Update Post Successful");
+            if (postService.updatePost(user, postId, post)) {
+                return new MessageResponse("Update Post Successful");
+            } else {
+                logger.info("updatePost: An Error Occur!");
+                throw new RequestException("An Error Occur", HttpStatus.NOT_FOUND);
+            }
         } else {
             logger.info("updatePost: Post Not Found!");
             throw new RequestException("Post Not Found", HttpStatus.NOT_FOUND);

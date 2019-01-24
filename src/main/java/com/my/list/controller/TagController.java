@@ -67,7 +67,12 @@ public class TagController {
         if (tag != null) {
             tag.setTitle(title);
             tag.setInfo(info != null ? info : "");
-            return new MessageResponse("Update Tag Successful");
+            if (tagService.updateTag(user, tagId, tag)) {
+                return new MessageResponse("Update Tag Successful");
+            } else {
+                logger.info("updateTag: An Error Occur!");
+                throw new RequestException("An Error Occur", HttpStatus.NOT_FOUND);
+            }
         } else {
             logger.info("updateTag: Tag Not Found!");
             throw new RequestException("Tag Not Found", HttpStatus.NOT_FOUND);
