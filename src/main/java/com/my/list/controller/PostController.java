@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Authorization
 @RequestMapping("/posts")
 public class PostController {
 
@@ -35,59 +36,59 @@ public class PostController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Object addPost(@CurrentUser User user,
-                          String title,
-                          @RequestParam(required = false) String content) {
+    public MessageResponse addPost(@CurrentUser User user,
+                                   String title,
+                                   @RequestParam(required = false) String content) throws RequestException {
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content != null ? content : "");
         if (postService.addPost(user, post)) {
-            return successResponse;
+            return new MessageResponse("Add Post Successful");
         } else {
             logger.info("addPost: An Error Occur!");
-            return errorResponse;
+            throw new RequestException("An Error Occur", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/{postId}", method = RequestMethod.DELETE)
-    public Object removePost(@CurrentUser User user,
-                             @PathVariable int postId) {
+    public MessageResponse removePost(@CurrentUser User user,
+                                      @PathVariable int postId) throws RequestException {
         if (postService.removePost(user, postId)) {
-            return successResponse;
+            return new MessageResponse("Remove Post Successful");
         } else {
             logger.info("removePost: An Error Occur!");
-            return errorResponse;
+            throw new RequestException("An Error Occur", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/{postId}", method = RequestMethod.PUT)
-    public Object updatePost(@CurrentUser User user,
-                             @PathVariable int postId,
-                             String title,
-                             @RequestParam(required = false) String content) {
+    public MessageResponse updatePost(@CurrentUser User user,
+                                      @PathVariable int postId,
+                                      String title,
+                                      @RequestParam(required = false) String content) throws RequestException {
         Post post = postService.getPost(user, postId);
         if (post != null) {
             post.setTitle(title);
             post.setContent(content != null ? content : "");
-            return successResponse;
+            return new MessageResponse("Update Post Successful");
         } else {
             logger.info("updatePost: Post Not Found!");
-            return notFoundResponse;
+            throw new RequestException("Post Not Found", HttpStatus.NOT_FOUND);
         }
     }
 
     @JSON(type = Post.class, include = "id,title,content,createdTime,updatedTime")
     @RequestMapping(value = "/{postId}", method = RequestMethod.GET)
-    public Object getPost(@CurrentUser User user,
-                          @PathVariable int postId) {
+    public Post getPost(@CurrentUser User user,
+                          @PathVariable int postId) throws RequestException {
         Post post = postService.getPost(user, postId);
         if (post != null) {
             return post;
         } else {
             logger.info("getPost: Post Not Found!");
-            return notFoundResponse;
+            throw new RequestException("Post Not Found", HttpStatus.NOT_FOUND);
         }
     }
 

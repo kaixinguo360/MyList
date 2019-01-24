@@ -2,9 +2,11 @@ package com.my.list.aop;
 
 import com.my.list.Constants;
 import com.my.list.controller.Authorization;
+import com.my.list.controller.RequestException;
 import com.my.list.data.Token;
 import com.my.list.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -24,7 +26,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws RequestException {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -37,8 +39,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
         String token = request.getHeader(Constants.AUTHORIZATION);
         if (token == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Error");
-            return false;
+            throw new RequestException("Authorization Error", HttpStatus.UNAUTHORIZED);
         }
         Token tokenEntity = new Token();
         tokenEntity.setToken(token);
@@ -48,8 +49,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             request.setAttribute(Constants.CURRENT_USER, tokenEntity.getUser());
             return true;
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Error");
-            return false;
+            throw new RequestException("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
     }
 }

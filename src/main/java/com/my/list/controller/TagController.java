@@ -10,21 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Authorization
 @RequestMapping("/tags")
 public class TagController {
 
     private final Logger logger = LoggerFactory.getLogger(TagController.class);
     private final TagService tagService;
     private final PostService postService;
-
-    private ResponseEntity successResponse = new ResponseEntity<>("Success!", HttpStatus.OK);
-    private ResponseEntity errorResponse = new ResponseEntity<>("Error!", HttpStatus.INTERNAL_SERVER_ERROR);
-    private ResponseEntity notFoundResponse = new ResponseEntity<>("Not Found!", HttpStatus.NOT_FOUND);
 
     @Autowired
     public TagController(TagService tagService,
@@ -35,59 +31,59 @@ public class TagController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Object addTag(@CurrentUser User user,
-                         String title,
-                         @RequestParam(required = false) String info) {
+    public MessageResponse addTag(@CurrentUser User user,
+                                  String title,
+                                  @RequestParam(required = false) String info) throws RequestException {
         Tag tag = new Tag();
         tag.setTitle(title);
         tag.setInfo(info != null ? info : "");
         if (tagService.addTag(user, tag)) {
-            return successResponse;
+            return new MessageResponse("Add Tag Successful");
         } else {
             logger.info("addTag: An Error Occur!");
-            return errorResponse;
+            throw new RequestException("An Error Occur", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/{tagId}", method = RequestMethod.DELETE)
-    public Object removeTag(@CurrentUser User user,
-                            @PathVariable int tagId) {
+    public MessageResponse removeTag(@CurrentUser User user,
+                                     @PathVariable int tagId) throws RequestException {
         if (tagService.removeTag(user, tagId)) {
-            return successResponse;
+            return new MessageResponse("Remove Tag Successful");
         } else {
             logger.info("removeTag: An Error Occur!");
-            return errorResponse;
+            throw new RequestException("An Error Occur", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ResponseBody
     @RequestMapping(value = "/{tagId}", method = RequestMethod.PUT)
-    public Object updateTag(@CurrentUser User user,
-                            @PathVariable int tagId,
-                            String title,
-                            @RequestParam(required = false) String info) {
+    public MessageResponse updateTag(@CurrentUser User user,
+                                     @PathVariable int tagId,
+                                     String title,
+                                     @RequestParam(required = false) String info) throws RequestException {
         Tag tag = tagService.getTag(user, tagId);
         if (tag != null) {
             tag.setTitle(title);
             tag.setInfo(info != null ? info : "");
-            return successResponse;
+            return new MessageResponse("Update Tag Successful");
         } else {
             logger.info("updateTag: Tag Not Found!");
-            return notFoundResponse;
+            throw new RequestException("Tag Not Found", HttpStatus.NOT_FOUND);
         }
     }
 
     @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
     @RequestMapping(value = "/{tagId}", method = RequestMethod.GET)
-    public Object getTag(@CurrentUser User user,
-                         @PathVariable int tagId) {
+    public Tag getTag(@CurrentUser User user,
+                         @PathVariable int tagId) throws RequestException {
         Tag tag = tagService.getTag(user, tagId);
         if (tag != null) {
             return tag;
         } else {
             logger.info("getTag: Tag Not Found!");
-            return notFoundResponse;
+            throw new RequestException("Tag Not Found", HttpStatus.NOT_FOUND);
         }
     }
 
