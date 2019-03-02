@@ -3,6 +3,10 @@
 !gradle/wrapper/gradle-wrapper.jar
 local.properties
 
+### WebApp ###
+/node_modules/
+/src/main/resources/static/
+
 ### STS ###
 .apt_generated
 .classpath
