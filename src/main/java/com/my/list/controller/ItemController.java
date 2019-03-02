@@ -3,6 +3,7 @@ package com.my.list.controller;
 import com.my.list.data.Item;
 import com.my.list.data.Tag;
 import com.my.list.data.User;
+import com.my.list.data.content.*;
 import com.my.list.json.JSON;
 import com.my.list.service.DataException;
 import com.my.list.service.ItemService;
@@ -30,7 +31,7 @@ public class ItemController {
     // ------------------------------ Items ------------------------------ //
 
     //Add
-    @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img")
+    @JSON(type = Item.class, filter = "userId,texts,images,musics,videos,links")
     @RequestMapping(method = RequestMethod.POST)
     public Item addItem(@CurrentUser User user,
                         @RequestParam String title,
@@ -66,7 +67,12 @@ public class ItemController {
     }
 
     //Get
-    @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img,tags")
+    @JSON(type = Item.class, filter = "userId")
+    @JSON(type = Text.class, filter = "id,item")
+    @JSON(type = Image.class, filter = "id,item")
+    @JSON(type = Music.class, filter = "id,item")
+    @JSON(type = Video.class, filter = "id,item")
+    @JSON(type = Link.class, filter = "id,item")
     @JSON(type = Tag.class, include = "id,title,info")
     @RequestMapping(value = "/{itemId}", method = RequestMethod.GET)
     public Item getItem(@CurrentUser User user,

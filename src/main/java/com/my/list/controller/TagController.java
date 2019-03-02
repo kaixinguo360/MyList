@@ -89,12 +89,12 @@ public class TagController {
     }
 
 
-    // ------------------------------ Posts ------------------------------ //
+    // ------------------------------ Items ------------------------------ //
 
     //GetAll
     @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img")
     @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
-    public Iterable<Item> getPostsByTagId(@CurrentUser User user,
+    public Iterable<Item> getItemsByTagId(@CurrentUser User user,
                                           @PathVariable int tagId) {
         return itemService.getItemsByTagId(user, tagId);
     }

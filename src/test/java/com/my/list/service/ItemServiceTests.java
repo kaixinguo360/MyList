@@ -1,6 +1,7 @@
 package com.my.list.service;
 
 import com.my.list.data.Item;
+import com.my.list.data.MyList;
 import com.my.list.data.Tag;
 import com.my.list.data.User;
 import org.junit.Test;
@@ -10,8 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -22,6 +22,8 @@ public class ItemServiceTests {
     private ItemService itemService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private MyListService myListService;
 
     @Test
     public void test() throws DataException {
@@ -33,6 +35,10 @@ public class ItemServiceTests {
         Tag tag1 = new Tag();
         tag1.setTitle("Tag1");
         tag1.setInfo("Info1");
+
+        MyList list1 = new MyList();
+        list1.setTitle("Tag1");
+        list1.setInfo("Info1");
 
         Item item1 = new Item();
         item1.setTitle("Post1");
@@ -74,6 +80,18 @@ public class ItemServiceTests {
 
         //Get Tag
         assertEquals(tagService.getTag(user1, tag1.getId()).getTitle(), tag1.getTitle());
+
+        //Add List
+        myListService.addList(user1, list1);
+        itemService.setListToItem(user1, item2.getId(), list1.getId());
+        assertEquals(itemService.getItem(user1, item2.getId()).getList().getTitle(), list1.getTitle());
+
+        //Remove List
+        itemService.resetListToItem(user1, item2.getId());
+        assertNull(itemService.getItem(user1, item2.getId()).getList());
+
+        //Get List
+        assertEquals(myListService.getList(user1, list1.getId()).getTitle(), list1.getTitle());
 
         //Remove
         itemService.removeItem(user1, item1.getId());

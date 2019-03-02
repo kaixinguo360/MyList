@@ -1,9 +1,6 @@
 package com.my.list.service;
 
-import com.my.list.data.Item;
-import com.my.list.data.ItemRepository;
-import com.my.list.data.Tag;
-import com.my.list.data.User;
+import com.my.list.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +17,13 @@ public class ItemService {
     private final Logger logger = LoggerFactory.getLogger(ItemService.class);
     private final ItemRepository itemRepository;
     private final TagService tagService;
+    private final MyListService myListService;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository, TagService tagService) {
+    public ItemService(ItemRepository itemRepository, TagService tagService, MyListService myListService) {
         this.itemRepository = itemRepository;
         this.tagService = tagService;
+        this.myListService = myListService;
     }
 
     //Get
@@ -49,6 +48,12 @@ public class ItemService {
     @NotNull
     public Iterable<Item> getItemsByTagId(@NotNull User user, int tagId) {
         return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
+    }
+
+    //GetAll - Tag Id
+    @NotNull
+    public Iterable<Item> getItemsByListId(@NotNull User user, int listId) {
+        return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
     }
 
     //Search
@@ -89,6 +94,23 @@ public class ItemService {
         Item item = getItem(user, postId);
         item.setTitle(newItem.getTitle());
         item.setInfo(newItem.getInfo());
+        item.setUrl(newItem.getUrl());
+        item.setImg(newItem.getImg());
+    }
+
+    //Set - List
+    @Transactional
+    public void setListToItem(@NotNull User user, int postId, int listId) throws DataException {
+        Item item = getItem(user, postId);
+        MyList list = myListService.getList(user, listId);
+        item.setList(list);
+    }
+
+    //Reset - List
+    @Transactional
+    public void resetListToItem(@NotNull User user, int postId) throws DataException {
+        Item item = getItem(user, postId);
+        item.setList(null);
     }
 
     //Add - Tag
