@@ -1,11 +1,11 @@
 package com.my.list.controller;
 
-import com.my.list.data.Post;
+import com.my.list.data.Item;
 import com.my.list.data.Tag;
 import com.my.list.data.User;
 import com.my.list.json.JSON;
 import com.my.list.service.DataException;
-import com.my.list.service.PostService;
+import com.my.list.service.ItemService;
 import com.my.list.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Authorization
-@RequestMapping("/tags")
+@RequestMapping("/api/tag")
 public class TagController {
 
     private final TagService tagService;
-    private final PostService postService;
+    private final ItemService itemService;
 
     @Autowired
     public TagController(TagService tagService,
-                         PostService postService) {
+                         ItemService itemService) {
         this.tagService = tagService;
-        this.postService = postService;
+        this.itemService = itemService;
     }
 
 
     // ------------------------------ Tags ------------------------------ //
 
     //Add
-    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
+    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
     @RequestMapping(method = RequestMethod.POST)
     public Tag addTag(@CurrentUser User user,
                                   @RequestParam String title,
@@ -66,7 +66,7 @@ public class TagController {
     }
 
     //Get
-    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
+    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
     @RequestMapping(value = "/{tagId}", method = RequestMethod.GET)
     public Tag getTag(@CurrentUser User user,
                       @PathVariable int tagId) throws DataException {
@@ -74,14 +74,14 @@ public class TagController {
     }
 
     //GetAll
-    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
+    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
     @RequestMapping(method = RequestMethod.GET)
     public Iterable<Tag> getTags(@CurrentUser User user) {
         return tagService.getAllTags(user);
     }
 
     //Search
-    @JSON(type = Tag.class, include = "id,title,info,createdTime,updatedTime")
+    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public Iterable<Tag> searchTags(@CurrentUser User user,
                                     @RequestParam String title) {
@@ -92,10 +92,10 @@ public class TagController {
     // ------------------------------ Posts ------------------------------ //
 
     //GetAll
-    @JSON(type = Post.class, include = "id,title,content,createdTime,updatedTime")
-    @RequestMapping(value = "/{tagId}/posts", method = RequestMethod.GET)
-    public Iterable<Post> getPostsByTagId(@CurrentUser User user,
+    @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img")
+    @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
+    public Iterable<Item> getPostsByTagId(@CurrentUser User user,
                                           @PathVariable int tagId) {
-        return postService.getPostsByTagId(user, tagId);
+        return itemService.getItemsByTagId(user, tagId);
     }
 }

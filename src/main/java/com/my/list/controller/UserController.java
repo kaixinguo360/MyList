@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Authorization
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -18,7 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "/users/check", method = RequestMethod.POST)
+    @RequestMapping(path = "/check", method = RequestMethod.GET)
     public MessageResponse checkUser(@RequestParam String name, @RequestParam String password) {
         if(name != null && password != null && userService.checkUser(name, password))
             return new MessageResponse("Success!");

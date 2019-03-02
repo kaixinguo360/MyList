@@ -7,19 +7,13 @@ import javax.persistence.*
 import kotlin.collections.HashSet
 
 @Entity
-data class Post(
+data class Item(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Int = 0,
 
         @Column(nullable = false)
         var userId: Int = 0,
-
-        @Column(nullable = false)
-        var title: String = "",
-
-        @Column(nullable = false)
-        var content: String = "",
 
         @Temporal(TemporalType.TIMESTAMP)
         @CreatedDate
@@ -29,7 +23,19 @@ data class Post(
         @Temporal(TemporalType.TIMESTAMP)
         @LastModifiedDate
         @Column(nullable = false)
-        var updatedTime: Date = Date()
+        var updatedTime: Date = Date(),
+
+        @Column(nullable = false)
+        var title: String = "",
+
+        @Column(nullable = true)
+        var info: String? = null,
+
+        @Column(nullable = true)
+        var url: String? = null,
+
+        @Column(nullable = true)
+        var img: String? = null
 ) {
         @ManyToMany(
                 cascade = [CascadeType.PERSIST, CascadeType.MERGE],

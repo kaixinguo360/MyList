@@ -36,10 +36,10 @@ public class TagService {
         }
     }
 
-    //GetAll - Post Id
+    //GetAll - Item Id
     @NotNull
-    public Iterable<Tag> getTagsByPostId(@NotNull User user, int postId) {
-        return tagRepository.findAllByUserIdAndPostId(user.getId(), postId);
+    public Iterable<Tag> getTagsByItemId(@NotNull User user, int postId) {
+        return tagRepository.findAllByUserIdAndItemId(user.getId(), postId);
     }
 
     //GetAll

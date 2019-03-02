@@ -8,10 +8,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PostRepositoryTests {
+public class ItemRepositoryTests {
 
     @Autowired
-    private PostRepository postRepository;
+    private ItemRepository itemRepository;
 
     @Test
     public void test() {
@@ -22,18 +22,18 @@ public class PostRepositoryTests {
         tag1.setTitle("Tag1");
         tag1.setInfo("Info1");
 
-        Post post1 = new Post();
-        post1.setUserId(user.getId());
-        post1.setTitle("Title1");
-        post1.setContent("Content1");
-        post1.getTags().add(tag1);
+        Item item1 = new Item();
+        item1.setUserId(user.getId());
+        item1.setTitle("Title1");
+        item1.setInfo("Content1");
+        item1.getTags().add(tag1);
 
-        postRepository.save(post1);
+        itemRepository.save(item1);
 
-        postRepository.findAllByUserIdAndTagId(user.getId(), tag1.getId()).forEach(post -> {
+        itemRepository.findAllByUserIdAndTagId(user.getId(), tag1.getId()).forEach(post -> {
             System.out.println(post.getTitle());
         });
-        postRepository.findAllByUserIdAndTagTitle(user.getId(), tag1.getTitle()).forEach(post -> {
+        itemRepository.findAllByUserIdAndTagTitle(user.getId(), tag1.getTitle()).forEach(post -> {
             System.out.println(post.getTitle());
         });
     }
