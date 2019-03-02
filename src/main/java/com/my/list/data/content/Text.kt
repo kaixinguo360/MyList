@@ -1,19 +1,19 @@
-package com.my.list.data
+package com.my.list.data.content
 
+import com.my.list.data.Item
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.util.*
 import javax.persistence.*
-import kotlin.collections.HashSet
 
 @Entity
-data class Tag(
+data class Text(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0,
 
-    @Column(nullable = false)
-    var userId: Int = 0,
+    @ManyToOne(fetch = FetchType.LAZY)
+    var item: Item,
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
@@ -31,8 +31,5 @@ data class Tag(
     var title: String = "",
 
     @Column(nullable = true)
-    var info: String? = null
-) {
-    @ManyToMany(mappedBy = "tags")
-    var items: Set<Item> = HashSet()
-}
+    var content: String? = null
+) {}
