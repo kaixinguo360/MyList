@@ -35,12 +35,12 @@ public class TagServiceTests {
         tag2.setInfo("Info2");
 
         //Add
-        tagService.addTag(user1, tag1);
-        tagService.addTag(user1, tag2);
+        tagService.save(user1, tag1);
+        tagService.save(user1, tag2);
 
         //Get
-        assertEquals(tagService.getTag(user1, tag1.getId()).getTitle(), tag1.getTitle());
-        assertEquals(tagService.getTag(user1, tag2.getId()).getTitle(), tag2.getTitle());
+        assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());
+        assertEquals(tagService.get(user1, tag2.getId()).getTitle(), tag2.getTitle());
 
         //Search
         tagService.search(user1, "Tag").forEach(System.out::println);
@@ -48,27 +48,27 @@ public class TagServiceTests {
         //Update
         tag1.setTitle("NewTitle1");
         tag2.setTitle("NewTitle2");
-        tagService.updateTag(user1, tag1.getId(), tag1);
-        tagService.updateTag(user1, tag2.getId(), tag2);
+        tagService.save(user1, tag1);
+        tagService.save(user1, tag2);
 
         //Get
-        assertEquals(tagService.getTag(user1, tag1.getId()).getTitle(), tag1.getTitle());
-        assertEquals(tagService.getTag(user1, tag2.getId()).getTitle(), tag2.getTitle());
+        assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());
+        assertEquals(tagService.get(user1, tag2.getId()).getTitle(), tag2.getTitle());
 
         //Search
         tagService.search(user1, "New").forEach(System.out::println);
 
         //Remove
-        tagService.removeTag(user1, tag1.getId());
-        tagService.removeTag(user1, tag2.getId());
+        tagService.remove(user1, tag1.getId());
+        tagService.remove(user1, tag2.getId());
 
         //Get
         try {
-            tagService.getTag(user1, tag1.getId());
+            tagService.get(user1, tag1.getId());
             fail();
         } catch (DataException ignored) {}
         try {
-            tagService.getTag(user1, tag2.getId());
+            tagService.get(user1, tag2.getId());
             fail();
         } catch (DataException ignored) {}
     }

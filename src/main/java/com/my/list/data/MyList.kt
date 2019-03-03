@@ -1,5 +1,6 @@
 package com.my.list.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.util.*
@@ -12,6 +13,7 @@ data class MyList(
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0,
 
+    @JsonIgnore
     @Column(nullable = false)
     var userId: Int = 0,
 
@@ -36,6 +38,7 @@ data class MyList(
     @Column(nullable = true)
     var img: String? = null
 ) {
+    @JsonIgnore
     @OneToMany(mappedBy="list")
     var items: List<Item> = ArrayList()
 }

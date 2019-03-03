@@ -47,26 +47,29 @@ data class Item(
     var list: MyList? = null
 ) {
     @ManyToMany(
-        cascade = [CascadeType.PERSIST, CascadeType.MERGE],
-        fetch = FetchType.LAZY
+        cascade = [
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH
+        ]
     )
     @JoinTable(name = "post_tag")
     var tags: Set<Tag> = HashSet()
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.REMOVE ])
+    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
     var texts: List<Text> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.REMOVE ])
+    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
     var images: List<Image> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.REMOVE ])
+    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
     var musics: List<Music> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.REMOVE ])
+    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
     var videos: List<Video> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.REMOVE ])
+    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
     var links: List<Link> = ArrayList()
 }

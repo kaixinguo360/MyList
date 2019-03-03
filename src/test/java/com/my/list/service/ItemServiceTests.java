@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -48,12 +50,12 @@ public class ItemServiceTests {
         item2.setInfo("Content2");
 
         //Add
-        itemService.addItem(user1, item1);
-        itemService.addItem(user1, item2);
+        itemService.save(user1, item1);
+        itemService.save(user1, item2);
 
         //Get
-        assertEquals(itemService.getItem(user1, item1.getId()).getTitle(), item1.getTitle());
-        assertEquals(itemService.getItem(user1, item2.getId()).getTitle(), item2.getTitle());
+        assertEquals(itemService.get(user1, item1.getId()).getTitle(), item1.getTitle());
+        assertEquals(itemService.get(user1, item2.getId()).getTitle(), item2.getTitle());
 
         //Search
         itemService.search(user1, "Item").forEach(System.out::println);
@@ -61,49 +63,65 @@ public class ItemServiceTests {
         //Update
         item1.setTitle("NewTitle1");
         item2.setTitle("NewTitle2");
-        itemService.updateItem(user1, item1.getId(), item1);
-        itemService.updateItem(user1, item2.getId(), item2);
+        itemService.save(user1, item1);
+        itemService.save(user1, item2);
 
         //Get
-        assertEquals(itemService.getItem(user1, item1.getId()).getTitle(), "NewTitle1");
-        assertEquals(itemService.getItem(user1, item2.getId()).getTitle(), "NewTitle2");
+        assertEquals(itemService.get(user1, item1.getId()).getTitle(), "NewTitle1");
+        assertEquals(itemService.get(user1, item2.getId()).getTitle(), "NewTitle2");
 
         //Search
         itemService.search(user1, "New").forEach(System.out::println);
 
         //Add Tag
-        tagService.addTag(user1, tag1);
-        itemService.addTagToItem(user1, item2.getId(), tag1.getId());
-
-        //Remove Tag
-        itemService.removeTagFromItem(user1, item2.getId(), tag1.getId());
+        tagService.save(user1, tag1);
 
         //Get Tag
-        assertEquals(tagService.getTag(user1, tag1.getId()).getTitle(), tag1.getTitle());
+        assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());
+
+        //Get Tags From Item
+        itemService.getAllByTagId(user1, tag1.getId()).forEach(item -> {
+            if (item.getId() == item2.getId()) {
+                fail();
+            }
+        });
+
+        //Add Tag To Item
+        item2.getTags().add(tag1);
+        itemService.save(user1, item2);
+
+        //Get Tags From Item
+        AtomicBoolean flag = new AtomicBoolean(false);
+        itemService.getAllByTagId(user1, tag1.getId()).forEach(item -> {
+            if (item.getId() == item2.getId()) {
+                flag.set(true);
+            }
+        });
+        assertTrue(flag.get());
 
         //Add List
         myListService.addList(user1, list1);
-        itemService.setListToItem(user1, item2.getId(), list1.getId());
-        assertEquals(itemService.getItem(user1, item2.getId()).getList().getTitle(), list1.getTitle());
+        itemService.setList(user1, item2.getId(), list1.getId());
+        assertEquals(itemService.get(user1, item2.getId()).getList().getTitle(), list1.getTitle());
 
         //Remove List
-        itemService.resetListToItem(user1, item2.getId());
-        assertNull(itemService.getItem(user1, item2.getId()).getList());
+        itemService.removeList(user1, item2.getId());
+        assertNull(itemService.get(user1, item2.getId()).getList());
 
         //Get List
         assertEquals(myListService.getList(user1, list1.getId()).getTitle(), list1.getTitle());
 
         //Remove
-        itemService.removeItem(user1, item1.getId());
-        itemService.removeItem(user1, item2.getId());
+        itemService.remove(user1, item1.getId());
+        itemService.remove(user1, item2.getId());
 
         //Get
         try {
-            itemService.getItem(user1, item1.getId());
+            itemService.get(user1, item1.getId());
             fail();
         } catch (DataException ignored) {}
         try {
-            itemService.getItem(user1, item2.getId());
+            itemService.get(user1, item2.getId());
             fail();
         } catch (DataException ignored) {}
     }

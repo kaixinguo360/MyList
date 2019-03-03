@@ -9,7 +9,10 @@ import com.my.list.service.ItemService;
 import com.my.list.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @Controller
 @Authorization
@@ -27,75 +30,59 @@ public class TagController {
     }
 
 
-    // ------------------------------ Tags ------------------------------ //
+    // ------------------------------ Tag ------------------------------ //
 
-    //Add
-    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
-    @RequestMapping(method = RequestMethod.POST)
-    public Tag addTag(@CurrentUser User user,
-                                  @RequestParam String title,
-                                  @RequestParam(required = false) String info) throws DataException {
-        Tag tag = new Tag();
-        tag.setTitle(title);
-        tag.setInfo(info != null ? info : "");
-        tagService.addTag(user, tag);
-        return tag;
+    //Save
+    @JSON
+    @RequestMapping(method = {
+        RequestMethod.POST,
+        RequestMethod.PUT
+    })
+    public Tag saveTag(@CurrentUser User user,
+                       @RequestBody Tag tag) throws DataException {
+        tag.setUpdatedTime(new Date());
+
+        return tagService.save(user, tag);
     }
 
     //Remove
-    @ResponseBody
-    @RequestMapping(value = "/{tagId}", method = RequestMethod.DELETE)
+    @JSON
+    @RequestMapping(method = RequestMethod.DELETE)
     public MessageResponse removeTag(@CurrentUser User user,
-                                     @PathVariable int tagId) throws DataException {
-        tagService.removeTag(user, tagId);
+                                     @RequestBody Tag tag) throws DataException {
+        tagService.remove(user, tag.getId());
         return new MessageResponse("Remove Tag Successful");
     }
 
-    //Update
-    @ResponseBody
-    @RequestMapping(value = "/{tagId}", method = RequestMethod.PUT)
-    public MessageResponse updateTag(@CurrentUser User user,
-                                     @PathVariable int tagId,
-                                     @RequestParam String title,
-                                     @RequestParam(required = false) String info) throws DataException {
-        Tag tag = tagService.getTag(user, tagId);
-        tag.setTitle(title);
-        tag.setInfo(info != null ? info : "");
-        tagService.updateTag(user, tagId, tag);
-        return new MessageResponse("Update Tag Successful");
-    }
-
     //Get
-    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
+    @JSON
     @RequestMapping(value = "/{tagId}", method = RequestMethod.GET)
     public Tag getTag(@CurrentUser User user,
                       @PathVariable int tagId) throws DataException {
-        return tagService.getTag(user, tagId);
+        return tagService.get(user, tagId);
     }
 
     //GetAll
-    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
+    @JSON
     @RequestMapping(method = RequestMethod.GET)
-    public Iterable<Tag> getTags(@CurrentUser User user) {
-        return tagService.getAllTags(user);
-    }
-
-    //Search
-    @JSON(type = Tag.class, include = "id,createdTime,updatedTime,title,info")
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public Iterable<Tag> searchTags(@CurrentUser User user,
-                                    @RequestParam String title) {
-        return tagService.search(user, title);
+    public Iterable<Tag> getTags(@CurrentUser User user,
+                                 @RequestParam(required = false) String search) {
+        if (StringUtils.isEmpty(search)) {
+            return tagService.getAll(user);
+        } else {
+            return tagService.search(user, search);
+        }
     }
 
 
-    // ------------------------------ Items ------------------------------ //
+    // ------------------------------ Item ------------------------------ //
 
     //GetAll
-    @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img")
+    @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
+    @JSON(type = Item.class, exclude = "texts,images,musics,videos,links")
     @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByTagId(@CurrentUser User user,
                                           @PathVariable int tagId) {
-        return itemService.getItemsByTagId(user, tagId);
+        return itemService.getAllByTagId(user, tagId);
     }
 }

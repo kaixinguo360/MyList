@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ItemService {
@@ -28,7 +29,7 @@ public class ItemService {
 
     //Get
     @NotNull
-    public Item getItem(@NotNull User user, int postId) throws DataException {
+    public Item get(@NotNull User user, int postId) throws DataException {
         Item item = itemRepository.findById(postId).orElse(null);
         if (item != null && item.getUserId() == user.getId()) {
             return item;
@@ -40,19 +41,19 @@ public class ItemService {
 
     //GetAll
     @NotNull
-    public Iterable<Item> getAllItems(@NotNull User user) {
+    public Iterable<Item> getAll(@NotNull User user) {
         return itemRepository.findAllByUserId(user.getId());
     }
 
     //GetAll - Tag Id
     @NotNull
-    public Iterable<Item> getItemsByTagId(@NotNull User user, int tagId) {
+    public Iterable<Item> getAllByTagId(@NotNull User user, int tagId) {
         return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
     }
 
-    //GetAll - Tag Id
+    //GetAll - List Id
     @NotNull
-    public Iterable<Item> getItemsByListId(@NotNull User user, int listId) {
+    public Iterable<Item> getAllByListId(@NotNull User user, int listId) {
         return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
     }
 
@@ -64,21 +65,30 @@ public class ItemService {
         return itemRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Add
-    public void addItem(@NotNull User user, @NotNull Item item) throws DataException {
+    //Save
+    @Transactional
+    public Item save(@NotNull User user, @NotNull Item item) throws DataException {
         try {
+            List<Tag> tags = new ArrayList<>();
+            for (Tag tag : item.getTags()){
+                tags.add(tagService.get(user, tag.getId()));
+            }
+            item.getTags().clear();
             item.setUserId(user.getId());
-            itemRepository.save(item);
+            item = itemRepository.save(item);
+            item.getTags().addAll(tags);
+            return item;
         } catch (Exception e) {
-            logger.info("addItem: An Error Occurred: " + e.getMessage());
+            logger.info("saveItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
     //Remove
-    public void removeItem(User user, int postId) throws DataException {
+    @Transactional
+    public void remove(User user, int postId) throws DataException {
         try {
-            getItem(user, postId);
+            get(user, postId);
             itemRepository.deleteById(postId);
         } catch (DataException e) {
             throw e;
@@ -88,44 +98,18 @@ public class ItemService {
         }
     }
 
-    //Update
-    @Transactional
-    public void updateItem(@NotNull User user, int postId, @NotNull Item newItem) throws DataException {
-        Item item = getItem(user, postId);
-        item.setTitle(newItem.getTitle());
-        item.setInfo(newItem.getInfo());
-        item.setUrl(newItem.getUrl());
-        item.setImg(newItem.getImg());
-    }
-
     //Set - List
     @Transactional
-    public void setListToItem(@NotNull User user, int postId, int listId) throws DataException {
-        Item item = getItem(user, postId);
+    public void setList(@NotNull User user, int postId, int listId) throws DataException {
+        Item item = get(user, postId);
         MyList list = myListService.getList(user, listId);
         item.setList(list);
     }
 
-    //Reset - List
+    //Remove - List
     @Transactional
-    public void resetListToItem(@NotNull User user, int postId) throws DataException {
-        Item item = getItem(user, postId);
+    public void removeList(@NotNull User user, int postId) throws DataException {
+        Item item = get(user, postId);
         item.setList(null);
-    }
-
-    //Add - Tag
-    @Transactional
-    public void addTagToItem(@NotNull User user, int postId, int tagId) throws DataException {
-        Item item = getItem(user, postId);
-        Tag tag = tagService.getTag(user, tagId);
-        item.getTags().add(tag);
-    }
-
-    //Remove - Tag
-    @Transactional
-    public void removeTagFromItem(@NotNull User user, int postId, int tagId) throws DataException {
-        Item item = getItem(user, postId);
-        Tag tag = tagService.getTag(user, tagId);
-        item.getTags().remove(tag);
     }
 }

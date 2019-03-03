@@ -18,7 +18,7 @@ public class CustomerJsonSerializer {
      * @param filter filter fields
      */
     public void filter(Class<?> clazz, String include, String filter) {
-        if (clazz == null) return;
+        if (clazz == null || clazz == void.class) return;
         if (!StringUtils.isEmpty(include)) {
             jacksonFilter.include(clazz, include.split(","));
         }
@@ -34,7 +34,7 @@ public class CustomerJsonSerializer {
     }
 
     public void filter(JSON json) {
-        this.filter(json.type(), json.include(), json.filter());
+        this.filter(json.type(), json.include(), json.exclude());
     }
 }
 

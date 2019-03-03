@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(JSONS.class)
 public @interface JSON {
-    Class<?> type();
+    Class<?> type() default void.class;
     String include() default "";
-    String filter() default "";
+    String exclude() default "";
 }

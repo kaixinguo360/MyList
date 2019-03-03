@@ -26,7 +26,7 @@ public class TagService {
 
     //Get
     @NotNull
-    public Tag getTag(@NotNull User user, int tagId) throws DataException {
+    public Tag get(@NotNull User user, int tagId) throws DataException {
         Tag tag = tagRepository.findById(tagId).orElse(null);
         if (tag != null && tag.getUserId() == user.getId()) {
             return tag;
@@ -36,15 +36,9 @@ public class TagService {
         }
     }
 
-    //GetAll - Item Id
-    @NotNull
-    public Iterable<Tag> getTagsByItemId(@NotNull User user, int postId) {
-        return tagRepository.findAllByUserIdAndItemId(user.getId(), postId);
-    }
-
     //GetAll
     @NotNull
-    public Iterable<Tag> getAllTags(@NotNull User user) {
+    public Iterable<Tag> getAll(@NotNull User user) {
         return tagRepository.findAllByUserId(user.getId());
     }
 
@@ -56,21 +50,26 @@ public class TagService {
         return tagRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Add
-    public void addTag(@NotNull User user, @NotNull Tag tag) throws DataException {
+    //Save
+    @Transactional
+    public Tag save(@NotNull User user, @NotNull Tag tag) throws DataException {
         try {
             tag.setUserId(user.getId());
-            tagRepository.save(tag);
+            return tagRepository.save(tag);
         } catch (Exception e) {
-            logger.info("addTag: An Error Occurred: " + e.getMessage());
+            logger.info("saveTag: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
     //Remove
-    public void removeTag(User user, int tagId) throws DataException {
+    @Transactional
+    public void remove(User user, int tagId) throws DataException {
         try {
-            getTag(user, tagId);
+            Tag tag = get(user, tagId);
+            tag.getItems().forEach(item -> {
+                item.getTags().remove(tag);
+            });
             tagRepository.deleteById(tagId);
         } catch (DataException e) {
             throw e;
@@ -78,13 +77,5 @@ public class TagService {
             logger.info("removeTag: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
-    }
-
-    //Update
-    @Transactional
-    public void updateTag(@NotNull User user, int tagId, @NotNull Tag newTag) throws DataException {
-        Tag tag = getTag(user, tagId);
-        tag.setTitle(newTag.getTitle());
-        tag.setInfo(newTag.getInfo());
     }
 }

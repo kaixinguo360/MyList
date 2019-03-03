@@ -96,7 +96,7 @@ public class MyListController {
     @RequestMapping(value = "/{listId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByListId(@CurrentUser User user,
                                           @PathVariable int listId) {
-        return itemService.getItemsByListId(user, listId);
+        return itemService.getAllByListId(user, listId);
     }
 
     //Add
@@ -105,7 +105,7 @@ public class MyListController {
     public MessageResponse addTagToItem(@CurrentUser User user,
                                         @PathVariable int listId,
                                         @PathVariable int itemId) throws DataException {
-        itemService.setListToItem(user, itemId, listId);
+        itemService.setList(user, itemId, listId);
         return new MessageResponse("Set List To Item Successful");
     }
 }

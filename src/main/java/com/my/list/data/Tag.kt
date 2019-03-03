@@ -1,5 +1,6 @@
 package com.my.list.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.util.*
@@ -12,6 +13,7 @@ data class Tag(
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0,
 
+    @JsonIgnore
     @Column(nullable = false)
     var userId: Int = 0,
 
@@ -33,6 +35,7 @@ data class Tag(
     @Column(nullable = true)
     var info: String? = null
 ) {
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags")
     var items: Set<Item> = HashSet()
 }
