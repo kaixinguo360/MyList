@@ -28,33 +28,47 @@ public class ItemController {
 
     // ------------------------------ Item ------------------------------ //
 
-    //Save
+    //Add
     @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
-    @RequestMapping(method = {
-        RequestMethod.POST,
-        RequestMethod.PUT
-    })
-    public Item saveItem(@CurrentUser User user,
-                         @RequestBody Item item) throws DataException {
+    @RequestMapping(method = RequestMethod.POST)
+    public Item addItem(@CurrentUser User user,
+                        @RequestBody Item item) throws DataException {
+        setupItem(item);
+        return itemService.add(user, item);
+    }
+
+    //Update
+    @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
+    @RequestMapping(method = RequestMethod.PUT)
+    public Item updateItem(@CurrentUser User user,
+                           @RequestBody Item item) throws DataException {
+        setupItem(item);
+        return itemService.update(user, item);
+    }
+
+    private void setupItem(Item item) {
         item.setUpdatedTime(new Date());
 
         item.getTexts().forEach((c -> {
+            c.setId(0);
             c.setUpdatedTime(new Date());
         }));
         item.getImages().forEach((c -> {
+            c.setId(0);
             c.setUpdatedTime(new Date());
         }));
         item.getMusics().forEach((c -> {
+            c.setId(0);
             c.setUpdatedTime(new Date());
         }));
         item.getVideos().forEach((c -> {
+            c.setId(0);
             c.setUpdatedTime(new Date());
         }));
         item.getLinks().forEach((c -> {
+            c.setId(0);
             c.setUpdatedTime(new Date());
         }));
-
-        return itemService.save(user, item);
     }
 
     //Remove
@@ -76,7 +90,7 @@ public class ItemController {
 
     //GetAll
     @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
-    @JSON(type = Item.class, exclude = "texts,images,musics,videos,links")
+    @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(method = RequestMethod.GET)
     public Iterable<Item> getItems(@CurrentUser User user,
                                    @RequestParam(required = false) String search) {

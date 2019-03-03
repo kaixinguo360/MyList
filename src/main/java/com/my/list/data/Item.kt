@@ -58,18 +58,38 @@ data class Item(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
+    @OneToMany(
+        mappedBy="item",
+        orphanRemoval = true,
+        cascade = [ CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE ]
+    )
     var texts: List<Text> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
+    @OneToMany(
+        mappedBy="item",
+        orphanRemoval = true,
+        cascade = [ CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE ]
+    )
     var images: List<Image> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
+    @OneToMany(
+        mappedBy="item",
+        orphanRemoval = true,
+        cascade = [ CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE ]
+    )
     var musics: List<Music> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
+    @OneToMany(
+        mappedBy="item",
+        orphanRemoval = true,
+        cascade = [ CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE ]
+    )
     var videos: List<Video> = ArrayList()
 
-    @OneToMany(mappedBy="item", cascade = [ CascadeType.ALL ], orphanRemoval = true)
+    @OneToMany(
+        mappedBy="item",
+        orphanRemoval = true,
+        cascade = [ CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE ]
+    )
     var links: List<Link> = ArrayList()
 }

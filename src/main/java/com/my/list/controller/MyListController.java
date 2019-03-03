@@ -9,7 +9,10 @@ import com.my.list.service.ItemService;
 import com.my.list.service.MyListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @Controller
 @Authorization
@@ -27,85 +30,64 @@ public class MyListController {
     }
 
 
-    // ------------------------------ Lists ------------------------------ //
+    // ------------------------------ List ------------------------------ //
 
     //Add
-    @JSON(type = MyList.class, include = "id,createdTime,updatedTime,title,info")
+    @JSON
     @RequestMapping(method = RequestMethod.POST)
     public MyList addList(@CurrentUser User user,
-                                  @RequestParam String title,
-                                  @RequestParam(required = false) String info) throws DataException {
-        MyList list = new MyList();
-        list.setTitle(title);
-        list.setInfo(info != null ? info : "");
-        myListService.addList(user, list);
-        return list;
-    }
-
-    //Remove
-    @ResponseBody
-    @RequestMapping(value = "/{listId}", method = RequestMethod.DELETE)
-    public MessageResponse removeList(@CurrentUser User user,
-                                     @PathVariable int listId) throws DataException {
-        myListService.removeList(user, listId);
-        return new MessageResponse("Remove List Successful");
+                          @RequestBody MyList list) throws DataException {
+        list.setUpdatedTime(new Date());
+        return myListService.add(user, list);
     }
 
     //Update
-    @ResponseBody
-    @RequestMapping(value = "/{listId}", method = RequestMethod.PUT)
-    public MessageResponse updateList(@CurrentUser User user,
-                                     @PathVariable int listId,
-                                     @RequestParam String title,
-                                     @RequestParam(required = false) String info) throws DataException {
-        MyList list = myListService.getList(user, listId);
-        list.setTitle(title);
-        list.setInfo(info != null ? info : "");
-        myListService.updateList(user, listId, list);
-        return new MessageResponse("Update List Successful");
+    @JSON
+    @RequestMapping(method = RequestMethod.PUT)
+    public MyList updateList(@CurrentUser User user,
+                             @RequestBody MyList list) throws DataException {
+        list.setUpdatedTime(new Date());
+        return myListService.update(user, list);
+    }
+
+    //Remove
+    @JSON
+    @RequestMapping(method = RequestMethod.DELETE)
+    public MessageResponse removeMyList(@CurrentUser User user,
+                                     @RequestBody MyList list) throws DataException {
+        myListService.remove(user, list.getId());
+        return new MessageResponse("Remove List Successful");
     }
 
     //Get
-    @JSON(type = MyList.class, include = "id,createdTime,updatedTime,title,info")
+    @JSON
     @RequestMapping(value = "/{listId}", method = RequestMethod.GET)
     public MyList getList(@CurrentUser User user,
                       @PathVariable int listId) throws DataException {
-        return myListService.getList(user, listId);
+        return myListService.get(user, listId);
     }
 
     //GetAll
-    @JSON(type = MyList.class, include = "id,createdTime,updatedTime,title,info")
+    @JSON
     @RequestMapping(method = RequestMethod.GET)
-    public Iterable<MyList> getLists(@CurrentUser User user) {
-        return myListService.getAllLists(user);
-    }
-
-    //Search
-    @JSON(type = MyList.class, include = "id,createdTime,updatedTime,title,info")
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public Iterable<MyList> searchLists(@CurrentUser User user,
-                                    @RequestParam String title) {
-        return myListService.search(user, title);
+    public Iterable<MyList> getLists(@CurrentUser User user,
+                                 @RequestParam(required = false) String search) {
+        if (StringUtils.isEmpty(search)) {
+            return myListService.getAll(user);
+        } else {
+            return myListService.search(user, search);
+        }
     }
 
 
-    // ------------------------------ Items ------------------------------ //
+    // ------------------------------ Item ------------------------------ //
 
     //GetAll
-    @JSON(type = Item.class, include = "id,createdTime,updatedTime,title,info,url,img")
+    @JSON(type = MyList.class, exclude = "createdTime,updatedTime")
+    @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(value = "/{listId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByListId(@CurrentUser User user,
                                           @PathVariable int listId) {
         return itemService.getAllByListId(user, listId);
-    }
-
-    //Add
-    @ResponseBody
-    @RequestMapping(value = "/{listId}/item/{itemId}", method = RequestMethod.POST)
-    public MessageResponse addTagToItem(@CurrentUser User user,
-                                        @PathVariable int listId,
-                                        @PathVariable int itemId) throws DataException {
-        itemService.setList(user, itemId, listId);
-        return new MessageResponse("Set List To Item Successful");
     }
 }

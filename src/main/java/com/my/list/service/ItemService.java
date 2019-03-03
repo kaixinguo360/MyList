@@ -1,6 +1,7 @@
 package com.my.list.service;
 
 import com.my.list.data.*;
+import com.my.list.data.content.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -21,7 +23,9 @@ public class ItemService {
     private final MyListService myListService;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository, TagService tagService, MyListService myListService) {
+    public ItemService(ItemRepository itemRepository,
+                       TagService tagService,
+                       MyListService myListService) {
         this.itemRepository = itemRepository;
         this.tagService = tagService;
         this.myListService = myListService;
@@ -65,23 +69,72 @@ public class ItemService {
         return itemRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Save
+    //Add
     @Transactional
-    public Item save(@NotNull User user, @NotNull Item item) throws DataException {
+    public Item add(@NotNull User user, @NotNull Item item) throws DataException {
         try {
-            List<Tag> tags = new ArrayList<>();
-            for (Tag tag : item.getTags()){
-                tags.add(tagService.get(user, tag.getId()));
-            }
-            item.getTags().clear();
-            item.setUserId(user.getId());
-            item = itemRepository.save(item);
-            item.getTags().addAll(tags);
-            return item;
+            item.setId(0);
+            return save(user, item);
         } catch (Exception e) {
             logger.info("saveItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
+    }
+
+    //Update
+    @Transactional
+    public Item update(@NotNull User user, @NotNull Item item) throws DataException {
+        try {
+            get(user, item.getId());
+            return save(user, item);
+        } catch (Exception e) {
+            logger.info("saveItem: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
+        }
+    }
+
+    //Save
+    private Item save(User user, final Item item) throws DataException {
+
+        MyList list = null;
+        if (item.getList() != null) {
+            list = myListService.get(user, item.getList().getId());
+        }
+
+        List<Tag> tags = new ArrayList<>();
+        for (Tag tag : item.getTags()){
+            tags.add(tagService.get(user, tag.getId()));
+        }
+
+        item.getTexts().forEach(c -> {
+            c.setId(0);
+            c.setItem(item);
+        });
+        item.getImages().forEach(c -> {
+            c.setId(0);
+            c.setItem(item);
+        });
+        item.getMusics().forEach(c -> {
+            c.setId(0);
+            c.setItem(item);
+        });
+        item.getVideos().forEach(c -> {
+            c.setId(0);
+            c.setItem(item);
+        });
+        item.getLinks().forEach(c -> {
+            c.setId(0);
+            c.setItem(item);
+        });
+
+        item.getTags().clear();
+        item.setUserId(user.getId());
+
+        Item item1 = itemRepository.save(item);
+        item1.getTags().addAll(tags);
+        item1.setList(list);
+
+        return item1;
     }
 
     //Remove
@@ -96,20 +149,5 @@ public class ItemService {
             logger.info("removeItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
-    }
-
-    //Set - List
-    @Transactional
-    public void setList(@NotNull User user, int postId, int listId) throws DataException {
-        Item item = get(user, postId);
-        MyList list = myListService.getList(user, listId);
-        item.setList(list);
-    }
-
-    //Remove - List
-    @Transactional
-    public void removeList(@NotNull User user, int postId) throws DataException {
-        Item item = get(user, postId);
-        item.setList(null);
     }
 }

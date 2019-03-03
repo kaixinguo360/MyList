@@ -10,6 +10,7 @@ import javax.persistence.*
 @Entity
 data class Text(
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0,
 

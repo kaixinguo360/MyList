@@ -35,12 +35,12 @@ public class MyListServiceTests {
         list2.setInfo("Info2");
 
         //Add
-        myListService.addList(user1, list1);
-        myListService.addList(user1, list2);
+        myListService.add(user1, list1);
+        myListService.add(user1, list2);
 
         //Get
-        assertEquals(myListService.getList(user1, list1.getId()).getTitle(), list1.getTitle());
-        assertEquals(myListService.getList(user1, list2.getId()).getTitle(), list2.getTitle());
+        assertEquals(myListService.get(user1, list1.getId()).getTitle(), list1.getTitle());
+        assertEquals(myListService.get(user1, list2.getId()).getTitle(), list2.getTitle());
 
         //Search
         myListService.search(user1, "List").forEach(System.out::println);
@@ -48,27 +48,27 @@ public class MyListServiceTests {
         //Update
         list1.setTitle("NewTitle1");
         list2.setTitle("NewTitle2");
-        myListService.updateList(user1, list1.getId(), list1);
-        myListService.updateList(user1, list2.getId(), list2);
+        myListService.update(user1, list1);
+        myListService.update(user1, list2);
 
         //Get
-        assertEquals(myListService.getList(user1, list1.getId()).getTitle(), list1.getTitle());
-        assertEquals(myListService.getList(user1, list2.getId()).getTitle(), list2.getTitle());
+        assertEquals(myListService.get(user1, list1.getId()).getTitle(), list1.getTitle());
+        assertEquals(myListService.get(user1, list2.getId()).getTitle(), list2.getTitle());
 
         //Search
         myListService.search(user1, "New").forEach(System.out::println);
 
         //Remove
-        myListService.removeList(user1, list1.getId());
-        myListService.removeList(user1, list2.getId());
+        myListService.remove(user1, list1.getId());
+        myListService.remove(user1, list2.getId());
 
         //Get
         try {
-            myListService.getList(user1, list1.getId());
+            myListService.get(user1, list1.getId());
             fail();
         } catch (DataException ignored) {}
         try {
-            myListService.getList(user1, list2.getId());
+            myListService.get(user1, list2.getId());
             fail();
         } catch (DataException ignored) {}
     }

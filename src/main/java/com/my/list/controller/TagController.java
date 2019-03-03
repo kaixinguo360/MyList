@@ -32,17 +32,22 @@ public class TagController {
 
     // ------------------------------ Tag ------------------------------ //
 
-    //Save
+    //Add
     @JSON
-    @RequestMapping(method = {
-        RequestMethod.POST,
-        RequestMethod.PUT
-    })
-    public Tag saveTag(@CurrentUser User user,
-                       @RequestBody Tag tag) throws DataException {
+    @RequestMapping(method = RequestMethod.POST)
+    public Tag addTag(@CurrentUser User user,
+                      @RequestBody Tag tag) throws DataException {
         tag.setUpdatedTime(new Date());
+        return tagService.add(user, tag);
+    }
 
-        return tagService.save(user, tag);
+    //Update
+    @JSON
+    @RequestMapping(method = RequestMethod.PUT)
+    public Tag updateTag(@CurrentUser User user,
+                         @RequestBody Tag tag) throws DataException {
+        tag.setUpdatedTime(new Date());
+        return tagService.update(user, tag);
     }
 
     //Remove
@@ -79,7 +84,7 @@ public class TagController {
 
     //GetAll
     @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
-    @JSON(type = Item.class, exclude = "texts,images,musics,videos,links")
+    @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByTagId(@CurrentUser User user,
                                           @PathVariable int tagId) {

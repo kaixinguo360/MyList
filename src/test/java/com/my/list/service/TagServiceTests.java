@@ -35,8 +35,8 @@ public class TagServiceTests {
         tag2.setInfo("Info2");
 
         //Add
-        tagService.save(user1, tag1);
-        tagService.save(user1, tag2);
+        tagService.add(user1, tag1);
+        tagService.add(user1, tag2);
 
         //Get
         assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());
@@ -48,8 +48,8 @@ public class TagServiceTests {
         //Update
         tag1.setTitle("NewTitle1");
         tag2.setTitle("NewTitle2");
-        tagService.save(user1, tag1);
-        tagService.save(user1, tag2);
+        tagService.update(user1, tag1);
+        tagService.update(user1, tag2);
 
         //Get
         assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());

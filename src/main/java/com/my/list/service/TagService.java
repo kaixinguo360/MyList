@@ -50,16 +50,34 @@ public class TagService {
         return tagRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Save
+    //Add
     @Transactional
-    public Tag save(@NotNull User user, @NotNull Tag tag) throws DataException {
+    public Tag add(@NotNull User user, @NotNull Tag tag) throws DataException {
         try {
-            tag.setUserId(user.getId());
-            return tagRepository.save(tag);
+            tag.setId(0);
+            return save(user, tag);
         } catch (Exception e) {
             logger.info("saveTag: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
+    }
+
+    //Update
+    @Transactional
+    public Tag update(@NotNull User user, @NotNull Tag tag) throws DataException {
+        try {
+            get(user, tag.getId());
+            return save(user, tag);
+        } catch (Exception e) {
+            logger.info("saveTag: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
+        }
+    }
+
+    //Save
+    private Tag save(User user, Tag tag) {
+        tag.setUserId(user.getId());
+        return tagRepository.save(tag);
     }
 
     //Remove
@@ -67,9 +85,7 @@ public class TagService {
     public void remove(User user, int tagId) throws DataException {
         try {
             Tag tag = get(user, tagId);
-            tag.getItems().forEach(item -> {
-                item.getTags().remove(tag);
-            });
+            tag.getItems().forEach(item -> item.getTags().remove(tag));
             tagRepository.deleteById(tagId);
         } catch (DataException e) {
             throw e;

@@ -26,7 +26,7 @@ public class MyListService {
 
     //Get
     @NotNull
-    public MyList getList(@NotNull User user, int listId) throws DataException {
+    public MyList get(@NotNull User user, int listId) throws DataException {
         MyList list = myListRepository.findById(listId).orElse(null);
         if (list != null && list.getUserId() == user.getId()) {
             return list;
@@ -38,7 +38,7 @@ public class MyListService {
 
     //GetAll
     @NotNull
-    public Iterable<MyList> getAllLists(@NotNull User user) {
+    public Iterable<MyList> getAll(@NotNull User user) {
         return myListRepository.findAllByUserId(user.getId());
     }
 
@@ -50,21 +50,42 @@ public class MyListService {
         return myListRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Add
-    public void addList(@NotNull User user, @NotNull MyList list) throws DataException {
+    //Save
+    @Transactional
+    public MyList add(@NotNull User user, @NotNull MyList list) throws DataException {
         try {
-            list.setUserId(user.getId());
-            myListRepository.save(list);
+            list.setId(0);
+            return save(user, list);
         } catch (Exception e) {
-            logger.info("addList: An Error Occurred: " + e.getMessage());
+            logger.info("saveList: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
 
-    //Remove
-    public void removeList(User user, int listId) throws DataException {
+    //Update
+    @Transactional
+    public MyList update(@NotNull User user, @NotNull MyList list) throws DataException {
         try {
-            getList(user, listId);
+            get(user, list.getId());
+            return save(user, list);
+        } catch (Exception e) {
+            logger.info("saveList: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
+        }
+    }
+
+    //Save
+    private MyList save(User user, MyList list) {
+        list.setUserId(user.getId());
+        return myListRepository.save(list);
+    }
+
+    //Remove
+    @Transactional
+    public void remove(User user, int listId) throws DataException {
+        try {
+            MyList list = get(user, listId);
+            list.getItems().forEach(item -> item.setList(null));
             myListRepository.deleteById(listId);
         } catch (DataException e) {
             throw e;
@@ -72,13 +93,5 @@ public class MyListService {
             logger.info("removeList: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
-    }
-
-    //Update
-    @Transactional
-    public void updateList(@NotNull User user, int listId, @NotNull MyList newList) throws DataException {
-        MyList list = getList(user, listId);
-        list.setTitle(newList.getTitle());
-        list.setInfo(newList.getInfo());
     }
 }

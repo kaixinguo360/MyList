@@ -50,8 +50,8 @@ public class ItemServiceTests {
         item2.setInfo("Content2");
 
         //Add
-        itemService.save(user1, item1);
-        itemService.save(user1, item2);
+        itemService.add(user1, item1);
+        itemService.add(user1, item2);
 
         //Get
         assertEquals(itemService.get(user1, item1.getId()).getTitle(), item1.getTitle());
@@ -63,8 +63,8 @@ public class ItemServiceTests {
         //Update
         item1.setTitle("NewTitle1");
         item2.setTitle("NewTitle2");
-        itemService.save(user1, item1);
-        itemService.save(user1, item2);
+        itemService.update(user1, item1);
+        itemService.update(user1, item2);
 
         //Get
         assertEquals(itemService.get(user1, item1.getId()).getTitle(), "NewTitle1");
@@ -74,7 +74,7 @@ public class ItemServiceTests {
         itemService.search(user1, "New").forEach(System.out::println);
 
         //Add Tag
-        tagService.save(user1, tag1);
+        tagService.add(user1, tag1);
 
         //Get Tag
         assertEquals(tagService.get(user1, tag1.getId()).getTitle(), tag1.getTitle());
@@ -88,7 +88,7 @@ public class ItemServiceTests {
 
         //Add Tag To Item
         item2.getTags().add(tag1);
-        itemService.save(user1, item2);
+        itemService.update(user1, item2);
 
         //Get Tags From Item
         AtomicBoolean flag = new AtomicBoolean(false);
@@ -100,16 +100,21 @@ public class ItemServiceTests {
         assertTrue(flag.get());
 
         //Add List
-        myListService.addList(user1, list1);
-        itemService.setList(user1, item2.getId(), list1.getId());
+        myListService.add(user1, list1);
+        assertEquals(myListService.get(user1, list1.getId()).getTitle(), list1.getTitle());
+        item2.setList(list1);
+        itemService.update(user1, item2);
+
+        //Get List
         assertEquals(itemService.get(user1, item2.getId()).getList().getTitle(), list1.getTitle());
 
         //Remove List
-        itemService.removeList(user1, item2.getId());
+        myListService.remove(user1, list1.getId());
         assertNull(itemService.get(user1, item2.getId()).getList());
-
-        //Get List
-        assertEquals(myListService.getList(user1, list1.getId()).getTitle(), list1.getTitle());
+        try {
+            myListService.get(user1, list1.getId());
+            fail();
+        } catch (DataException ignored) {}
 
         //Remove
         itemService.remove(user1, item1.getId());
