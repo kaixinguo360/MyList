@@ -1,0 +1,19 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+}
+
+.icon-box {
+  flex: 0 1 auto;
+}
+
+.title {
+  flex: 1;
+}
+
+.content-container {
+  height: calc(100% - 64px);
+}
