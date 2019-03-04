@@ -29,19 +29,19 @@ export class ListService {
   
   getAll(search?: string): Observable<List[]> {
     const params = search ? { search: search } : null;
-    return this.apiService.get<List[]>("list", params);
+    return this.apiService.get<List[]>('list', params);
   }
   
   add(list: List): Observable<List> {
-    return this.apiService.post<List>("list", list);
+    return this.apiService.post<List>('list', list);
   }
   
   update(list: List): Observable<List> {
-    return this.apiService.put<List>("list", list);
+    return this.apiService.put<List>('list', list);
   }
   
   delete(id: number): Observable<Message> {
-    return this.apiService.delete<Message>("list", { id: id });
+    return this.apiService.delete<Message>('list', { id: id });
   }
   
   constructor(

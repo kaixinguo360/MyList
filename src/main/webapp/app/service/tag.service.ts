@@ -28,19 +28,19 @@ export class TagService {
   
   getAll(search?: string): Observable<Tag[]> {
     const params = search ? { search: search } : null;
-    return this.apiService.get<Tag[]>("tag", params);
+    return this.apiService.get<Tag[]>('tag', params);
   }
   
   add(tag: Tag): Observable<Tag> {
-    return this.apiService.post<Tag>("tag", tag);
+    return this.apiService.post<Tag>('tag', tag);
   }
   
   update(tag: Tag): Observable<Tag> {
-    return this.apiService.put<Tag>("tag", tag);
+    return this.apiService.put<Tag>('tag', tag);
   }
   
   delete(id: number): Observable<Message> {
-    return this.apiService.delete<Message>("tag", { id: id });
+    return this.apiService.delete<Message>('tag', { id: id });
   }
   
   constructor(

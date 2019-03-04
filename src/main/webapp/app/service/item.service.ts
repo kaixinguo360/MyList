@@ -34,19 +34,19 @@ export class ItemService {
   
   getAll(search?: string): Observable<Item[]> {
     const params = search ? { search: search } : null;
-    return this.apiService.get<Item[]>("item", params);
+    return this.apiService.get<Item[]>('item', params);
   }
   
   add(item: Item): Observable<Item> {
-    return this.apiService.post<Item>("item", item);
+    return this.apiService.post<Item>('item', item);
   }
   
   update(item: Item): Observable<Item> {
-    return this.apiService.put<Item>("item", item);
+    return this.apiService.put<Item>('item', item);
   }
   
   delete(id: number): Observable<Message> {
-    return this.apiService.delete<Message>("item", { id: id });
+    return this.apiService.delete<Message>('item', { id: id });
   }
   
   constructor(

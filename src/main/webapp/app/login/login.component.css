@@ -1,0 +1,48 @@
+.full-width {
+  width: 100%;
+}
+
+.login-container {
+  display: flex;
+}
+
+.space {
+  flex: 0 1 auto;
+  min-width: 20px;
+}
+
+.login-card {
+  flex: 1 0 auto;
+  max-width: 400px;
+  min-width: 0;
+  margin: 100px auto;
+}
+
+.login-card>div {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.align-center {
+  display: flex;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 80px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1 0 auto;
+  margin-right: 20px;
+}
+
+.col:last-child {
+  margin-right: 0;
+}

@@ -1,0 +1,30 @@
+<form [formGroup]="loginData" novalidate (ngSubmit)="login()" class="login-container">
+  <div class="space"></div>
+  <mat-card class="login-card">
+    <div>
+      <div class="align-center icon">
+        <mat-icon [inline]="true">person</mat-icon>
+      </div>
+      <mat-card-content>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="用户名" formControlName="name">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput type="password" placeholder="密码" formControlName="password">
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-content>
+      <div class="align-center">
+        <button mat-raised-button color="primary" type="submit">登陆</button>
+      </div>
+    </div>
+  </mat-card>
+  <div class="space"></div>
+</form>

@@ -16,7 +16,11 @@ export class StorageService {
   }
 
   public set(key: string, value: string): void {
-    localStorage.setItem(key, value);
+    if (value != null) {
+      localStorage.setItem(key, value);
+    } else {
+      localStorage.removeItem(key);
+    }
   }
 
   constructor() { }

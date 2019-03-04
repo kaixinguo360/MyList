@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { catchError, tap } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 
 import { StorageService } from './storage.service';
 import { ApiService, Message } from './api.service';
@@ -19,31 +19,31 @@ export interface Token {
 })
 export class AuthService {
 
-  public login(name: string, password: string): Observable<boolean> {
-    const subject = new Subject<boolean>();
+  public login(name: string, password: string): Observable<string> {
+    const subject = new Subject<string>();
     this.apiService.post<Token>(`token?name=${name}&password=${password}`, null, false).pipe(
       tap(token => {
-        this.storageService.set("token", token.token);
-        subject.next(true)
+        this.storageService.set('token', token.token);
+        subject.next(token.token)
       }),
       catchError(err => {
-        subject.next(false);
-        return err;
+        subject.error(err);
+        return of(err);
       })
     ).subscribe();
     return subject;
   }
 
-  public logout(): Observable<boolean> {
-    const subject = new Subject<boolean>();
-    this.apiService.delete<Message>("token").pipe(
+  public logout(): Observable<string> {
+    const subject = new Subject<string>();
+    this.apiService.delete<Message>('token').pipe(
       tap(() => {
-        this.storageService.set("token", null);
-        subject.next(true)
+        this.clearToken();
+        subject.next('success')
       }),
       catchError(err => {
-        subject.next(false);
-        return err;
+        subject.error(err);
+        return of(err);
       })
     ).subscribe();
     return subject;
@@ -55,6 +55,10 @@ export class AuthService {
 
   public getToken(): string {
     return this.storageService.get('token');
+  }
+
+  public clearToken() {
+    this.storageService.set('token', null);
   }
 
   constructor(

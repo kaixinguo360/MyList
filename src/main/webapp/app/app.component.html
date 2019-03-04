@@ -11,7 +11,16 @@
         </button>
       </div>
       <span class="title">{{title}}</span>
-      <div class="icon-box">
+      <div class="icon-box" *ngIf="router.url=='/'">
+        <button
+          type="button"
+          aria-label="Home"
+          mat-icon-button
+          routerLink="">
+          <mat-icon>home</mat-icon>
+        </button>
+      </div>
+      <div class="icon-box" *ngIf="router.url!='/'">
         <button
           type="button"
           aria-label="Add"
@@ -29,9 +38,12 @@
           type="button"
           aria-label="More"
           mat-icon-button
-          routerLink="">
+          [matMenuTriggerFor]="mainMenu">
           <mat-icon>more_horiz</mat-icon>
         </button>
+        <mat-menu #mainMenu="matMenu" xPosition="before">
+          <button mat-menu-item class="menu" (click)="logout()">注销</button>
+        </mat-menu>
       </div>
     </mat-toolbar>
     <div class="content-container">
