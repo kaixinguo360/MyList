@@ -10,6 +10,7 @@ import {
 import { AuthService } from './service/auth.service';
 import { LoginComponent } from './login/login.component';
 import { ListComponent } from './list/list.component';
+import { ListDetailsComponent } from './list-details/list-details.component';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class LoginGuard implements CanActivate {
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'list', component: ListComponent, canActivate: [ LoginGuard ] }
+  { path: 'list', component: ListComponent, canActivate: [ LoginGuard ] },
+  { path: 'list/:id', component: ListDetailsComponent, canActivate: [ LoginGuard ] }
 ];
 
 @NgModule({

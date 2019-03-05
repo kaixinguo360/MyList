@@ -1,3 +1,20 @@
-<p>
-  list works!
-</p>
+<div class="grid-container">
+  <div class="space"></div>
+  <div class="grid-container1">
+    <h1 class="mat-h1">我的列表</h1>
+    <mat-grid-list [cols]="cols" rowHeight="250px">
+      <mat-grid-tile *ngFor="let list of lists | async">
+        <mat-card class="list-card" [routerLink]="['/list',list.id]">
+          <div class="list-card-content">
+            <div class="list-card-image" [style.background-image]="'url('+list.img+')'" *ngIf="list.img"></div>
+            <div class="list-card-text">
+              <div class="list-card-text-title">{{list.title}}</div>
+              <div class="list-card-text-info" *ngIf="list.info">{{list.info?list.info:''}}</div>
+            </div>
+          </div>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div class="space"></div>
+</div>

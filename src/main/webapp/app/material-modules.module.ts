@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { LayoutModule } from '@angular/cdk/layout';
 import {
   MatToolbarModule,
   MatButtonModule,
@@ -26,7 +27,8 @@ import {
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
-    MatRadioModule
+    MatRadioModule,
+    LayoutModule
   ],
   exports: [
     MatToolbarModule,
@@ -40,7 +42,8 @@ import {
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
-    MatRadioModule
+    MatRadioModule,
+    LayoutModule
   ]
 })
 export class MaterialModules { }
