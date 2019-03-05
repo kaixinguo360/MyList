@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material';
 
 import { of, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { List, ListService } from '../service/list.service';
 import { Item } from '../service/item.service';
+import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 
 @Component({
   selector: 'app-list-detail',
@@ -18,11 +20,29 @@ export class ListDetailComponent implements OnInit {
 
   list: List = { id: 0, createdTime: 0, updatedTime: 0, title: '' };
   items: Subject<Item[]> = new Subject<Item[]>();
+  _items: Item[];
   cols = 1;
 
+  openItemDialog(index: number) {
+    this.dialog.open(
+      ItemDialogComponent,
+      {
+        width: '100%',
+        height: '100%',
+        maxWidth: 'none',
+        autoFocus: false,
+        data: {
+          items: this._items,
+          index: index
+        }
+      }
+    );
+  }
+  
   constructor(
     private route: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,
+    private dialog: MatDialog,
     private listService: ListService
   ) { }
 
@@ -42,7 +62,7 @@ export class ListDetailComponent implements OnInit {
       ).subscribe();
       this.listService.getItems(Number(params.get('id'))).pipe(
         tap(items => {
-          console.log(items);
+          this._items = items;
           this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
         }),
         catchError(err => of(err))

@@ -1,0 +1,54 @@
+.dialog-panel {
+  margin-bottom: 42px;
+  text-align: center;
+}
+
+.dialog-image {
+  max-width: 100%;
+  max-height: calc(100vh - 90px);
+  cursor: pointer;
+}
+
+.dialog-text-box {
+  max-width: 800px;
+  margin: auto;
+}
+
+.dialog-text {
+  margin: 12px;
+}
+
+.dialog-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: black;
+  word-wrap:break-word;
+}
+
+.dialog-info {
+  color: #323232;
+}
+
+.dialog-url {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-time {
+  font-size: 0.8em;
+  color: gray;
+  margin-top: 30px;
+}
+
+.dialog-actions {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+}
+
+.dialog-button {
+  margin: 0 9px;
+}

@@ -11,12 +11,12 @@
     </div>
     <h4 class="mat-h4 list-info" *ngIf="list.info">{{list.info}}</h4>
     <mat-grid-list [cols]="cols" rowHeight="250px">
-      <mat-grid-tile *ngFor="let item of items | async">
+      <mat-grid-tile *ngFor="let item of items | async;index as index" (click)="openItemDialog(index)">
         <mat-card class="list-card">
           <div class="list-card-content">
             <div class="list-card-image" [style.background-image]="'url('+item.img+')'" *ngIf="item.img"></div>
             <div class="list-card-text">
-              <div class="list-card-text-title">{{item.title}}</div>
+              <div class="list-card-text-title">{{(item.title||item.info)?item.title:(item.createdTime | date:'yyyy-MM-dd')}}</div>
               <div class="list-card-text-info" *ngIf="item.info">{{item.info?item.info:''}}</div>
             </div>
           </div>

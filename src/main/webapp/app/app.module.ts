@@ -11,6 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { ListComponent } from './list/list.component';
 import { ListDetailComponent } from './list-detail/list-detail.component';
 import { ListEditComponent } from './list-edit/list-edit.component';
+import { ItemDialogComponent } from './item-dialog/item-dialog.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ListEditComponent } from './list-edit/list-edit.component';
     LoginComponent,
     ListComponent,
     ListDetailComponent,
-    ListEditComponent
+    ListEditComponent,
+    ItemDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -29,6 +31,9 @@ import { ListEditComponent } from './list-edit/list-edit.component';
     MaterialModules
   ],
   providers: [],
-  bootstrap: [ AppComponent ]
+  bootstrap: [ AppComponent ],
+  entryComponents: [
+    ItemDialogComponent
+  ]
 })
 export class AppModule { }

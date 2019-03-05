@@ -12,7 +12,8 @@ import {
   MatDialogModule,
   MatInputModule,
   MatSelectModule,
-  MatRadioModule } from '@angular/material';
+  MatRadioModule
+} from '@angular/material';
 
 @NgModule({
   imports: [
