@@ -1,3 +1,21 @@
-<p>
-  list-details works!
-</p>
+<div class="grid-container">
+  <div class="space"></div>
+  <div class="grid-container1">
+    <h1 class="mat-h1">{{list.title}}</h1>
+    <h4 class="mat-h4 list-info" *ngIf="list.info">{{list.info}}</h4>
+    <mat-grid-list [cols]="cols" rowHeight="250px">
+      <mat-grid-tile *ngFor="let item of items | async">
+        <mat-card class="list-card">
+          <div class="list-card-content">
+            <div class="list-card-image" [style.background-image]="'url('+item.img+')'" *ngIf="item.img"></div>
+            <div class="list-card-text">
+              <div class="list-card-text-title">{{item.title}}</div>
+              <div class="list-card-text-info" *ngIf="item.info">{{item.info?item.info:''}}</div>
+            </div>
+          </div>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div class="space"></div>
+</div>
