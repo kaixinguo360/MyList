@@ -9,6 +9,18 @@
   margin: 20px auto;
 }
 
+.list-title {
+  display: flex;
+}
+
+.mat-h1 {
+  flex: 1;
+}
+
+.add-btn {
+  flex: 0 1 auto;
+}
+
 .list-info {
   margin: 0 4px 16px;
 }

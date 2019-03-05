@@ -1,7 +1,14 @@
 <div class="grid-container">
   <div class="space"></div>
   <div class="grid-container1">
-    <h1 class="mat-h1">{{list.title}}</h1>
+    <div class="list-title">
+      <h1 class="mat-h1">{{list.title}}</h1>
+      <button mat-icon-button
+              class="add-btn"
+              [routerLink]="['/list', list.id, 'edit']">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
     <h4 class="mat-h4 list-info" *ngIf="list.info">{{list.info}}</h4>
     <mat-grid-list [cols]="cols" rowHeight="250px">
       <mat-grid-tile *ngFor="let item of items | async">

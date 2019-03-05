@@ -4,7 +4,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { catchError, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 
-import { List, ListService } from '../service/listservice';
+import { List, ListService } from '../service/list.service';
 
 @Component({
   selector: 'app-list',
@@ -24,7 +24,7 @@ export class ListComponent implements OnInit {
   ngOnInit() {
     this.listService.getAll().pipe(
       tap(lists => {
-        this.lists.next(lists.sort((a, b) => a.updatedTime - b.updatedTime));
+        this.lists.next(lists.sort((a, b) => b.updatedTime - a.updatedTime));
       }),
       catchError(err => {
         alert('获取列表时出错!');

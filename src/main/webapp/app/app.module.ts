@@ -9,14 +9,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { MaterialModules } from './material-modules.module';
 import { LoginComponent } from './login/login.component';
 import { ListComponent } from './list/list.component';
-import { ListDetailsComponent } from './list-details/list-details.component';
+import { ListDetailComponent } from './list-detail/list-detail.component';
+import { ListEditComponent } from './list-edit/list-edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     ListComponent,
-    ListDetailsComponent
+    ListDetailComponent,
+    ListEditComponent
   ],
   imports: [
     BrowserModule,

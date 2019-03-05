@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { of, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { List, ListService } from '../service/listservice';
+import { List, ListService } from '../service/list.service';
 import { Item } from '../service/item.service';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
-  selector: 'app-list-details',
-  templateUrl: './list-details.component.html',
-  styleUrls: ['./list-details.component.css']
+  selector: 'app-list-detail',
+  templateUrl: './list-detail.component.html',
+  styleUrls: ['./list-detail.component.css']
 })
-export class ListDetailsComponent implements OnInit {
+export class ListDetailComponent implements OnInit {
 
   list: List = { id: 0, createdTime: 0, updatedTime: 0, title: '' };
   items: Subject<Item[]> = new Subject<Item[]>();
@@ -29,14 +30,22 @@ export class ListDetailsComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.listService.get(Number(params.get('id'))).pipe(
         tap(list => this.list = list),
-        catchError(err => of(err))
-      ).subscribe();
-      this.listService.getItems(Number(params.get('id'))).pipe(
-        tap(items => this.items.next(items)),
         catchError(err => {
-          alert('获取项目时出错!');
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            alert('列表不存在!');
+            window.history.go(-1);
+          } else {
+            alert('获取项目时出错!');
+          }
           return of(err);
         })
+      ).subscribe();
+      this.listService.getItems(Number(params.get('id'))).pipe(
+        tap(items => {
+          console.log(items);
+          this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
+        }),
+        catchError(err => of(err))
       ).subscribe();
     });
 

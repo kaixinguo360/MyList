@@ -1,7 +1,14 @@
 <div class="grid-container">
   <div class="space"></div>
   <div class="grid-container1">
-    <h1 class="mat-h1">我的列表</h1>
+    <div class="title">
+      <h1 class="mat-h1">我的列表</h1>
+      <button mat-icon-button
+              class="add-btn"
+              [routerLink]="['/list/new']">
+        <mat-icon>playlist_add</mat-icon>
+      </button>
+    </div>
     <mat-grid-list [cols]="cols" rowHeight="250px">
       <mat-grid-tile *ngFor="let list of lists | async">
         <mat-card class="list-card" [routerLink]="['/list',list.id]">

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -32,7 +33,7 @@ export class ApiService {
       headers: headers
     }).pipe(
       catchError(err => {
-        this.handleError(err);
+        this.handleError(err, needAuth);
         return throwError(err);
       })
     );
@@ -44,7 +45,7 @@ export class ApiService {
       headers: headers
     }).pipe(
       catchError(err => {
-        this.handleError(err);
+        this.handleError(err, needAuth);
         return throwError(err);
       })
     );
@@ -56,7 +57,7 @@ export class ApiService {
       headers: headers
     }).pipe(
       catchError(err => {
-        this.handleError(err);
+        this.handleError(err, needAuth);
         return throwError(err);
       })
     );
@@ -69,19 +70,23 @@ export class ApiService {
       headers: headers
     }).pipe(
       catchError(err => {
-        this.handleError(err);
+        this.handleError(err, needAuth);
         return throwError(err);
       })
     );
   }
   
-  private handleError(err) {
-    if (err.status === 401) {
+  private handleError(err, needAuth: boolean) {
+    if (err instanceof HttpErrorResponse && err.status === 401) {
       this.authService.clearToken();
+      if (needAuth) {
+        this.router.navigate([ '' ]);
+      }
     }
   }
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) { }
 }
