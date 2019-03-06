@@ -27,9 +27,7 @@ export class ListDetailComponent implements OnInit {
     this.dialog.open(
       ItemDialogComponent,
       {
-        width: '100%',
-        height: '100%',
-        maxWidth: 'none',
+        maxHeight: '90vh',
         autoFocus: false,
         data: {
           items: this._items,

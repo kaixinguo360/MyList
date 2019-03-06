@@ -29,8 +29,8 @@ export class ItemDialogComponent implements OnInit {
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<ItemDialogComponent>
+    @Inject(MAT_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<ItemDialogComponent>
   ) { }
 
   ngOnInit() {
