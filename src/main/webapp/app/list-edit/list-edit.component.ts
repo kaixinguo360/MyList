@@ -14,6 +14,8 @@ import { List, ListService } from '../service/list.service';
 })
 export class ListEditComponent implements OnInit {
 
+  isLoading = true;
+
   listData = this.fb.group({
     title: [null, Validators.required],
     info: [null],
@@ -84,10 +86,13 @@ export class ListEditComponent implements OnInit {
 
   ngOnInit() {
     this.isNew = this.router.url === '/list/new';
-    if (!this.isNew) {
+    if (this.isNew) {
+      this.isLoading = false;
+    } else {
       const listId = Number(this.route.snapshot.paramMap.get('id'));
       this.listService.get(listId).pipe(
         tap(list => {
+          this.isLoading = false;
           this.list = list;
           this.listData.setValue({
             title: list.title,
@@ -96,6 +101,7 @@ export class ListEditComponent implements OnInit {
           });
         }),
         catchError(err => {
+          this.isLoading = false;
           alert('获取列表信息时出错!');
           return of(err);
         })

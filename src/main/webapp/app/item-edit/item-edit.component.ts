@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { catchError, tap } from 'rxjs/operators';
-import {of, Subject} from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
@@ -14,6 +14,8 @@ import { Item, ItemService } from '../service/item.service';
   styleUrls: ['./item-edit.component.css']
 })
 export class ItemEditComponent implements OnInit {
+
+  isLoading = true;
 
   lists: Subject<List[]> = new Subject<List[]>();
   itemData = this.fb.group({
@@ -108,10 +110,13 @@ export class ItemEditComponent implements OnInit {
     ).subscribe();
 
     this.isNew = this.router.url === '/item/new';
-    if (!this.isNew) {
+    if (this.isNew) {
+      this.isLoading = false;
+    } else {
       const itemId = Number(this.route.snapshot.paramMap.get('id'));
       this.itemService.get(itemId).pipe(
         tap(item => {
+          this.isLoading = false;
           this.item = item;
           this.itemData.setValue({
             list: item.list ? item.list.id : 0,
@@ -122,7 +127,7 @@ export class ItemEditComponent implements OnInit {
           });
         }),
         catchError(err => {
-          console.log(err);
+          this.isLoading = false;
           alert('获取项目信息时出错!');
           return of(err);
         })

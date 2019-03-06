@@ -11,15 +11,23 @@
       </button>
     </div>
     <h4 class="mat-h4 list-info" *ngIf="list.info">{{list.info}}</h4>
+    <div class="loading-icon" *ngIf="isLoading">
+      <mat-icon>autorenew</mat-icon>正在加载
+    </div>
     <mat-grid-list [cols]="cols" rowHeight="250px">
       <mat-grid-tile *ngFor="let item of items | async;index as index" (click)="openItemDialog(index)">
         <mat-card class="list-card">
+          <div class="list-card-head" *ngIf="!item.img"></div>
           <div class="list-card-content">
             <div class="list-card-image" [style.background-image]="'url('+item.img+')'" *ngIf="item.img"></div>
             <div class="list-card-text">
-              <div class="list-card-text-title">{{(item.title||item.info)?item.title:(item.createdTime | date:'yyyy-MM-dd')}}</div>
-              <div class="list-card-text-info" *ngIf="item.info">{{item.info?item.info:''}}</div>
+              <div class="list-card-title" *ngIf="!item.img">{{getTitle(item)}}</div>
+              <div class="list-card-info" *ngIf="item.info&&!item.img">{{item.info}}</div>
             </div>
+          </div>
+          <div class="list-card-bottom">
+            <span  class="list-card-footer">{{getFooter(item)}}</span>
+            <span  class="list-card-time">{{item.createdTime | date:'yyyy-MM-dd'}}</span>
           </div>
         </mat-card>
       </mat-grid-tile>

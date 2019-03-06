@@ -2,6 +2,13 @@
   <div class="space"></div>
   <mat-card class="edit-card">
     <button mat-icon-button
+            class="loading-icon"
+            type="button"
+            disabled
+            *ngIf="isLoading">
+      <mat-icon>autorenew</mat-icon>
+    </button>
+    <button mat-icon-button
             class="more-btn"
             type="button"
             *ngIf="!isNew"

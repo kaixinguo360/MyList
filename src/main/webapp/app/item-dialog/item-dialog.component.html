@@ -14,7 +14,7 @@
     <p class="dialog-text dialog-info">{{items[index].info}}</p>
     <p class="dialog-text dialog-url" *ngIf="items[index].url">
       <mat-icon>link</mat-icon>
-      <a [href]="items[index].url">来源</a>
+      <a [href]="items[index].url">{{getDomain(items[index].url)}}</a>
     </p>
     <p class="dialog-text dialog-time">{{items[index].createdTime | date:'yyyy-MM-dd HH:mm:ss'}}</p>
   </div>

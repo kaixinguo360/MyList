@@ -18,6 +18,8 @@ import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 })
 export class ListDetailComponent implements OnInit {
 
+  isLoading = true;
+
   list: List = { id: 0, createdTime: 0, updatedTime: 0, title: '' };
   items: Subject<Item[]> = new Subject<Item[]>();
   _items: Item[];
@@ -35,6 +37,47 @@ export class ListDetailComponent implements OnInit {
         }
       }
     );
+  }
+
+  private getDomain(url: string) {
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+      return match[2];
+    } else {
+      return url;
+    }
+  }
+
+  getTitle(item: Item): string {
+    if (item.title) {
+      return item.title;
+    } else if (item.info || item.img) {
+      return '';
+    } else if (item.url) {
+      return '来自' + this.getDomain(item.url) + '的收藏';
+    } else {
+      return '未命名收藏';
+    }
+  }
+
+  getFooter(item: Item): string {
+    if (item.img) {
+      if (item.title) {
+        return item.title;
+      } else if (item.info) {
+        return item.info;
+      } else if (item.url) {
+        return this.getDomain(item.url);
+      } else {
+        return '来自' + this.getDomain(item.img) + '的图片';
+      }
+    } else {
+      if (item.url) {
+        return this.getDomain(item.url);
+      } else {
+        return '';
+      }
+    }
   }
 
   constructor(
@@ -56,10 +99,12 @@ export class ListDetailComponent implements OnInit {
         };
         this.itemService.getAll('list:none').pipe(
           tap(items => {
+            this.isLoading = false;
             this._items = items;
             this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
           }),
           catchError(err => {
+            this.isLoading = false;
             alert('获取项目时出错!');
             return of(err);
           })
@@ -79,10 +124,14 @@ export class ListDetailComponent implements OnInit {
         ).subscribe();
         this.listService.getItems(Number(params.get('id'))).pipe(
           tap(items => {
+            this.isLoading = false;
             this._items = items;
             this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
           }),
-          catchError(err => of(err))
+          catchError(err => {
+            this.isLoading = false;
+            return of(err);
+          })
         ).subscribe();
       }
     });

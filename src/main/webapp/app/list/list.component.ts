@@ -13,6 +13,8 @@ import { List, ListService } from '../service/list.service';
 })
 export class ListComponent implements OnInit {
 
+  isLoading = true;
+
   lists: Subject<List[]> = new Subject<List[]>();
   cols = 1;
 
@@ -24,9 +26,11 @@ export class ListComponent implements OnInit {
   ngOnInit() {
     this.listService.getAll().pipe(
       tap(lists => {
+        this.isLoading = false;
         this.lists.next(lists.sort((a, b) => b.updatedTime - a.updatedTime));
       }),
       catchError(err => {
+        this.isLoading = false;
         alert('获取列表时出错!');
         return of(err);
       })
