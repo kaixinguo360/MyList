@@ -7,11 +7,11 @@ import { StorageService } from './storage.service';
 import { ApiService, Message } from './api.service';
 
 export interface Token {
-  token: string,
+  token: string;
   user: {
     id: number,
     name: string
-  }
+  };
 }
 
 @Injectable({
@@ -24,7 +24,7 @@ export class AuthService {
     this.apiService.post<Token>(`token?name=${name}&password=${password}`, null, false).pipe(
       tap(token => {
         this.storageService.set('token', token.token);
-        subject.next(token.token)
+        subject.next(token.token);
       }),
       catchError(err => {
         subject.error(err);
@@ -39,7 +39,7 @@ export class AuthService {
     this.apiService.delete<Message>('token').pipe(
       tap(() => {
         this.clearToken();
-        subject.next('success')
+        subject.next('success');
       }),
       catchError(err => {
         subject.error(err);

@@ -9,9 +9,9 @@ import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
 export interface Message {
-  timestamp: number,
-  status: number,
-  message: string
+  timestamp: number;
+  status: number;
+  message: string;
 }
 
 @Injectable({
@@ -75,7 +75,7 @@ export class ApiService {
       })
     );
   }
-  
+
   private handleError(err, needAuth: boolean) {
     if (err instanceof HttpErrorResponse && err.status === 401) {
       this.authService.clearToken();

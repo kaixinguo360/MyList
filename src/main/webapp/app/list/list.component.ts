@@ -12,7 +12,7 @@ import { List, ListService } from '../service/list.service';
   styleUrls: ['./list.component.css']
 })
 export class ListComponent implements OnInit {
-  
+
   lists: Subject<List[]> = new Subject<List[]>();
   cols = 1;
 

@@ -38,7 +38,7 @@ export class ListDetailComponent implements OnInit {
       }
     );
   }
-  
+
   constructor(
     private route: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,

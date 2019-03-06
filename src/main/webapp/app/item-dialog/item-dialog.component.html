@@ -1,3 +1,8 @@
+<button mat-icon-button mat-dialog-close
+        class="edit-btn"
+        [routerLink]="['/item', items[index].id, 'edit']">
+  <mat-icon>edit</mat-icon>
+</button>
 <div class="dialog-panel">
   <div *ngIf="items[index].img">
     <a target="_blank" [href]="items[index].img">

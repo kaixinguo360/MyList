@@ -1,0 +1,64 @@
+<form [formGroup]="itemData" novalidate (ngSubmit)="update()" class="edit-container">
+  <div class="space"></div>
+  <mat-card class="edit-card">
+    <button mat-icon-button
+            class="more-btn"
+            type="button"
+            *ngIf="!isNew"
+            [matMenuTriggerFor]="moreMenu">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+    <mat-menu #moreMenu="matMenu" xPosition="before">
+      <button mat-menu-item class="menu" (click)="delete()">删除</button>
+    </mat-menu>
+    <div>
+      <div class="align-center icon">
+        <mat-icon [inline]="true">book</mat-icon>
+      </div>
+      <mat-card-content>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <mat-select formControlName="list">
+                <mat-option [value]="0">默认列表</mat-option>
+                <mat-option *ngFor="let list of lists|async" [value]="list.id">{{list.title}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="标题" formControlName="title" autocomplete="off">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <textarea matInput placeholder="描述" formControlName="info" autocomplete="off"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="图片" formControlName="img" autocomplete="off">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="full-width">
+              <input matInput placeholder="来源 URL" formControlName="url" autocomplete="off">
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-content>
+      <div class="align-center">
+        <button mat-raised-button color="primary" type="submit">保存</button>
+      </div>
+    </div>
+  </mat-card>
+  <div class="space"></div>
+</form>

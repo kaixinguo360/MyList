@@ -14,12 +14,12 @@ import { AuthService } from '../service/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  
+
   loginData = this.fb.group({
     name: [null, Validators.required],
     password: [null, Validators.required]
   });
-  
+
   login() {
     const data = this.loginData.getRawValue();
     this.authService.login(data.name, data.password).pipe(
@@ -46,6 +46,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     if (this.authService.isLogin()) {
       this.router.navigate([ 'list' ]);
-    } 
+    }
   }
 }

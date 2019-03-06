@@ -18,7 +18,7 @@ export class ItemDialogComponent implements OnInit {
   }
 
   next() {
-    this.index = (this.index + 1 + this.items.length) % this.items.length
+    this.index = (this.index + 1 + this.items.length) % this.items.length;
   }
 
   keyDown($event) {
@@ -27,7 +27,7 @@ export class ItemDialogComponent implements OnInit {
       case 'ArrowRight': this.next(); $event.preventDefault(); break;
     }
   }
-  
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ItemDialogComponent>

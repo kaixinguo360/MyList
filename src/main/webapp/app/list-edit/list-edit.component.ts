@@ -27,16 +27,16 @@ export class ListEditComponent implements OnInit {
       alert('数据不符合要求!');
       return;
     }
-    const list = this.listData.getRawValue();
+    const listData = this.listData.getRawValue();
     if (this.isNew) {
       this.listService.add({
-        title: list.title,
-        info: list.info,
-        img: list.img
+        title: listData.title,
+        info: listData.info,
+        img: listData.img
       }).pipe(
         tap(list => {
           alert('添加成功!');
-          this.router.navigate([ '/list', list.id ], { replaceUrl:true });
+          this.router.navigate([ '/list', list.id ], { replaceUrl: true });
         }),
         catchError(err => {
           alert('添加失败!');
@@ -44,9 +44,9 @@ export class ListEditComponent implements OnInit {
         })
       ).subscribe();
     } else {
-      this.list.title = list.title;
-      this.list.info = list.info;
-      this.list.img = list.img;
+      this.list.title = listData.title;
+      this.list.info = listData.info;
+      this.list.img = listData.img;
       this.listService.update(this.list).pipe(
         tap(() => {
           alert('保存成功!');
@@ -59,7 +59,7 @@ export class ListEditComponent implements OnInit {
       ).subscribe();
     }
   }
-  
+
   delete() {
     if (confirm(`确定要删除列表'${this.list.title}'吗?`)) {
       this.listService.delete(this.list.id).pipe(
@@ -74,7 +74,7 @@ export class ListEditComponent implements OnInit {
       ).subscribe();
     }
   }
-  
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -83,7 +83,7 @@ export class ListEditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.isNew = this.router.url == '/list/new';
+    this.isNew = this.router.url === '/list/new';
     if (!this.isNew) {
       const listId = Number(this.route.snapshot.paramMap.get('id'));
       this.listService.get(listId).pipe(

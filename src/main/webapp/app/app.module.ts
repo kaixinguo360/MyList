@@ -12,6 +12,7 @@ import { ListComponent } from './list/list.component';
 import { ListDetailComponent } from './list-detail/list-detail.component';
 import { ListEditComponent } from './list-edit/list-edit.component';
 import { ItemDialogComponent } from './item-dialog/item-dialog.component';
+import { ItemEditComponent } from './item-edit/item-edit.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ItemDialogComponent } from './item-dialog/item-dialog.component';
     ListComponent,
     ListDetailComponent,
     ListEditComponent,
-    ItemDialogComponent
+    ItemDialogComponent,
+    ItemEditComponent
   ],
   imports: [
     BrowserModule,
