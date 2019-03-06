@@ -20,7 +20,8 @@
             "tsConfig": "src/main/webapp/tsconfig.app.json",
             "assets": [
               "src/main/webapp/favicon.ico",
-              "src/main/webapp/assets"
+              "src/main/webapp/assets",
+              "src/main/webapp/manifest.webmanifest"
             ],
             "styles": [
               "src/main/webapp/styles.css"
@@ -50,7 +51,8 @@
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
                 }
-              ]
+              ],
+              "serviceWorker": true
             }
           }
         },
@@ -85,7 +87,8 @@
             "scripts": [],
             "assets": [
               "src/main/webapp/favicon.ico",
-              "src/main/webapp/assets"
+              "src/main/webapp/assets",
+              "src/main/webapp/manifest.webmanifest"
             ]
           }
         },
