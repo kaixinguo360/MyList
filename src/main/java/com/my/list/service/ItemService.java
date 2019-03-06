@@ -51,14 +51,22 @@ public class ItemService {
 
     //GetAll - Tag Id
     @NotNull
-    public Iterable<Item> getAllByTagId(@NotNull User user, int tagId) {
-        return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
+    public Iterable<Item> getAllByTagId(@NotNull User user, Integer tagId) {
+        if (tagId != null) {
+            return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
+        } else {
+            return itemRepository.findAllByUserIdAndTagsIsNull(user.getId());
+        }
     }
 
     //GetAll - List Id
     @NotNull
-    public Iterable<Item> getAllByListId(@NotNull User user, int listId) {
-        return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
+    public Iterable<Item> getAllByListId(@NotNull User user, Integer listId) {
+        if (listId != null) {
+            return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
+        } else {
+            return itemRepository.findAllByUserIdAndListIsNull(user.getId());
+        }
     }
 
     //Search

@@ -29,8 +29,8 @@ data class Item(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @Column(nullable = false)
-    var title: String = "",
+    @Column(nullable = true)
+    var title: String? = null,
 
     @Column(nullable = true)
     var info: String? = null,

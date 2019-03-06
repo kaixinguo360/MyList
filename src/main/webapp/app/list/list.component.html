@@ -4,7 +4,12 @@
     <div class="title">
       <h1 class="mat-h1">我的列表</h1>
       <button mat-icon-button
-              class="add-btn"
+              class="list-btn"
+              [routerLink]="['/list/default']">
+        <mat-icon>star</mat-icon>
+      </button>
+      <button mat-icon-button
+              class="list-btn"
               [routerLink]="['/list/new']">
         <mat-icon>playlist_add</mat-icon>
       </button>

@@ -43,7 +43,7 @@ export class ItemEditComponent implements OnInit {
           if (item.list) {
             this.router.navigate([ '/list', item.list ], { replaceUrl: true });
           } else {
-            window.history.go(-1);
+            this.router.navigate([ '/list/default' ], { replaceUrl: true });
           }
         }),
         catchError(err => {
@@ -65,7 +65,7 @@ export class ItemEditComponent implements OnInit {
           if (itemData.list) {
             this.router.navigate([ '/list', itemData.list ], { replaceUrl: true });
           } else {
-            window.history.go(-1);
+            this.router.navigate([ '/list/default' ], { replaceUrl: true });
           }
         }),
         catchError(err => {
