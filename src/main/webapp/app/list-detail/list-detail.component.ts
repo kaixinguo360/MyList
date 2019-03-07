@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { of, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
-import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
+import { ItemDetailDialogComponent } from '../item-detail/item-detail.component';
 
 @Component({
   selector: 'app-list-detail',
@@ -26,17 +26,21 @@ export class ListDetailComponent implements OnInit {
   cols = 1;
 
   openItemDialog(index: number) {
-    this.dialog.open(
-      ItemDialogComponent,
+    const dialogRef: MatDialogRef<ItemDetailDialogComponent> = this.dialog.open(
+      ItemDetailDialogComponent,
       {
-        maxHeight: '90vh',
+        maxWidth: null,
+        maxHeight: null,
         autoFocus: false,
+        panelClass: 'flex-dialog',
         data: {
           items: this._items,
           index: index
         }
       }
     );
+    dialogRef.componentInstance.items = this._items;
+    dialogRef.componentInstance.index = index;
   }
 
   private getDomain(url: string) {

@@ -1,4 +1,31 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.flex-dialog {
+  max-width: calc(100vw - 50px);
+  max-height: calc(100vh - 50px);
+}
+
+.medium-dialog {
+  width: calc(100vw - 50px);
+  max-width: 450px;
+  max-height: calc(100vh - 50px);
+}
+
+.large-card {
+  width: calc(100vw - 50px);
+  max-width: 450px;
+  margin: 50px auto;
+}

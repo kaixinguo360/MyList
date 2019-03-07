@@ -13,8 +13,8 @@ import { LoginComponent } from './login/login.component';
 import { ListComponent } from './list/list.component';
 import { ListDetailComponent } from './list-detail/list-detail.component';
 import { ListEditComponent } from './list-edit/list-edit.component';
-import { ItemDialogComponent } from './item-dialog/item-dialog.component';
-import { ItemEditComponent } from './item-edit/item-edit.component';
+import { ItemDetailComponent, ItemDetailDialogComponent } from './item-detail/item-detail.component';
+import { ItemEditComponent, ItemEditDialogComponent } from './item-edit/item-edit.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,9 @@ import { ItemEditComponent } from './item-edit/item-edit.component';
     ListComponent,
     ListDetailComponent,
     ListEditComponent,
-    ItemDialogComponent,
+    ItemDetailDialogComponent,
+    ItemDetailComponent,
+    ItemEditDialogComponent,
     ItemEditComponent
   ],
   imports: [
@@ -38,7 +40,8 @@ import { ItemEditComponent } from './item-edit/item-edit.component';
   providers: [],
   bootstrap: [ AppComponent ],
   entryComponents: [
-    ItemDialogComponent
+    ItemDetailDialogComponent,
+    ItemEditDialogComponent
   ]
 })
 export class AppModule { }

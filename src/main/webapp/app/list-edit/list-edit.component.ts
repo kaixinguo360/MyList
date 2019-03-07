@@ -37,7 +37,7 @@ export class ListEditComponent implements OnInit {
         img: listData.img
       }).pipe(
         tap(list => {
-          alert('添加成功!');
+          // alert('添加成功!');
           this.router.navigate([ '/list', list.id ], { replaceUrl: true });
         }),
         catchError(err => {
@@ -51,7 +51,7 @@ export class ListEditComponent implements OnInit {
       this.list.img = listData.img;
       this.listService.update(this.list).pipe(
         tap(() => {
-          alert('保存成功!');
+          // alert('保存成功!');
           window.history.go(-1);
         }),
         catchError(err => {

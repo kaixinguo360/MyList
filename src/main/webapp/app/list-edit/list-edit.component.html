@@ -1,6 +1,5 @@
-<form [formGroup]="listData" novalidate (ngSubmit)="update()" class="edit-container">
-  <div class="space"></div>
-  <mat-card class="edit-card">
+<div class="large-card"><mat-card>
+  <form [formGroup]="listData" class="edit-box" novalidate (ngSubmit)="update()">
     <button mat-icon-button
             class="loading-icon"
             type="button"
@@ -49,6 +48,6 @@
         <button mat-raised-button color="primary" type="submit">保存</button>
       </div>
     </div>
-  </mat-card>
-  <div class="space"></div>
-</form>
+  </form>
+</mat-card>
+</div>
