@@ -50,9 +50,9 @@ export class ListEditComponent implements OnInit {
       this.list.info = listData.info;
       this.list.img = listData.img;
       this.listService.update(this.list).pipe(
-        tap(() => {
+        tap(list => {
           // alert('保存成功!');
-          window.history.go(-1);
+          this.router.navigate([ '/list', list.id ], { replaceUrl: true });
         }),
         catchError(err => {
           alert('保存失败!');
@@ -66,8 +66,8 @@ export class ListEditComponent implements OnInit {
     if (confirm(`确定要删除列表'${this.list.title}'吗?`)) {
       this.listService.delete(this.list.id).pipe(
         tap(() => {
-          alert('删除成功!');
-          window.history.go(-2);
+          // alert('删除成功!');
+          this.router.navigate([ '/list' ], { replaceUrl: true });
         }),
         catchError(err => {
           alert('删除失败!');

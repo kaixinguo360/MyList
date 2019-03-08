@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
-import { ItemDetailDialogComponent } from '../item-detail/item-detail.component';
+import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 
 @Component({
   selector: 'app-list-detail',
@@ -18,38 +19,43 @@ import { ItemDetailDialogComponent } from '../item-detail/item-detail.component'
 })
 export class ListDetailComponent implements OnInit {
 
+  private static defaultColumnWidth = 240;
+
   isLoading = true;
+  isMobile = false;
+  column = 1;
 
   list: List = { id: 0, createdTime: 0, updatedTime: 0, title: '' };
-  items: Subject<Item[]> = new Subject<Item[]>();
-  _items: Item[];
-  cols = 1;
+  loadedItems: Item[] = [];
+  items: Item[];
+
+  @ViewChild('masonry')
+  masonry: NgxMasonryComponent;
+  masonryWidth: number;
+  columnWidth: number;
+  masonryOptions: NgxMasonryOptions = {
+    transitionDuration: '0.2s',
+    gutter: 0,
+    resize: false,
+    initLayout: true
+  };
 
   openItemDialog(index: number) {
-    const dialogRef: MatDialogRef<ItemDetailDialogComponent> = this.dialog.open(
-      ItemDetailDialogComponent,
+    const dialogRef: MatDialogRef<ItemDetailPopupComponent> = this.dialog.open(
+      ItemDetailPopupComponent,
       {
         maxWidth: null,
         maxHeight: null,
         autoFocus: false,
         panelClass: 'flex-dialog',
         data: {
-          items: this._items,
+          items: this.items,
           index: index
         }
       }
     );
-    dialogRef.componentInstance.items = this._items;
+    dialogRef.componentInstance.items = this.items;
     dialogRef.componentInstance.index = index;
-  }
-
-  private getDomain(url: string) {
-    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
-    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
-      return match[2];
-    } else {
-      return url;
-    }
   }
 
   getTitle(item: Item): string {
@@ -84,6 +90,113 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
+  loadMoreItems() {
+    let num;
+
+    if (this.loadedItems.length === 0) {
+      num = this.column * 8;
+    } else {
+      num = this.column * 4;
+    }
+
+    const left = this.items.length - this.loadedItems.length;
+    num = (left < num) ? left : num;
+
+    if (num !== 0) {
+      for (let i = 0; i < num; i++) {
+        this.loadedItems.push(this.items[this.loadedItems.length]);
+      }
+    }
+
+    this.updateLayout();
+  }
+
+  private getDomain(url: string) {
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+      return match[2];
+    } else {
+      return url;
+    }
+  }
+
+  private changeItems(items: Item[]) {
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.items = items;
+      this.loadMoreItems();
+    } else {
+      this.items = items;
+      const loadedNum = this.loadedItems.length;
+      this.loadedItems.length = 0;
+      for (let i = 0; i < loadedNum; i++) {
+        this.loadedItems.push(this.items[this.loadedItems.length]);
+      }
+      this.items = items;
+    }
+  }
+
+  private updateData(id: number) {
+    if (id === null) {
+      this.list = {
+        id: 0,
+        createdTime: 0,
+        updatedTime: 0,
+        title: '默认列表'
+      };
+      this.itemService.getAll('list:none').pipe(
+        tap(items => {
+          this.changeItems(items);
+        }),
+        catchError(err => {
+          this.isLoading = false;
+          alert('获取项目时出错!');
+          return of(err);
+        })
+      ).subscribe();
+    } else {
+      this.listService.get(id).pipe(
+        tap(list => this.list = list),
+        catchError(err => {
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            alert('列表不存在!');
+            window.history.go(-1);
+          } else {
+            alert('获取项目时出错!');
+          }
+          return of(err);
+        })
+      ).subscribe();
+      this.listService.getItems(id).pipe(
+        tap(items => {
+          this.changeItems(items);
+        }),
+        catchError(err => {
+          this.isLoading = false;
+          return of(err);
+        })
+      ).subscribe();
+    }
+  }
+
+  updateLayout() {
+    this.masonry.layout();
+  }
+
+  @HostListener('window:resize')
+  private resize() {
+    if (this.isMobile) {
+      this.column = 1;
+      this.columnWidth = window.innerWidth;
+      this.masonryWidth = window.innerWidth;
+    } else {
+      this.column = Math.round(window.innerWidth / this.columnWidth) - 1;
+      this.columnWidth = ListDetailComponent.defaultColumnWidth;
+      this.masonryWidth = (this.column === 0) ? this.columnWidth : this.column * this.columnWidth;
+    }
+    this.updateLayout();
+  }
+
   constructor(
     private route: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,
@@ -94,81 +207,53 @@ export class ListDetailComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      if (params.get('id') === 'default') {
-        this.list = {
-          id: 0,
-          createdTime: 0,
-          updatedTime: 0,
-          title: '默认列表'
-        };
-        this.itemService.getAll('list:none').pipe(
-          tap(items => {
-            this.isLoading = false;
-            this._items = items;
-            this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
-          }),
-          catchError(err => {
-            this.isLoading = false;
-            alert('获取项目时出错!');
-            return of(err);
-          })
-        ).subscribe();
-      } else {
-        this.listService.get(Number(params.get('id'))).pipe(
-          tap(list => this.list = list),
-          catchError(err => {
-            if (err instanceof HttpErrorResponse && err.status === 404) {
-              alert('列表不存在!');
-              window.history.go(-1);
-            } else {
-              alert('获取项目时出错!');
+      const id = params.get('id');
+      this.updateData(id === 'default' ? null : Number(id));
+    });
+
+    this.itemService.onUpdate.subscribe(event => {
+      console.log(event);
+
+      if (
+        (event.item.list && event.item.list.id === this.list.id) || (!event.item.list && this.list.id === 0) ||
+        this.items.find(i => i.id === event.item.id)
+      ) {
+        if (event.type === 'add') {
+          // Add
+          this.updateData(this.list.id === 0 ? null : this.list.id);
+        } else if (event.type === 'update') {
+          // Update
+          this.loadedItems.forEach(item => {
+            if (item.id === event.item.id) {
+              item.title = event.item.title;
+              item.info = event.item.info;
+              item.img = event.item.img;
+              item.url = event.item.url;
             }
-            return of(err);
-          })
-        ).subscribe();
-        this.listService.getItems(Number(params.get('id'))).pipe(
-          tap(items => {
-            this.isLoading = false;
-            this._items = items;
-            this.items.next(items.sort((a, b) => b.updatedTime - a.updatedTime));
-          }),
-          catchError(err => {
-            this.isLoading = false;
-            return of(err);
-          })
-        ).subscribe();
+          });
+          this.items.forEach(item => {
+            if (item.id === event.item.id) {
+              item.title = event.item.title;
+              item.info = event.item.info;
+              item.img = event.item.img;
+              item.url = event.item.url;
+            }
+          });
+        } else if (event.type === 'delete') {
+          // Delete
+          this.loadedItems = this.loadedItems.filter(item => item.id !== event.item.id);
+          this.items = this.items.filter(item => item.id !== event.item.id);
+        }
       }
     });
 
+    this.breakpointObserver.observe(Breakpoints.XSmall).pipe(
+      tap(({ matches }) => {
+        this.isMobile = matches;
+        this.resize();
+      })
+    ).subscribe();
 
-    this.breakpointObserver.observe([
-      Breakpoints.XSmall
-    ]).pipe(
-      tap(({ matches }) => {
-        if (matches) {
-          this.cols = 1;
-        }
-      })
-    ).subscribe();
-    this.breakpointObserver.observe([
-      Breakpoints.Small,
-      Breakpoints.Medium
-    ]).pipe(
-      tap(({ matches }) => {
-        if (matches) {
-          this.cols = 2;
-        }
-      })
-    ).subscribe();
-    this.breakpointObserver.observe([
-      Breakpoints.Large
-    ]).pipe(
-      tap(({ matches }) => {
-        if (matches) {
-          this.cols = 3;
-        }
-      })
-    ).subscribe();
+    this.resize();
   }
-
 }

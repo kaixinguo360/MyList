@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
+import { Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
+
+import { OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
 import { Item } from './item.service';
 
@@ -23,12 +26,22 @@ export class TagService {
   }
 
   getItems(id: number): Observable<Item[]> {
-    return this.apiService.get<Item[]>(`tag/${id}/item`);
+    return this.apiService.get<Item[]>(`tag/${id}/item`).pipe(
+      map(items => {
+        this.orderService.sort(items);
+        return items;
+      })
+    );
   }
 
   getAll(search?: string): Observable<Tag[]> {
     const params = search ? { search: search } : null;
-    return this.apiService.get<Tag[]>('tag', params);
+    return this.apiService.get<Tag[]>('tag', params).pipe(
+      map(tags => {
+        this.orderService.sort(tags);
+        return tags;
+      })
+    );
   }
 
   add(tag: Tag): Observable<Tag> {
@@ -44,6 +57,7 @@ export class TagService {
   }
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private orderService: OrderService
   ) { }
 }

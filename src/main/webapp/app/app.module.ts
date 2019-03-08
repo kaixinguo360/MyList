@@ -5,6 +5,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
+import { NgxMasonryModule } from 'ngx-masonry';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,7 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { ListComponent } from './list/list.component';
 import { ListDetailComponent } from './list-detail/list-detail.component';
 import { ListEditComponent } from './list-edit/list-edit.component';
-import { ItemDetailComponent, ItemDetailDialogComponent } from './item-detail/item-detail.component';
+import { ItemDetailComponent, ItemDetailDialogComponent, ItemDetailPopupComponent } from './item-detail/item-detail.component';
 import { ItemEditComponent, ItemEditDialogComponent } from './item-edit/item-edit.component';
 
 @NgModule({
@@ -25,8 +28,9 @@ import { ItemEditComponent, ItemEditDialogComponent } from './item-edit/item-edi
     ListEditComponent,
     ItemDetailDialogComponent,
     ItemDetailComponent,
+    ItemDetailPopupComponent,
     ItemEditDialogComponent,
-    ItemEditComponent
+    ItemEditComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,12 +39,14 @@ import { ItemEditComponent, ItemEditDialogComponent } from './item-edit/item-edi
     BrowserAnimationsModule,
     ReactiveFormsModule,
     MaterialModules,
+    NgxMasonryModule,
+    InfiniteScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [],
   bootstrap: [ AppComponent ],
   entryComponents: [
-    ItemDetailDialogComponent,
+    ItemDetailPopupComponent,
     ItemEditDialogComponent
   ]
 })

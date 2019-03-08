@@ -46,7 +46,7 @@
   cursor: pointer;
 }
 
-.list-card-content {
+.list-card-body {
   display: flex;
   flex: 1;
   flex-direction: column;

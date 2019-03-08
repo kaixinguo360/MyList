@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
+import {Observable, Subject} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
+
+import { OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
 import { List } from './list.service';
 
@@ -24,10 +27,17 @@ export interface Item {
   links?: object[];
 }
 
+export interface UpdateEvent {
+  type: string;
+  item: Item;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ItemService {
+
+  public onUpdate: Subject<UpdateEvent> = new Subject<UpdateEvent>();
 
   get(id: number): Observable<Item> {
     return this.apiService.get<Item>(`item/${id}`);
@@ -35,22 +45,34 @@ export class ItemService {
 
   getAll(search?: string): Observable<Item[]> {
     const params = search ? { search: search } : null;
-    return this.apiService.get<Item[]>('item', params);
+    return this.apiService.get<Item[]>('item', params).pipe(
+      map(items => {
+        this.orderService.sort(items);
+        return items;
+      })
+    );
   }
 
   add(item: Item): Observable<Item> {
-    return this.apiService.post<Item>('item', item);
+    return this.apiService.post<Item>('item', item).pipe(
+      tap(i => this.onUpdate.next({ type: 'add', item: i }))
+    );
   }
 
   update(item: Item): Observable<Item> {
-    return this.apiService.put<Item>('item', item);
+    return this.apiService.put<Item>('item', item).pipe(
+      tap(i => this.onUpdate.next({ type: 'update', item: i }))
+    );
   }
 
   delete(id: number): Observable<Message> {
-    return this.apiService.delete<Message>('item', { id: id });
+    return this.apiService.delete<Message>('item', { id: id }).pipe(
+      tap(() => this.onUpdate.next({ type: 'delete', item: { id: id } }))
+    );
   }
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private orderService: OrderService
   ) { }
 }

@@ -3,17 +3,6 @@
   text-align: center;
 }
 
-.edit-btn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 48px;
-  height: 48px;
-  min-width: 0;
-  padding: 0;
-  border-radius: 50%;
-}
-
 .dialog-image {
   max-width: 100%;
   max-height: calc(90vh - 48px);
@@ -60,4 +49,19 @@
 
 .dialog-button {
   margin: 0 9px;
+}
+
+.icon-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.round-btn {
+  min-width: 0;
+  padding: 0;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  margin: 0 0 10px;
+  z-index: 3;
 }

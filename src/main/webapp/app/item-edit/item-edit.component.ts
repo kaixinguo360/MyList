@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material';
 import { catchError, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 
+import { StorageService } from '../service/storage.service';
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 
@@ -23,7 +24,7 @@ export class ItemEditDialogComponent implements OnInit {
 
   lists: Subject<List[]> = new Subject<List[]>();
   itemData = this.fb.group({
-    list: 0,
+    list: Number(this.storageService.get('defaultList', '0')),
     title: null,
     info: null,
     img: null,
@@ -46,10 +47,12 @@ export class ItemEditDialogComponent implements OnInit {
         tap(item => {
           // alert('添加成功!');
           if (item.list) {
-            this.router.navigate([ '/list', item.list ], { replaceUrl: true });
+            this.router.navigate([ '/list', item.list.id ], { replaceUrl: true });
           } else {
             this.router.navigate([ '/list/default' ], { replaceUrl: true });
           }
+          this.storageService.set('defaultList', item.list ? item.list.id + '' : '0');
+          this.dialog.closeAll();
         }),
         catchError(err => {
           alert('添加失败!');
@@ -76,6 +79,7 @@ export class ItemEditDialogComponent implements OnInit {
         }),
         catchError(err => {
           alert('保存失败!');
+          alert(err);
           this.dialog.closeAll();
           return of(err);
         })
@@ -87,8 +91,12 @@ export class ItemEditDialogComponent implements OnInit {
     if (confirm('确定要删除' + (this.item.title ? `收藏'${this.item.title}'` : '这个收藏') + '吗?')) {
       this.itemService.delete(this.item.id).pipe(
         tap(() => {
-          alert('删除成功!');
-          window.history.go(-1);
+          // alert('删除成功!');
+          if (this.item.list) {
+            this.router.navigate([ '/list', this.item.list.id ], { replaceUrl: true });
+          } else {
+            this.router.navigate([ '/list/default' ], { replaceUrl: true });
+          }
           this.dialog.closeAll();
         }),
         catchError(err => {
@@ -104,6 +112,7 @@ export class ItemEditDialogComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
+    private storageService: StorageService,
     private listService: ListService,
     private itemService: ItemService,
     private dialog: MatDialog
@@ -147,7 +156,7 @@ export class ItemEditDialogComponent implements OnInit {
 @Component({
   selector: 'app-item-edit',
   template: `
-    <div class="large-card">
+    <div class="medium-card">
       <mat-card>
         <app-item-edit-dialog #dialog></app-item-edit-dialog>
       </mat-card>

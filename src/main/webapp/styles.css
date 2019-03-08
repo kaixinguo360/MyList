@@ -15,16 +15,16 @@ body {
 
 .flex-dialog {
   max-width: calc(100vw - 50px);
-  max-height: calc(100vh - 50px);
+  max-height: 80vh;
 }
 
 .medium-dialog {
   width: calc(100vw - 50px);
   max-width: 450px;
-  max-height: calc(100vh - 50px);
+  max-height: 90vh;
 }
 
-.large-card {
+.medium-card {
   width: calc(100vw - 50px);
   max-width: 450px;
   margin: 50px auto;

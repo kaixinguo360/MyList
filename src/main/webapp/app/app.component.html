@@ -24,8 +24,8 @@
         <button
           type="button"
           aria-label="Add"
-          mat-icon-button
-          routerLink="item/new">
+          mat-icon-button 
+          (click)="addItem()">
           <mat-icon style="color: white">add</mat-icon>
         </button>
         <button
@@ -42,8 +42,18 @@
           [matMenuTriggerFor]="mainMenu">
           <mat-icon>more_horiz</mat-icon>
         </button>
-        <mat-menu #mainMenu="matMenu" xPosition="before">
+        <mat-menu #mainMenu xPosition="before">
+          <button mat-menu-item class="menu" [matMenuTriggerFor]="sortMenu">排序</button>
           <button mat-menu-item class="menu" (click)="logout()">注销</button>
+        </mat-menu>
+        <mat-menu #sortMenu="matMenu" xPosition="before">
+          <button mat-menu-item
+                  *ngFor="let item of orders"
+                  [class.menu-select]="item.isSelected"
+                  (click)="changeOrder(item.order)">
+            <mat-icon>{{item.icon}}</mat-icon>
+            {{item.title}}
+          </button>
         </mat-menu>
       </div>
     </mat-toolbar>
