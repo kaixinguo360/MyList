@@ -7,8 +7,30 @@
   <div class="grid-container">
     <div class="list-title-container">
       <h1 class="list-title">{{list.title}}</h1>
+      <div class="icon-box">
+        <button mat-raised-button
+                class="round-btn"
+                (click)="selectAll()"
+                *ngIf="selectMode">
+          <mat-icon>select_all</mat-icon>
+        </button>
+        <button mat-raised-button
+                class="round-btn"
+                [matMenuTriggerFor]="moveMenu"
+                *ngIf="selectMode">
+          <mat-icon>style</mat-icon>
+        </button>
+        <mat-menu #moveMenu xPosition="before" yPosition="above">
+          <button mat-menu-item *ngFor="let l of lists" (click)="moveSelected(l)">{{l.title}}</button>
+        </mat-menu>
+        <button mat-raised-button
+                class="round-btn"
+                (click)="toggleSelectMode()">
+          <mat-icon>collections_bookmark</mat-icon>
+        </button>
+      </div>
       <button mat-icon-button
-              class="edit-btn"
+              class="icon-btn"
               *ngIf="list.id!==0"
               [routerLink]="['/list', list.id, 'edit']">
         <mat-icon>edit</mat-icon>
@@ -25,7 +47,9 @@
            *ngFor="let item of loadedItems;index as index"
            class="list-card-container"
            [style.width.px]="columnWidth">
-        <mat-card class="list-card" (click)="openItemDialog(index)">
+        <mat-card class="list-card"
+                  [class.list-card-selected]="selectMode&&item.selected"
+                  (click)="selectMode?item.selected=!item.selected:openItemDialog(index)">
           <div class="list-card-head" *ngIf="!item.img"></div>
           <div class="list-card-body">
             <img class="list-card-image" [src]="item.img" *ngIf="item.img" alt="Image" (load)="updateLayout()">

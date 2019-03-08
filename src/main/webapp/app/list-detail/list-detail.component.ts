@@ -12,6 +12,10 @@ import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 
+interface SelectableItem extends Item {
+  selected?: boolean;
+}
+
 @Component({
   selector: 'app-list-detail',
   templateUrl: './list-detail.component.html',
@@ -26,8 +30,8 @@ export class ListDetailComponent implements OnInit {
   column = 1;
 
   list: List = { id: 0, createdTime: 0, updatedTime: 0, title: '' };
-  loadedItems: Item[] = [];
-  items: Item[];
+  loadedItems: SelectableItem[] = [];
+  items: SelectableItem[];
 
   @ViewChild('masonry')
   masonry: NgxMasonryComponent;
@@ -39,6 +43,9 @@ export class ListDetailComponent implements OnInit {
     resize: false,
     initLayout: true
   };
+
+  selectMode = false;
+  lists: List[];
 
   openItemDialog(index: number) {
     const dialogRef: MatDialogRef<ItemDetailPopupComponent> = this.dialog.open(
@@ -109,6 +116,53 @@ export class ListDetailComponent implements OnInit {
     }
 
     this.updateLayout();
+  }
+
+  toggleSelectMode() {
+    if (!this.selectMode) {
+      if (!this.lists) {
+        this.listService.getAll().pipe(
+          tap(lists => {
+            lists.unshift({ id: 0, title: '默认列表' });
+            this.lists = lists.filter(l => l.id !== this.list.id);
+          }),
+          catchError(err => {
+            alert('获取列表信息时出错!');
+            return of(err);
+          })
+        ).subscribe();
+      }
+    } else {
+      this.items.forEach(item => item.selected = false);
+    }
+    this.selectMode = !this.selectMode;
+  }
+
+  selectAll() {
+    if (this.items.find(i => !i.selected)) {
+      this.items.forEach(item => item.selected = true);
+    } else {
+      this.items.forEach(item => item.selected = false);
+    }
+  }
+
+  moveSelected(list: List) {
+    const selectedItems = this.items.filter(i => i.selected);
+    if (selectedItems.length) {
+      this.selectMode = !this.selectMode;
+      this.listService.addItems(list.id, selectedItems).pipe(
+        tap(() => {
+          this.loadedItems = this.loadedItems.filter(i => !i.selected);
+          this.items = this.items.filter(i => !i.selected);
+        }),
+        catchError(err => {
+          this.items.forEach(item => item.selected = false);
+          return of(err);
+        })
+      ).subscribe();
+    } else {
+      this.toggleSelectMode();
+    }
   }
 
   private getDomain(url: string) {
@@ -212,8 +266,6 @@ export class ListDetailComponent implements OnInit {
     });
 
     this.itemService.onUpdate.subscribe(event => {
-      console.log(event);
-
       if (
         (event.item.list && event.item.list.id === this.list.id) || (!event.item.list && this.list.id === 0) ||
         this.items.find(i => i.id === event.item.id)

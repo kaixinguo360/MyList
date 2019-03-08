@@ -1,6 +1,6 @@
 <div class="dialog-panel">
   <div *ngIf="item.img">
-    <a target="_blank" [href]="item.img">
+    <a [href]="item.img" target="_blank">
       <img class="dialog-image" [src]="item.img" alt="Image">
     </a>
   </div>
@@ -9,7 +9,7 @@
     <p class="dialog-text dialog-info">{{item.info}}</p>
     <p class="dialog-text dialog-url" *ngIf="item.url">
       <mat-icon>link</mat-icon>
-      <a [href]="item.url">{{getDomain(item.url)}}</a>
+      <a [href]="item.url" target="_blank">{{getDomain(item.url)}}</a>
     </p>
     <p class="dialog-text dialog-time">{{item.createdTime | date:'yyyy-MM-dd HH:mm:ss'}}</p>
   </div>

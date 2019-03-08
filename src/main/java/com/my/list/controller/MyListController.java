@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @Authorization
@@ -87,7 +88,27 @@ public class MyListController {
     @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(value = "/{listId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByListId(@CurrentUser User user,
-                                          @PathVariable int listId) {
-        return itemService.getAllByListId(user, listId);
+                                           @PathVariable int listId) {
+        if (listId == 0) {
+            return itemService.getAllByListId(user, null);
+        } else {
+            return itemService.getAllByListId(user, listId);
+        }
+    }
+
+    //AddAll
+    @JSON(type = MyList.class, exclude = "createdTime,updatedTime")
+    @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
+    @RequestMapping(value = "/{listId}/item", method = RequestMethod.POST)
+    public MessageResponse addItemsByListId(@CurrentUser User user,
+                                           @PathVariable int listId,
+                                           @RequestBody List<Integer> itemIds) throws DataException {
+        if (listId == 0) {
+            itemService.setList(user, itemIds, null);
+            return new MessageResponse("Set List Successful");
+        } else {
+            itemService.setList(user, itemIds, listId);
+            return new MessageResponse("Set List Successful");
+        }
     }
 }

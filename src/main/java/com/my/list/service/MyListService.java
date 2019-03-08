@@ -31,8 +31,8 @@ public class MyListService {
         if (list != null && list.getUserId() == user.getId()) {
             return list;
         } else {
-            logger.info("removeList: List(" + listId + ") Not Exist");
-            throw new DataException("removeList: List(" + listId + ") Not Exist", ErrorType.NOT_FOUND);
+            logger.info("getList: List(" + listId + ") Not Exist");
+            throw new DataException("List(" + listId + ") Not Exist", ErrorType.NOT_FOUND);
         }
     }
 
@@ -50,14 +50,14 @@ public class MyListService {
         return myListRepository.findAllByUserIdAndTitleLike(user.getId(), title);
     }
 
-    //Save
+    //Add
     @Transactional
     public MyList add(@NotNull User user, @NotNull MyList list) throws DataException {
         try {
             list.setId(0);
             return save(user, list);
         } catch (Exception e) {
-            logger.info("saveList: An Error Occurred: " + e.getMessage());
+            logger.info("addList: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
@@ -69,7 +69,7 @@ public class MyListService {
             get(user, list.getId());
             return save(user, list);
         } catch (Exception e) {
-            logger.info("saveList: An Error Occurred: " + e.getMessage());
+            logger.info("updateList: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }

@@ -19,8 +19,27 @@
   flex: 1;
 }
 
-.edit-btn {
+.icon-btn {
   flex: 0 1 auto;
+}
+
+.icon-box {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 3;
+}
+
+.round-btn {
+  min-width: 0;
+  padding: 0;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  margin: 0 0 10px;
+  z-index: 3;
 }
 
 .list-info {
@@ -56,6 +75,11 @@
   margin: 10px;
   outline: 0;
   cursor: pointer;
+}
+
+.list-card-selected {
+  background-color: #c5cae9;
+  box-shadow: none;
 }
 
 .list-card-head {

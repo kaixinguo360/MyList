@@ -1,7 +1,6 @@
 package com.my.list.service;
 
 import com.my.list.data.*;
-import com.my.list.data.content.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -69,6 +67,17 @@ public class ItemService {
         }
     }
 
+    //Set List
+    @Transactional
+    public void setList(@NotNull User user, List<Integer> itemIds, Integer listId) throws DataException {
+        if (listId != null) {
+            MyList list = this.myListService.get(user, listId);
+            itemRepository.setListByUserIdAndIds(list, user.getId(), itemIds);
+        } else {
+            itemRepository.setListByUserIdAndIds(null, user.getId(), itemIds);
+        }
+    }
+
     //Search
     @NotNull
     public Iterable<Item> search(@NotNull User user, String title) {
@@ -84,7 +93,7 @@ public class ItemService {
             item.setId(0);
             return save(user, item);
         } catch (Exception e) {
-            logger.info("saveItem: An Error Occurred: " + e.getMessage());
+            logger.info("addItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
@@ -96,7 +105,7 @@ public class ItemService {
             get(user, item.getId());
             return save(user, item);
         } catch (Exception e) {
-            logger.info("saveItem: An Error Occurred: " + e.getMessage());
+            logger.info("updateItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }

@@ -31,8 +31,8 @@ public class TagService {
         if (tag != null && tag.getUserId() == user.getId()) {
             return tag;
         } else {
-            logger.info("removeTag: Tag(" + tagId + ") Not Exist");
-            throw new DataException("removeTag: Tag(" + tagId + ") Not Exist", ErrorType.NOT_FOUND);
+            logger.info("getTag: Tag(" + tagId + ") Not Exist");
+            throw new DataException("Tag(" + tagId + ") Not Exist", ErrorType.NOT_FOUND);
         }
     }
 
@@ -57,7 +57,7 @@ public class TagService {
             tag.setId(0);
             return save(user, tag);
         } catch (Exception e) {
-            logger.info("saveTag: An Error Occurred: " + e.getMessage());
+            logger.info("addTag: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
@@ -69,7 +69,7 @@ public class TagService {
             get(user, tag.getId());
             return save(user, tag);
         } catch (Exception e) {
-            logger.info("saveTag: An Error Occurred: " + e.getMessage());
+            logger.info("updateTag: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
     }
