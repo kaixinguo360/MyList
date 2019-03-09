@@ -25,6 +25,12 @@
         </mat-menu>
         <button mat-raised-button
                 class="round-btn"
+                (click)="openAddItemPopup()"
+                *ngIf="!selectMode">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-raised-button
+                class="round-btn"
                 (click)="toggleSelectMode()">
           <mat-icon>collections_bookmark</mat-icon>
         </button>
@@ -49,7 +55,7 @@
            [style.width.px]="columnWidth">
         <mat-card class="list-card"
                   [class.list-card-selected]="selectMode&&item.selected"
-                  (click)="selectMode?item.selected=!item.selected:openItemDialog(index)">
+                  (click)="selectMode?item.selected=!item.selected:openItemPopup(index)">
           <div class="list-card-head" *ngIf="!item.img"></div>
           <div class="list-card-body">
             <img class="list-card-image" [src]="item.img" *ngIf="item.img" alt="Image" (load)="updateLayout()">

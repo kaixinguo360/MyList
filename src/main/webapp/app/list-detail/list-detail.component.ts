@@ -8,9 +8,11 @@ import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
+import { StorageService } from '../service/storage.service';
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
+import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
 
 interface SelectableItem extends Item {
   selected?: boolean;
@@ -47,22 +49,33 @@ export class ListDetailComponent implements OnInit {
   selectMode = false;
   lists: List[];
 
-  openItemDialog(index: number) {
+  openItemPopup(index: number) {
     const dialogRef: MatDialogRef<ItemDetailPopupComponent> = this.dialog.open(
       ItemDetailPopupComponent,
       {
         maxWidth: null,
         maxHeight: null,
         autoFocus: false,
-        panelClass: 'flex-dialog',
-        data: {
-          items: this.items,
-          index: index
-        }
+        panelClass: 'flex-dialog'
       }
     );
     dialogRef.componentInstance.items = this.items;
     dialogRef.componentInstance.index = index;
+  }
+
+  openAddItemPopup() {
+    this.storageService.set('defaultList', this.list.id === 0 ? null : this.list.id + '');
+    const dialogRef: MatDialogRef<ItemEditDialogComponent> = this.dialog.open(
+      ItemEditDialogComponent,
+      {
+        maxWidth: null,
+        maxHeight: null,
+        autoFocus: false,
+        closeOnNavigation: true,
+        panelClass: 'medium-dialog'
+      }
+    );
+    dialogRef.componentInstance.isNew = true;
   }
 
   getTitle(item: Item): string {
@@ -165,6 +178,10 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
+  updateLayout() {
+    this.masonry.layout();
+  }
+
   private getDomain(url: string) {
     const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
     if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
@@ -191,6 +208,10 @@ export class ListDetailComponent implements OnInit {
   }
 
   private updateData(id: number) {
+    if (this.list && this.list.id !== id) {
+      this.isLoading = true;
+      this.loadedItems.length = 0;
+    }
     if (id === null) {
       this.list = {
         id: 0,
@@ -233,10 +254,6 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
-  updateLayout() {
-    this.masonry.layout();
-  }
-
   @HostListener('window:resize')
   private resize() {
     if (this.isMobile) {
@@ -255,6 +272,7 @@ export class ListDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private breakpointObserver: BreakpointObserver,
     private dialog: MatDialog,
+    private storageService: StorageService,
     private listService: ListService,
     private itemService: ItemService
   ) { }
