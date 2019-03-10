@@ -17,6 +17,11 @@ class OrderMenuItem {
   order: Order;
   icon: string;
 }
+class ProxyMenuItem {
+  title: string;
+  isSelected: boolean;
+  mode: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -26,7 +31,8 @@ class OrderMenuItem {
 export class AppComponent implements OnInit {
 
   public title = '';
-  public orders: OrderMenuItem[];
+  public orderMenuItems: OrderMenuItem[];
+  public proxyMenuItems: ProxyMenuItem[];
 
   back() {
     window.stop();
@@ -53,6 +59,11 @@ export class AppComponent implements OnInit {
     location.reload();
   }
 
+  changeProxyMode(mode: string) {
+    this.storageService.set('proxyMode', mode);
+    this.proxyMenuItems.forEach(i => i.isSelected = i.mode === mode);
+  }
+
   logout() {
     this.authService.logout().pipe(
       tap(() => this.router.navigate([ '' ])),
@@ -71,7 +82,7 @@ export class AppComponent implements OnInit {
     private storageService: StorageService
   ) {
     const currentOrder = storageService.get('order', Order.UPDATE_ASC);
-    this.orders  = [
+    this.orderMenuItems  = [
       { title: '↓ 更新时间', icon: 'access_time', isSelected: (currentOrder === Order.UPDATE_ASC) , order: Order.UPDATE_ASC },
       { title: '↑ 更新时间', icon: 'access_time', isSelected: (currentOrder === Order.UPDATE_DESC) , order: Order.UPDATE_DESC },
       { title: '↓ 创建时间', icon: 'create_new_folder', isSelected: (currentOrder === Order.CREATE_ASC) , order: Order.CREATE_ASC },
@@ -79,6 +90,13 @@ export class AppComponent implements OnInit {
       { title: '↓ 名称', icon: 'sort_by_alpha', isSelected: (currentOrder === Order.NAME_ASC) , order: Order.NAME_ASC },
       { title: '↑ 名称', icon: 'sort_by_alpha', isSelected: (currentOrder === Order.NAME_DESC) , order: Order.NAME_DESC },
       { title: '随机', icon: 'blur_on', isSelected: (currentOrder === Order.RANDOM) , order: Order.RANDOM }
+    ];
+
+    const proxyMode = this.storageService.get('proxyMode', 'http');
+    this.proxyMenuItems  = [
+      { title: '代理全部', isSelected: (proxyMode === 'all') , mode: 'all' },
+      { title: '仅代理HTTP', isSelected: (proxyMode === 'http') , mode: 'http' },
+      { title: '不使用代理', isSelected: (proxyMode === 'none') , mode: 'none' }
     ];
   }
 

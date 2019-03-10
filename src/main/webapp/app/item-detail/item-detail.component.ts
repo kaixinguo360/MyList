@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
+import { ProxyService } from '../service/proxy.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
 
@@ -43,7 +44,8 @@ export class ItemDetailDialogComponent {
   }
 
   constructor(
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private proxyService: ProxyService,
   ) { }
 
 }
@@ -54,7 +56,7 @@ export class ItemDetailDialogComponent {
     <div class="icon-box">
       <button mat-raised-button
               class="round-btn"
-              style="position:fixed; top:88px; right:24px;"
+              style="position:fixed; bottom:24px; right:24px;"
               (click)="dialog.edit()">
         <mat-icon>edit</mat-icon>
       </button>
@@ -108,22 +110,22 @@ export class ItemDetailComponent implements OnInit {
   selector: 'app-item-detail-popup',
   template: `
     <div class="icon-box"
-         style="position:absolute; top:24px; right:24px;">
+         style="position:absolute; bottom:82px; right:24px;">
       <button mat-raised-button
               class="round-btn"
               (click)="dialogService.closeAll()">
         <mat-icon>close</mat-icon>
       </button>
+      <a target="_blank" [routerLink]="['/item', items[index].id]">
+        <button mat-raised-button
+                class="round-btn">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </a>
       <button mat-raised-button
               class="round-btn"
               (click)="dialog.edit()">
         <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-raised-button
-              class="round-btn"
-              [routerLink]="['/item', items[index].id]"
-              (click)="dialogService.closeAll()">
-        <mat-icon>open_in_new</mat-icon>
       </button>
     </div>
     <app-item-detail-dialog #dialog></app-item-detail-dialog>

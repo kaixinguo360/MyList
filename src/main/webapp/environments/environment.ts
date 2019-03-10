@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiRoot: 'api/'
+  apiRoot: 'api/',
+  proxyRoot: 'p/'
 };
 
 /*

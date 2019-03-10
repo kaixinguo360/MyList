@@ -1,7 +1,7 @@
 <div class="dialog-panel">
   <div *ngIf="item.img">
-    <a [href]="item.img" target="_blank">
-      <img class="dialog-image" [src]="item.img" alt="Image">
+    <a [href]="proxyService.proxy(item.img)" target="_blank">
+      <img class="dialog-image" [src]="proxyService.proxy(item.img)" alt="Image">
     </a>
   </div>
   <div class="dialog-text-box">

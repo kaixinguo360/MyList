@@ -58,7 +58,7 @@
                   (click)="selectMode?item.selected=!item.selected:openItemPopup(index)">
           <div class="list-card-head" *ngIf="!item.img"></div>
           <div class="list-card-body">
-            <img class="list-card-image" [src]="item.img" *ngIf="item.img" alt="Image" (load)="updateLayout()">
+            <img class="list-card-image" [src]="proxyService.proxy(item.img)" *ngIf="item.img" alt="Image" (load)="updateLayout()">
             <div class="list-card-text">
               <div class="list-card-title" *ngIf="!item.img">{{getTitle(item)}}</div>
               <div class="list-card-info" *ngIf="item.info&&!item.img">{{item.info}}</div>

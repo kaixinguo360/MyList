@@ -9,6 +9,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
 import { StorageService } from '../service/storage.service';
+import { ProxyService } from '../service/proxy.service';
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
@@ -273,6 +274,7 @@ export class ListDetailComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private dialog: MatDialog,
     private storageService: StorageService,
+    private proxyService: ProxyService,
     private listService: ListService,
     private itemService: ItemService
   ) { }

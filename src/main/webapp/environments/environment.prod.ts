@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiRoot: 'api/'
+  apiRoot: 'api/',
+  proxyRoot: 'p/'
 };

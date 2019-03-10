@@ -44,15 +44,24 @@
         </button>
         <mat-menu #mainMenu xPosition="before">
           <button mat-menu-item class="menu" [matMenuTriggerFor]="sortMenu">排序</button>
+          <button mat-menu-item class="menu" [matMenuTriggerFor]="proxyMenu">代理</button>
           <button mat-menu-item class="menu" (click)="logout()">注销</button>
         </mat-menu>
         <mat-menu #sortMenu="matMenu" xPosition="before">
           <button mat-menu-item
-                  *ngFor="let item of orders"
+                  *ngFor="let item of orderMenuItems"
                   [class.menu-select]="item.isSelected"
                   (click)="changeOrder(item.order)">
             <mat-icon>{{item.icon}}</mat-icon>
             {{item.title}}
+          </button>
+        </mat-menu>
+        <mat-menu #proxyMenu xPosition="before">
+          <button mat-menu-item
+                  *ngFor="let proxy of proxyMenuItems"
+                  [class.menu-select]="proxy.isSelected"
+                  (click)="changeProxyMode(proxy.mode)">
+            {{proxy.title}}
           </button>
         </mat-menu>
       </div>
