@@ -1,12 +1,12 @@
 buildscript {
     ext {
-        kotlinVersion = '1.3.11'
-        springBootVersion = '2.1.2.RELEASE'
+        kotlinVersion = "1.3.11"
+        springBootVersion = "2.1.2.RELEASE"
     }
     repositories {
         //mavenCentral()
         maven{
-            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
         }
     }
     dependencies {
@@ -16,35 +16,36 @@ buildscript {
     }
 }
 
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-spring'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
+apply plugin: "kotlin"
+apply plugin: "kotlin-spring"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
 
-group = 'com.my'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+group = "com.my"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = "1.8"
 
 repositories {
     //mavenCentral()
     maven{
-        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        url "http://maven.aliyun.com/nexus/content/groups/public/"
     }
 }
 
 configurations {
-    compile.exclude module: 'spring-boot-starter-tomcat'
+    compile.exclude module: "spring-boot-starter-tomcat"
 }
 
 dependencies {
+    compile("org.jsoup:jsoup:1.11.3")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
-    compile('com.fasterxml.jackson.module:jackson-module-kotlin')
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-undertow'
-    runtimeOnly 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-undertow"
+    runtimeOnly "mysql:mysql-connector-java"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 
 compileKotlin {

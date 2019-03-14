@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { environment } from '../../environments/environment';
-import {StorageService} from './storage.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class ProxyService {
 
   public proxy(url: string): string {
     const proxyMode = this.storageService.get('proxyMode', 'http');
-    const proxy = this.root + 'img/' + ProxyService.base64url(url);
+    const proxy = this.root + 'static/' + ProxyService.base64url(url);
     switch (proxyMode) {
       case 'all':
         return proxy;
