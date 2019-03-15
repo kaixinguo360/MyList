@@ -37,6 +37,7 @@ const routes: Routes = [
   { path: 'list/:id/edit', component: ListEditComponent, canActivate: [ LoginGuard ] },
   { path: 'list/:id', component: ListDetailComponent, canActivate: [ LoginGuard ] },
   { path: 'item/new', component: ItemEditComponent, canActivate: [ LoginGuard ] },
+  { path: 'item/fromPage', component: ItemEditComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id/edit', component: ItemEditComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id', component: ItemDetailComponent, canActivate: [ LoginGuard ] }
 ];

@@ -14,7 +14,7 @@ function getAbsUrl(url) {
   } else  if (url.substr(0, 7) === 'http://' || url.substr(0, 8) === 'https://') {
     return url;
   } else if (url.substr(0, 2) === '//') {
-    return url;
+    return document.location.protocol + url;
   } else if (url.substr(0, 1) === '/') {
     return BASE + url;
   } else {
@@ -92,7 +92,7 @@ function fetchImages() {
   imgs.length = 0;
   $('img').each(function () {
     addImage({
-      url: $(this).attr('src'),
+      url: getAbsUrl($(this).attr('src')),
       info: $(this).attr('alt'),
       width: $(this)[0].naturalWidth,
       height: $(this)[0].naturalHeight
@@ -122,8 +122,13 @@ function setupUI() {
 
   // Save All
   $('.hook-save').click(function () {
-    localStorage.setItem('imagesToSave', JSON.stringify(imgs));
-    alert('正在跳转...');
+    localStorage.setItem('tmpItem', JSON.stringify({
+      title: document.title,
+      url: BASE + PATH,
+      img: imgs.length ? imgs[0].url : null,
+      images: imgs
+    }));
+    location.href = '/item/fromPage';
   });
 
   // Remove All

@@ -182,11 +182,28 @@ export class ItemEditComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private storageService: StorageService,
   ) { }
 
   ngOnInit(): void {
-    this.dialog.isNew = this.router.url === '/item/new';
-    if (!this.dialog.isNew) {
+    if (this.router.url === '/item/new') {
+      this.dialog.isNew = true;
+    } else if (this.router.url === '/item/fromPage') {
+      this.dialog.isNew = true;
+      const tmpItemStr = this.storageService.get('tmpItem');
+      if (tmpItemStr) {
+        const item = JSON.parse(tmpItemStr);
+        this.dialog.item = item;
+        this.dialog.itemData.setValue({
+          list: item.list ? item.list.id : 0,
+          title: item.title ? item.title : '',
+          info: item.info ? item.info : '',
+          img: item.img ? item.img : '',
+          url: item.url ? item.url : ''
+        });
+        this.storageService.set('tmpItem', null);
+      } 
+    } else {
       this.dialog.itemId = Number(this.route.snapshot.paramMap.get('id'));
     }
   }
