@@ -2,12 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { ProxyService } from '../service/proxy.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
+import { Message } from '../service/api.service';
 
 @Component({
   selector: 'app-item-detail-dialog',
@@ -43,9 +44,36 @@ export class ItemDetailDialogComponent {
     dialogRef.componentInstance.itemId = this.item.id;
   }
 
+  delete(): Observable<Message> {
+    if (confirm('确定要删除' + (this.item.title ? `收藏'${this.item.title}'` : '这个收藏') + '吗?')) {
+      return this.itemService.delete(this.item.id);
+    } else {
+      return throwError('cancel');
+    }
+  }
+
+  public updateItem() {
+    this.itemService.get(this.item.id).pipe(
+      tap(item => {
+        this.item = item;
+      }),
+      catchError(err => {
+        this.item = {
+          id: 0,
+          createdTime: 0,
+          updatedTime: 0,
+          info: '加载失败'
+        };
+        alert('获取项目信息时出错!');
+        return of(err);
+      })
+    ).subscribe();
+  }
+  
   constructor(
     private dialog: MatDialog,
     private proxyService: ProxyService,
+    private itemService: ItemService
   ) { }
 
 }
@@ -53,10 +81,15 @@ export class ItemDetailDialogComponent {
 @Component({
   selector: 'app-item-detail',
   template: `
-    <div class="icon-box">
+    <div class="icon-box"
+         style="position:fixed; bottom:24px; right:24px;">
       <button mat-raised-button
               class="round-btn"
-              style="position:fixed; bottom:24px; right:24px;"
+              (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-raised-button
+              class="round-btn"
               (click)="dialog.edit()">
         <mat-icon>edit</mat-icon>
       </button>
@@ -74,34 +107,37 @@ export class ItemDetailComponent implements OnInit {
   @ViewChild('dialog')
   dialog: ItemDetailDialogComponent;
 
+  delete() {
+    this.dialog.delete().pipe(
+      tap(() => {
+        if (this.dialog.item.list) {
+          this.router.navigate([ '/list', this.dialog.item.list.id ], { replaceUrl: true });
+        } else {
+          this.router.navigate([ '/list/default' ], { replaceUrl: true });
+        }
+      }),
+      catchError(err => {
+        if (err !== 'cancel') {
+          alert('删除失败!');
+        }
+        return of(err);
+      })
+    ).subscribe();
+  }
+
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
-    private itemService: ItemService
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.dialog.item = {
-      id: 0,
+      id: Number(this.route.snapshot.paramMap.get('id')),
       createdTime: 0,
       updatedTime: 0,
       info: '正在加载'
     };
-    this.itemService.get(Number(this.route.snapshot.paramMap.get('id'))).pipe(
-      tap(item => {
-        this.dialog.item = item;
-      }),
-      catchError(err => {
-        this.dialog.item = {
-          id: 0,
-          createdTime: 0,
-          updatedTime: 0,
-          info: '加载失败'
-        };
-        alert('获取项目信息时出错!');
-        return of(err);
-      })
-    ).subscribe();
+    this.dialog.updateItem();
   }
 
 }
@@ -109,8 +145,7 @@ export class ItemDetailComponent implements OnInit {
 @Component({
   selector: 'app-item-detail-popup',
   template: `
-    <div class="icon-box"
-         style="position:absolute; bottom:82px; right:24px;">
+    <div class="icon-box" style="position:absolute; bottom:82px; right:24px;">
       <button mat-raised-button
               class="round-btn"
               (click)="dialogService.closeAll()">
@@ -122,6 +157,11 @@ export class ItemDetailComponent implements OnInit {
           <mat-icon>open_in_new</mat-icon>
         </button>
       </a>
+      <button mat-raised-button
+              class="round-btn"
+              (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
       <button mat-raised-button
               class="round-btn"
               (click)="dialog.edit()">
@@ -166,12 +206,27 @@ export class ItemDetailPopupComponent implements OnInit {
     }
   }
 
+  delete() {
+    this.dialog.delete().pipe(
+      tap(() => {
+        this.dialogService.closeAll();
+      }),
+      catchError(err => {
+        if (err !== 'cancel') {
+          alert('删除失败!');
+        }
+        return of(err);
+      })
+    ).subscribe();
+  }
+
   constructor(
     public dialogService: MatDialog
   ) { }
 
   ngOnInit() {
     this.dialog.item = this.items[this.index];
+    this.dialog.updateItem();
   }
 
 }

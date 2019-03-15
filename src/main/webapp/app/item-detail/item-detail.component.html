@@ -13,4 +13,12 @@
     </p>
     <p class="dialog-text dialog-time">{{item.createdTime | date:'yyyy-MM-dd HH:mm:ss'}}</p>
   </div>
+  <div *ngIf="item.images">
+    <div *ngFor=" let image of item.images">
+      <a [href]="proxyService.proxy(image.url)" target="_blank">
+        <img class="dialog-image" [src]="proxyService.proxy(image.url)" alt="Image">
+      </a>
+      <p class="dialog-image-info">{{image.info}}</p>
+    </div>
+  </div>
 </div>

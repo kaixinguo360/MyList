@@ -160,6 +160,26 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
+  deleteSelected() {
+    const selectedItems = this.items.filter(i => i.selected);
+    if (selectedItems.length && confirm('确定要删除这些收藏吗?')) {
+      this.selectMode = !this.selectMode;
+      this.itemService.deleteAll(selectedItems).pipe(
+        tap(() => {
+          this.loadedItems = this.loadedItems.filter(i => !i.selected);
+          this.items = this.items.filter(i => !i.selected);
+        }),
+        catchError(err => {
+          alert('删除失败!');
+          this.items.forEach(item => item.selected = false);
+          return of(err);
+        })
+      ).subscribe();
+    } else {
+      this.toggleSelectMode();
+    }
+  }
+
   moveSelected(list: List) {
     const selectedItems = this.items.filter(i => i.selected);
     if (selectedItems.length) {
@@ -170,6 +190,7 @@ export class ListDetailComponent implements OnInit {
           this.items = this.items.filter(i => !i.selected);
         }),
         catchError(err => {
+          alert('移动失败!');
           this.items.forEach(item => item.selected = false);
           return of(err);
         })
@@ -177,6 +198,10 @@ export class ListDetailComponent implements OnInit {
     } else {
       this.toggleSelectMode();
     }
+  }
+
+  createList() {
+    
   }
 
   updateLayout() {
@@ -286,35 +311,37 @@ export class ListDetailComponent implements OnInit {
     });
 
     this.itemService.onUpdate.subscribe(event => {
-      if (
-        (event.item.list && event.item.list.id === this.list.id) || (!event.item.list && this.list.id === 0) ||
-        this.items.find(i => i.id === event.item.id)
-      ) {
-        if (event.type === 'add') {
-          // Add
-          this.updateData(this.list.id === 0 ? null : this.list.id);
-        } else if (event.type === 'update') {
-          // Update
-          this.loadedItems.forEach(item => {
-            if (item.id === event.item.id) {
-              item.title = event.item.title;
-              item.info = event.item.info;
-              item.img = event.item.img;
-              item.url = event.item.url;
-            }
-          });
-          this.items.forEach(item => {
-            if (item.id === event.item.id) {
-              item.title = event.item.title;
-              item.info = event.item.info;
-              item.img = event.item.img;
-              item.url = event.item.url;
-            }
-          });
-        } else if (event.type === 'delete') {
-          // Delete
-          this.loadedItems = this.loadedItems.filter(item => item.id !== event.item.id);
-          this.items = this.items.filter(item => item.id !== event.item.id);
+      if (event.type !== 'deleteAll') {
+        if (
+          (event.item.list && event.item.list.id === this.list.id) || (!event.item.list && this.list.id === 0) ||
+          this.items.find(i => i.id === event.item.id)
+        ) {
+          if (event.type === 'add') {
+            // Add
+            this.updateData(this.list.id === 0 ? null : this.list.id);
+          } else if (event.type === 'update') {
+            // Update
+            this.loadedItems.forEach(item => {
+              if (item.id === event.item.id) {
+                item.title = event.item.title;
+                item.info = event.item.info;
+                item.img = event.item.img;
+                item.url = event.item.url;
+              }
+            });
+            this.items.forEach(item => {
+              if (item.id === event.item.id) {
+                item.title = event.item.title;
+                item.info = event.item.info;
+                item.img = event.item.img;
+                item.url = event.item.url;
+              }
+            });
+          } else if (event.type === 'delete') {
+            // Delete
+            this.loadedItems = this.loadedItems.filter(item => item.id !== event.item.id);
+            this.items = this.items.filter(item => item.id !== event.item.id);
+          }
         }
       }
     });

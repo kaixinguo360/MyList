@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ItemRepository extends CrudRepository<Item, Integer> {
@@ -29,4 +30,6 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
     @Modifying
     @Query("UPDATE Item i SET i.list = ?1 where i.userId = ?2 and i.id in ?3")
     void setListByUserIdAndIds(MyList list, int useId, List<Integer> itemId);
+    
+    void deleteAllByUserIdAndIdIn(int userId, Collection<Integer> id);
 }

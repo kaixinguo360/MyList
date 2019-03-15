@@ -156,12 +156,23 @@ public class ItemService {
 
     //Remove
     @Transactional
-    public void remove(User user, int postId) throws DataException {
+    public void remove(User user, int itemId) throws DataException {
         try {
-            get(user, postId);
-            itemRepository.deleteById(postId);
+            get(user, itemId);
+            itemRepository.deleteById(itemId);
         } catch (DataException e) {
             throw e;
+        } catch (Exception e) {
+            logger.info("removeItem: An Error Occurred: " + e.getMessage());
+            throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
+        }
+    }
+
+    //Remove All
+    @Transactional
+    public void removeAll(User user, List<Integer> ids) throws DataException {
+        try {
+            itemRepository.deleteAllByUserIdAndIdIn(user.getId(), ids);
         } catch (Exception e) {
             logger.info("removeItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);

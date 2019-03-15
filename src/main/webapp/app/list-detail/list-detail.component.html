@@ -16,11 +16,18 @@
         </button>
         <button mat-raised-button
                 class="round-btn"
+                (click)="deleteSelected()"
+                *ngIf="selectMode">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-raised-button
+                class="round-btn"
                 [matMenuTriggerFor]="moveMenu"
                 *ngIf="selectMode">
           <mat-icon>style</mat-icon>
         </button>
         <mat-menu #moveMenu xPosition="before" yPosition="above">
+          <button mat-menu-item (click)="createList()">新建列表</button>
           <button mat-menu-item *ngFor="let l of lists" (click)="moveSelected(l)">{{l.title}}</button>
         </mat-menu>
         <button mat-raised-button

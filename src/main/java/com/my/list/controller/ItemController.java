@@ -13,6 +13,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Authorization
@@ -76,8 +78,9 @@ public class ItemController {
     @JSON
     @RequestMapping(method = RequestMethod.DELETE)
     public MessageResponse removeItem(@CurrentUser User user,
-                                      @RequestBody Item item) throws DataException {
-        itemService.remove(user, item.getId());
+                                      @RequestBody List<Item> items) throws DataException {
+        List<Integer> ids = items.stream().map(Item::getId).collect(Collectors.toList());
+        itemService.removeAll(user, ids);
         return new MessageResponse("Remove Item Successful");
     }
 

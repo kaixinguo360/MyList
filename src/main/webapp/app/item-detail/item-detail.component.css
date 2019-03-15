@@ -9,6 +9,11 @@
   cursor: pointer;
 }
 
+.dialog-image-info {
+  margin: 0 12px 12px;
+  color: #323232;
+}
+
 .dialog-text-box {
   margin: 24px auto;
 }

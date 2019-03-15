@@ -7,6 +7,14 @@ import { OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
 import { List } from './list.service';
 
+export interface Image {
+  createdTime?: number;
+  updatedTime?: number;
+
+  url?: string;
+  info?: string;
+}
+
 export interface Item {
   id?: number;
   createdTime?: number;
@@ -21,7 +29,7 @@ export interface Item {
   tags?: object[];
 
   texts?: object[];
-  images?: object[];
+  images?: Image[];
   musics?: object[];
   videos?: object[];
   links?: object[];
@@ -29,7 +37,8 @@ export interface Item {
 
 export interface UpdateEvent {
   type: string;
-  item: Item;
+  item?: Item;
+  items?: Item[];
 }
 
 @Injectable({
@@ -66,8 +75,14 @@ export class ItemService {
   }
 
   delete(id: number): Observable<Message> {
-    return this.apiService.delete<Message>('item', { id: id }).pipe(
+    return this.apiService.delete<Message>('item', [{ id: id }]).pipe(
       tap(() => this.onUpdate.next({ type: 'delete', item: { id: id } }))
+    );
+  }
+
+  deleteAll(items: Item[]): Observable<Message> {
+    return this.apiService.delete<Message>('item', items).pipe(
+      tap(() => this.onUpdate.next({ type: 'deleteAll', items: items }))
     );
   }
 

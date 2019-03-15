@@ -36,6 +36,11 @@ export class AppComponent implements OnInit {
 
   back() {
     window.stop();
+    if (window.history.length === 1) {
+      window.close();
+    } else {
+      this.location.back();
+    }
     this.location.back();
   }
 
