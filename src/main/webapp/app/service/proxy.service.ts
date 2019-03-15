@@ -17,6 +17,9 @@ export class ProxyService {
   }
 
   public proxy(url: string): string {
+    if (!url) {
+      return '';
+    }
     const proxyMode = this.storageService.get('proxyMode', 'http');
     const proxy = this.root + 'static/' + ProxyService.base64url(url);
     switch (proxyMode) {
@@ -29,6 +32,10 @@ export class ProxyService {
       default:
         return url;
     }
+  }
+
+  public proxyPage(url: string): string {
+    return this.root + 'page/' + ProxyService.base64url(url);
   }
 
   constructor(

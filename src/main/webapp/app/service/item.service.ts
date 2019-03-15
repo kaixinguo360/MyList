@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
-import { OrderService } from './order.service';
+import { Order, OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
 import { List } from './list.service';
 
@@ -49,7 +49,14 @@ export class ItemService {
   public onUpdate: Subject<UpdateEvent> = new Subject<UpdateEvent>();
 
   get(id: number): Observable<Item> {
-    return this.apiService.get<Item>(`item/${id}`);
+    return this.apiService.get<Item>(`item/${id}`).pipe(
+      map(item => {
+        if (item.images) {
+          this.orderService.sort(item.images, Order.CREATE_DESC);
+        }
+        return item;
+      })
+    );
   }
 
   getAll(search?: string): Observable<Item[]> {

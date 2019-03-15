@@ -9,6 +9,7 @@ import { of, Subject } from 'rxjs';
 import { StorageService } from '../service/storage.service';
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
+import { ProxyService } from '../service/proxy.service';
 
 @Component({
   selector: 'app-item-edit-dialog',
@@ -30,20 +31,36 @@ export class ItemEditDialogComponent implements OnInit {
     img: null,
     url: null
   });
-  item: Item;
+
+  item: Item = {
+    title: '',
+    info: '',
+    img: '',
+    url: '',
+    images: []
+  };
+
+  addImage() {
+    if (!this.item.images) {
+      this.item.images = [];
+    }
+    this.item.images.push({ url: "", info: "" });
+  }
 
   update() {
     const itemData = this.itemData.getRawValue();
+    this.item.list = itemData.list !== 0 ? {
+      id: Number(itemData.list)
+    } : null;
+    this.item.title = itemData.title;
+    this.item.info = itemData.info;
+    this.item.img = itemData.img;
+    this.item.url = itemData.url;
+    this.item.images = this.item.images.filter(image => image.url || image.info);
+    
     if (this.isNew) {
-      this.itemService.add({
-        list: itemData.list !== 0 ? {
-          id: Number(itemData.list)
-        } : null,
-        title: itemData.title,
-        info: itemData.info,
-        img: itemData.img,
-        url: itemData.url
-      }).pipe(
+      this.item.id = null;
+      this.itemService.add(this.item).pipe(
         tap(item => {
           // alert('添加成功!');
           if (item.list) {
@@ -60,13 +77,6 @@ export class ItemEditDialogComponent implements OnInit {
         })
       ).subscribe();
     } else {
-      this.item.list = itemData.list !== 0 ? {
-        id: Number(itemData.list)
-      } : null;
-      this.item.title = itemData.title;
-      this.item.info = itemData.info;
-      this.item.img = itemData.img;
-      this.item.url = itemData.url;
       this.itemService.update(this.item).pipe(
         tap(() => {
           // alert('保存成功!');
@@ -114,6 +124,7 @@ export class ItemEditDialogComponent implements OnInit {
     private fb: FormBuilder,
     private storageService: StorageService,
     private listService: ListService,
+    private proxyService: ProxyService,
     private itemService: ItemService,
     private dialog: MatDialog
   ) { }

@@ -22,7 +22,7 @@
         <mat-card class="list-card" [routerLink]="['/list',list.id]">
           <div class="list-card-head" *ngIf="!list.img"></div>
           <div class="list-card-body">
-            <div class="list-card-image" [style.background-image]="'url('+list.img+')'" *ngIf="list.img"></div>
+            <div class="list-card-image" [style.background-image]="'url('+proxyService.proxy(list.img)+')'" *ngIf="list.img"></div>
             <div class="list-card-text">
               <div class="list-card-title" *ngIf="!list.img">{{list.title}}</div>
               <div class="list-card-info" *ngIf="list.info&&!list.img">{{list.info}}</div>

@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { Order } from './service/order.service';
 import { AuthService } from './service/auth.service';
 import { StorageService } from './service/storage.service';
+import { ProxyService } from './service/proxy.service';
 import { ItemEditDialogComponent } from './item-edit/item-edit.component';
 
 class OrderMenuItem {
@@ -59,6 +60,13 @@ export class AppComponent implements OnInit {
     dialogRef.componentInstance.isNew = true;
   }
 
+  addItemFromPage() {
+    const url = prompt('请输入网页 URL: ');
+    if (url) {
+      window.open(this.proxyService.proxyPage(url));
+    }
+  }
+
   changeOrder(order: Order) {
     this.storageService.set('order', order);
     location.reload();
@@ -84,7 +92,8 @@ export class AppComponent implements OnInit {
     public router: Router,
     private dialog: MatDialog,
     private authService: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private proxyService: ProxyService
   ) {
     const currentOrder = storageService.get('order', Order.UPDATE_ASC);
     this.orderMenuItems  = [

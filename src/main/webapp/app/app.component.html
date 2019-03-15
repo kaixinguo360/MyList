@@ -25,9 +25,13 @@
           type="button"
           aria-label="Add"
           mat-icon-button 
-          (click)="addItem()">
+          [matMenuTriggerFor]="addMenu">
           <mat-icon style="color: white">add</mat-icon>
         </button>
+        <mat-menu #addMenu xPosition="before">
+          <button mat-menu-item class="menu" (click)="addItem()">普通收藏</button>
+          <button mat-menu-item class="menu" (click)="addItemFromPage()">来自网页</button>
+        </mat-menu>
         <button
           type="button"
           aria-label="Home"

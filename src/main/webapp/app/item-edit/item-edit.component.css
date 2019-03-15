@@ -43,3 +43,47 @@
 .col:last-child {
   margin-right: 0;
 }
+
+.content-image-card {
+  margin: 8px 0;
+}
+
+.content-image-viewer {
+  display: flex;
+}
+
+.content-image-editor {
+  margin-top: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.content-image {
+  flex: 0 1 auto;
+  width: 64px;
+  height: 64px;
+  background-position: center;
+  background-size: cover;
+}
+
+.content-image-text-box {
+  flex: 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.content-image-text {
+  flex: 0 1 auto;
+  color: gray;
+  margin: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  justify-content: center;
+}

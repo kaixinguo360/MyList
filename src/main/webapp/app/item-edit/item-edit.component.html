@@ -59,6 +59,44 @@
           </mat-form-field>
         </div>
       </div>
+      <div *ngIf="item.images">
+        <mat-card class="content-image-card" *ngFor="let image of item.images; index as i">
+          <div #imageViewer class="content-image-viewer" (click)="imageEditor.hidden=!imageEditor.hidden;">
+            <a (click)="$event.stopPropagation();" [href]="proxyService.proxy(image.url)" target="_blank" *ngIf="image.url">
+              <div class="content-image" [style.background-image]="'url('+proxyService.proxy(image.url)+')'"></div>
+            </a>
+            <div class="content-image-text-box">
+              <p class="content-image-text" *ngIf="image.url">{{image.url}}</p>
+              <p class="content-image-text" *ngIf="image.info">{{image.info}}</p>
+              <p class="content-image-text" *ngIf="!(image.url||image.info)">新建图片</p>
+            </div>
+          </div>
+          <div #imageEditor class="content-image-editor" hidden>
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="图片 URL" [(ngModel)]="image.url" [ngModelOptions]="{standalone: true}" autocomplete="off">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="描述" [(ngModel)]="image.info" [ngModelOptions]="{standalone: true}" autocomplete="off">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="align-center">
+              <button mat-raised-button color="primary" type="button" (click)="item.images.splice(i, 1)">删除</button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div class="align-center">
+        <button mat-icon-button type="button" (click)="addImage()">
+          <mat-icon>add_photo_alternate</mat-icon>
+        </button>
+      </div>
     </mat-card-content>
     <div class="align-center">
       <button mat-raised-button color="primary" type="submit">保存</button>

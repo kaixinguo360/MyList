@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 
 import { List, ListService } from '../service/list.service';
+import { ProxyService } from '../service/proxy.service';
 
 @Component({
   selector: 'app-list',
@@ -20,6 +21,7 @@ export class ListComponent implements OnInit {
 
   constructor(
     private listService: ListService,
+    private proxyService: ProxyService,
     private breakpointObserver: BreakpointObserver
   ) { }
 

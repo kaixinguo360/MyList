@@ -23,10 +23,10 @@ export interface Sortable {
 })
 export class OrderService {
 
-  public sort(array: Sortable[]) {
+  public sort(array: Sortable[], order?: Order) {
     array.sort(
       (a, b) => {
-        switch (this.storageService.get('order')) {
+        switch (order ? order : this.storageService.get('order')) {
           case Order.UPDATE_ASC:
             return b.updatedTime - a.updatedTime;
           case Order.UPDATE_DESC:
