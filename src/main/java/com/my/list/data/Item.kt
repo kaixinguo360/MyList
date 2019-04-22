@@ -29,16 +29,16 @@ data class Item(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 255)
     var title: String? = null,
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     var info: String? = null,
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     var url: String? = null,
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     var img: String? = null,
 
 /* ---------- * ---------- * ---------- * ---------- */

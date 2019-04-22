@@ -30,9 +30,9 @@ data class Text(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     var title: String = "",
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 10230)
     var content: String? = null
 ) {}

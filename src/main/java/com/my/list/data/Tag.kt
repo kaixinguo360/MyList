@@ -29,10 +29,10 @@ data class Tag(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     var title: String = "",
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     var info: String? = null
 ) {
     @JsonIgnore

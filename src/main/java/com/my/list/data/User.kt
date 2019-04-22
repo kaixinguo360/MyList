@@ -12,7 +12,7 @@ data class User(
         @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Int = 0,
 
-        @Column(unique = true, nullable = false)
+        @Column(unique = true, nullable = false, length = 64)
         var name: String = "",
 
         @JsonIgnore

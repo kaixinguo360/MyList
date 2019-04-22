@@ -146,3 +146,8 @@
 .list-card-url-icon, .list-card-time {
   flex: 0 1 auto;
 }
+
+.menu {
+  font-size: 16px;
+  font-weight: bold;
+}

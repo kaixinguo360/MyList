@@ -14,6 +14,7 @@ import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
+import {AppComponent} from '../app.component';
 
 interface SelectableItem extends Item {
   selected?: boolean;
@@ -301,7 +302,8 @@ export class ListDetailComponent implements OnInit {
     private storageService: StorageService,
     private proxyService: ProxyService,
     private listService: ListService,
-    private itemService: ItemService
+    private itemService: ItemService,
+    public appComponent: AppComponent
   ) { }
 
   ngOnInit() {

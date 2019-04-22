@@ -25,21 +25,21 @@
         <div class="row">
           <div class="col">
             <mat-form-field class="full-width">
-              <input matInput placeholder="标题" formControlName="title" autocomplete="off">
+              <input matInput placeholder="标题" maxlength="255" formControlName="title" autocomplete="off">
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <mat-form-field class="full-width">
-              <textarea matInput placeholder="描述" formControlName="info" autocomplete="off"></textarea>
+              <textarea matInput placeholder="描述" maxlength="1023" formControlName="info" autocomplete="off"></textarea>
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <mat-form-field class="full-width">
-              <input matInput placeholder="封面 URL" formControlName="img" autocomplete="off">
+              <input matInput placeholder="封面 URL" maxlength="1023" formControlName="img" autocomplete="off">
             </mat-form-field>
           </div>
         </div>

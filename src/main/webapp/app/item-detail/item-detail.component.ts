@@ -192,11 +192,13 @@ export class ItemDetailPopupComponent implements OnInit {
   previous() {
     this.index = (this.index - 1 + this.items.length) % this.items.length;
     this.dialog.item = this.items[this.index];
+    this.dialog.updateItem();
   }
 
   next() {
     this.index = (this.index + 1 + this.items.length) % this.items.length;
     this.dialog.item = this.items[this.index];
+    this.dialog.updateItem();
   }
 
   keyDown($event) {

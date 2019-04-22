@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
     this.location.back();
   }
 
-  addItem() {
+  public addItem() {
     this.dialog.closeAll();
     const dialogRef: MatDialogRef<ItemEditDialogComponent> = this.dialog.open(
       ItemEditDialogComponent,
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
     dialogRef.componentInstance.isNew = true;
   }
 
-  addItemFromPage() {
+  public addItemFromPage() {
     const url = prompt('请输入网页 URL: ');
     if (url) {
       window.open(this.proxyService.proxyPage(url));

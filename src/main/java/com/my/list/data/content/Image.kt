@@ -30,9 +30,9 @@ data class Image(
 
 /* ---------- * ---------- * ---------- * ---------- */
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1023)
     var url: String = "",
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1023)
     var info: String? = null
 ) {}

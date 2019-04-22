@@ -34,28 +34,28 @@
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <input matInput placeholder="标题" formControlName="title" autocomplete="off">
+            <input matInput placeholder="标题" maxlength="255" formControlName="title" autocomplete="off">
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <textarea matInput placeholder="描述" formControlName="info" autocomplete="off"></textarea>
+            <textarea matInput placeholder="描述" maxlength="1023" formControlName="info" autocomplete="off"></textarea>
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <input matInput placeholder="图片" formControlName="img" autocomplete="off">
+            <input matInput placeholder="图片" maxlength="1023" formControlName="img" autocomplete="off">
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col">
           <mat-form-field class="full-width">
-            <input matInput placeholder="来源 URL" formControlName="url" autocomplete="off">
+            <input matInput placeholder="来源 URL" maxlength="1023" formControlName="url" autocomplete="off">
           </mat-form-field>
         </div>
       </div>
@@ -75,14 +75,14 @@
             <div class="row">
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="图片 URL" [(ngModel)]="image.url" [ngModelOptions]="{standalone: true}" autocomplete="off">
+                  <input matInput placeholder="图片 URL" maxlength="1023" [(ngModel)]="image.url" [ngModelOptions]="{standalone: true}" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <mat-form-field class="full-width">
-                  <input matInput placeholder="描述" [(ngModel)]="image.info" [ngModelOptions]="{standalone: true}" autocomplete="off">
+                  <input matInput placeholder="描述" maxlength="1023" [(ngModel)]="image.info" [ngModelOptions]="{standalone: true}" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>

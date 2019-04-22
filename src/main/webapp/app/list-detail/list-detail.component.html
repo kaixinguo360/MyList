@@ -32,10 +32,14 @@
         </mat-menu>
         <button mat-raised-button
                 class="round-btn"
-                (click)="openAddItemPopup()"
+                [matMenuTriggerFor]="addMenu"
                 *ngIf="!selectMode">
           <mat-icon>add</mat-icon>
         </button>
+        <mat-menu #addMenu xPosition="before">
+          <button mat-menu-item class="menu" (click)="appComponent.addItem()">普通收藏</button>
+          <button mat-menu-item class="menu" (click)="appComponent.addItemFromPage()">来自网页</button>
+        </mat-menu>
         <button mat-raised-button
                 class="round-btn"
                 (click)="toggleSelectMode()">
