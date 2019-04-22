@@ -14,6 +14,7 @@ import { ListEditComponent } from './list-edit/list-edit.component';
 import { ListDetailComponent } from './list-detail/list-detail.component';
 import { ItemEditComponent } from './item-edit/item-edit.component';
 import { ItemDetailComponent } from './item-detail/item-detail.component';
+import { NewItemComponent } from './new-item/new-item.component';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,7 @@ const routes: Routes = [
   { path: 'list/:id/edit', component: ListEditComponent, canActivate: [ LoginGuard ] },
   { path: 'list/:id', component: ListDetailComponent, canActivate: [ LoginGuard ] },
   { path: 'item/new', component: ItemEditComponent, canActivate: [ LoginGuard ] },
-  { path: 'item/fromPage', component: ItemEditComponent, canActivate: [ LoginGuard ] },
+  { path: 'item/fromPage', component: NewItemComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id/edit', component: ItemEditComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id', component: ItemDetailComponent, canActivate: [ LoginGuard ] }
 ];

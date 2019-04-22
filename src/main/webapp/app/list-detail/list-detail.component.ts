@@ -8,13 +8,14 @@ import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
+import { environment } from '../../environments/environment';
 import { StorageService } from '../service/storage.service';
 import { ProxyService } from '../service/proxy.service';
 import { List, ListService } from '../service/list.service';
 import { Item, ItemService } from '../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
-import {AppComponent} from '../app.component';
+import { AppComponent } from '../app.component';
 
 interface SelectableItem extends Item {
   selected?: boolean;
@@ -26,8 +27,6 @@ interface SelectableItem extends Item {
   styleUrls: ['./list-detail.component.css']
 })
 export class ListDetailComponent implements OnInit {
-
-  private static defaultColumnWidth = 240;
 
   isLoading = true;
   isMobile = false;
@@ -202,7 +201,7 @@ export class ListDetailComponent implements OnInit {
   }
 
   createList() {
-    
+
   }
 
   updateLayout() {
@@ -289,7 +288,7 @@ export class ListDetailComponent implements OnInit {
       this.masonryWidth = window.innerWidth;
     } else {
       this.column = Math.round(window.innerWidth / this.columnWidth) - 1;
-      this.columnWidth = ListDetailComponent.defaultColumnWidth;
+      this.columnWidth = environment.defaultColumnWidth;
       this.masonryWidth = (this.column === 0) ? this.columnWidth : this.column * this.columnWidth;
     }
     this.updateLayout();

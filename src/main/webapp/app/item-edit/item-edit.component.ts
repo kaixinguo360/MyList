@@ -44,7 +44,7 @@ export class ItemEditDialogComponent implements OnInit {
     if (!this.item.images) {
       this.item.images = [];
     }
-    this.item.images.push({ url: "", info: "" });
+    this.item.images.push({ url: '', info: '' });
   }
 
   update() {
@@ -57,7 +57,7 @@ export class ItemEditDialogComponent implements OnInit {
     this.item.img = itemData.img;
     this.item.url = itemData.url;
     this.item.images = this.item.images.filter(image => image.url || image.info);
-    
+
     if (this.isNew) {
       this.item.id = null;
       this.itemService.add(this.item).pipe(
@@ -202,7 +202,7 @@ export class ItemEditComponent implements OnInit {
           url: item.url ? item.url : ''
         });
         this.storageService.set('tmpItem', null);
-      } 
+      }
     } else {
       this.dialog.itemId = Number(this.route.snapshot.paramMap.get('id'));
     }

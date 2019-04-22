@@ -1,0 +1,50 @@
+<div>
+  <iframe #iframe class="iframe" hidden [src]="src">
+  </iframe>
+  <button mat-icon-button (click)="iframe.hidden=!iframe.hidden">
+    <mat-icon *ngIf="iframe.hidden">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="!iframe.hidden">arrow_drop_up</mat-icon>
+  </button>
+</div>
+<div class="icon-box">
+  <button mat-raised-button
+          class="round-btn"
+          (click)="selectAll()">
+    <mat-icon>select_all</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [matMenuTriggerFor]="saveMenu">
+    <mat-icon>save</mat-icon>
+  </button>
+  <mat-menu #saveMenu xPosition="before" yPosition="above">
+    <button mat-menu-item *ngFor="let l of lists" (click)="saveToList(l)">{{l.title}}</button>
+  </mat-menu>
+</div>
+<div>
+  <div class="grid-container">
+    <ngx-masonry
+      [useImagesLoaded]="false"
+      [options]="masonryOptions"
+      class="masonry-container"
+      [style.width.px]="masonryWidth"
+      #masonry>
+      <div ngxMasonryItem
+           *ngFor="let image of images;index as index"
+           class="list-card-container"
+           [style.width.px]="columnWidth">
+        <mat-card class="list-card"
+                  [class.list-card-selected]="image.selected"
+                  (click)="image.selected=!image.selected">
+          <div class="list-card-body">
+            <img class="list-card-image" [src]="proxyService.proxy(image.url)" [alt]="image.url" (load)="updateLayout()">
+            <div class="list-card-info" *ngIf="image.info">{{image.info}}</div>
+          </div>
+        </mat-card>
+      </div>
+    </ngx-masonry>
+  </div>
+  <div class="loading-icon" *ngIf="isLoading">
+    <mat-icon>autorenew</mat-icon>正在加载
+  </div>
+</div>

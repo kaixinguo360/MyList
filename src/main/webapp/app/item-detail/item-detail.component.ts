@@ -69,7 +69,7 @@ export class ItemDetailDialogComponent {
       })
     ).subscribe();
   }
-  
+
   constructor(
     private dialog: MatDialog,
     private proxyService: ProxyService,

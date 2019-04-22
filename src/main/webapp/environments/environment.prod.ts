@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
   apiRoot: 'api/',
-  proxyRoot: 'p/'
+  proxyRoot: 'p/',
+  defaultColumnWidth: 240
 };
