@@ -1,7 +1,14 @@
 .iframe {
-  height: 80vh;
   width: 100%;
   border: 0;
+}
+
+.iframe-open {
+  height: 80vh;
+}
+
+.iframe-close {
+  height: 0;
 }
 
 .grid-container {

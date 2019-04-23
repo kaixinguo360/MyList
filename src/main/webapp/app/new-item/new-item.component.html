@@ -1,9 +1,11 @@
 <div>
-  <iframe #iframe class="iframe" hidden [src]="src">
-  </iframe>
-  <button mat-icon-button (click)="iframe.hidden=!iframe.hidden">
-    <mat-icon *ngIf="iframe.hidden">arrow_drop_down</mat-icon>
-    <mat-icon *ngIf="!iframe.hidden">arrow_drop_up</mat-icon>
+  <iframe class="iframe"
+          [class.iframe-open]="isOpen"
+          [class.iframe-close]="!isOpen"
+          [src]="src"></iframe>
+  <button mat-icon-button (click)="isOpen=!isOpen">
+    <mat-icon *ngIf="!isOpen">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="isOpen">arrow_drop_up</mat-icon>
   </button>
 </div>
 <div class="icon-box">

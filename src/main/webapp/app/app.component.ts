@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
   public addItemFromPage() {
     const url = prompt('请输入网页 URL: ');
     if (url) {
-      window.location.href = '/item/fromPage?url=' + url;
+      this.router.navigate(['/item/fromPage'], { queryParams: {'url': url } });
     }
   }
 

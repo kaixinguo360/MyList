@@ -48,6 +48,8 @@ export class NewItemComponent implements OnInit {
     images: []
   };
   images: SelectableImage[] = [];
+  
+  isOpen = false;
 
   selectAll() {
     if (this.images.find(i => !i.selected)) {
@@ -61,8 +63,10 @@ export class NewItemComponent implements OnInit {
     const selectedImages = this.images.filter(i => i.selected);
     if (selectedImages.length) {
       this.item.list = list.id !== 0 ? { id: list.id } : null;
-      selectedImages.forEach(image => this.item.images.push(image));
-      this.item.img = this.item.images[0].url;
+      this.item.img = selectedImages[0].url;
+      if (selectedImages.length > 1) {
+        selectedImages.forEach(image => this.item.images.push(image));
+      }
       this.itemService.add(this.item).pipe(
         tap(() => {
           this.images = this.images.filter(i => !i.selected);

@@ -101,8 +101,8 @@ public class ProxyController {
         "<script>PATH='%s'</script>\n" +
         "<script src='//code.jquery.com/jquery-3.3.1.min.js'></script>\n" +
         "<script src='//unpkg.com/xhook@latest/dist/xhook.min.js'></script>\n" +
-        "<link rel='stylesheet' href='/assets/hook/hook.css'></link>\n" +
-        "<script src='/assets/hook/hook.js'></script>\n";
+        "<link rel='stylesheet' href='/p/hook/hook.css'></link>\n" +
+        "<script src='/p/hook/hook.js'></script>\n";
     private void addHook(Document doc, URL url) {
         String protocol = url.getProtocol() + "://";
         String host = url.getHost();
