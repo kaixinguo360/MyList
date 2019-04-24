@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
     this.location.back();
   }
 
-  public addItem() {
+  addItem() {
     this.dialog.closeAll();
     const dialogRef: MatDialogRef<ItemEditDialogComponent> = this.dialog.open(
       ItemEditDialogComponent,
@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
     dialogRef.componentInstance.isNew = true;
   }
 
-  public addItemFromPage() {
+  addItemFromPage() {
     const url = prompt('请输入网页 URL: ');
     if (url) {
       this.router.navigate(['/item/fromPage'], { queryParams: {'url': url } });
@@ -74,6 +74,11 @@ export class AppComponent implements OnInit {
   changeProxyMode(mode: string) {
     this.storageService.set('proxyMode', mode);
     this.proxyMenuItems.forEach(i => i.isSelected = i.mode === mode);
+  }
+
+  setMinImageSize() {
+    const size = Number(prompt('请输入新的最小图像大小: '));
+    this.storageService.set('minImageSize', size + '');
   }
 
   logout() {

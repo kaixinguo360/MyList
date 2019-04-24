@@ -21,10 +21,10 @@ if ('serviceWorker' in navigator) {
       }
 
       // registration worked
-      console.log('Registration succeeded.');
+      console.log('[Registration succeeded]');
     }).catch(function(error) {
     // registration failed
-    console.log('Registration failed with ' + error);
+    console.log('[Registration failed] ' + error);
     });
 }
 
@@ -33,7 +33,7 @@ navigator.serviceWorker.controller.postMessage({
   message: 'newItem',
   port: channel.port2,
   title: document.title,
-  base: BASE,
+  origin: ORIGIN,
   path: PATH
 }, [channel.port2]);
 
@@ -52,10 +52,10 @@ function check() {
 // Commit All Images To New-Item Component
 function commit() {
   fetchImages();
-  localStorage.setItem('tmpItem', JSON.stringify({
-    title: document.title,
-    images: imgs
-  }));
+  var data = { title: document.title, images: imgs };
+  localStorage.setItem('tmpItem', JSON.stringify(data));
+  console.log('[Commit] ' + imgs.length);
+  console.log(data)
 }
 
 /* ---------- UI ---------- */
@@ -89,18 +89,21 @@ function addImage(img) {
   var isAdded = false;
   imgs.forEach(function (value) {
     if (value.url === img.url) {
-      value.info = value.info ? value.info : img.info;
       isAdded = true;
+      if (!value.info && value.info) {
+        value.info = img.info;
+        console.log('[Update Image] ' + img.url);
+      }
     }
   });
   if (!isAdded) {
     imgs.push(img);
+    console.log('[New Image] ' + img.url);
   }
 }
 
 // Fetch Images For Page
 function fetchImages() {
-  imgs.length = 0;
   $('img').each(function () {
     addImage({
       url: getAbsUrl($(this).attr('src')),
@@ -118,8 +121,8 @@ function getAbsUrl(url) {
   } else if (url.substr(0, 2) === '//') {
     return document.location.protocol + url;
   } else if (url.substr(0, 1) === '/') {
-    return BASE + url;
+    return ORIGIN + url;
   } else {
-    return BASE + PATH + '/' + url;
+    return ORIGIN + PATH + '/' + url;
   }
 }

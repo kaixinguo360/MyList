@@ -39,7 +39,8 @@
                   [class.list-card-selected]="image.selected"
                   (click)="image.selected=!image.selected">
           <div class="list-card-body">
-            <img class="list-card-image" [src]="proxyService.proxy(image.url)" [alt]="image.url" (load)="updateLayout()">
+            <img #img class="list-card-image" [src]="proxyService.proxy(image.url)" [alt]="image.url" (load)="onImageLoad(img.naturalWidth<img.naturalHeight?img.naturalWidth:img.naturalHeight, index)">
+            <div class="list-card-info">{{img.naturalWidth}}x{{img.naturalHeight}}</div>
             <div class="list-card-info" *ngIf="image.info">{{image.info}}</div>
           </div>
         </mat-card>

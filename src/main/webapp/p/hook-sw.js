@@ -4,14 +4,13 @@ var client;
 self.addEventListener('fetch', function(event) {
 
   var request = event.request;
-  var url = new URL(request.url);
 
-  if (request.mode !== 'navigate' && url.pathname.substr(0, 8) !== '/p/hook/') {
-    if (client) {
-
+  if (client) {
+    var url = new URL(request.url);
+    if (request.mode !== 'navigate' && url.pathname.substr(0, 8) !== '/p/hook/') {
       // Check and Replace Origin URL
-      if (url.origin === self.location.origin) {
-        request = new Request(client.base + url.pathname, {
+      if (request.url.match(self.location.origin)) {
+        request = new Request(request.url.replace(self.location.origin, client.origin), {
           body: request.body,
           cache: request.cache,
           credentials: request.credentials,
@@ -27,7 +26,6 @@ self.addEventListener('fetch', function(event) {
           window: request.window
         });
       }
-
       // Record the URL of Image
       if (client && request.destination === 'image') {
         client.port.postMessage({
@@ -35,11 +33,9 @@ self.addEventListener('fetch', function(event) {
           img: { url: request.url }
         });
       }
-    }
-  } else {
-    if (client) {
+    } else {
       client = null;
-      console.log('Flush Cache.');
+      console.log('[SW:Flush Cache]');
     }
   }
 
@@ -51,8 +47,9 @@ self.addEventListener('message', function(event) {
     client = {
       port: event.data.port,
       title: event.data.title,
-      base: event.data.base,
+      origin: event.data.origin,
       path: event.data.path
     };
   }
+  console.log('[SW:New Client] ' + event.data.origin + ' ' + event.data.path);
 });

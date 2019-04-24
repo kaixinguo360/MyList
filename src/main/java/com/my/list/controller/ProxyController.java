@@ -97,7 +97,7 @@ public class ProxyController {
         return new ResponseEntity<>(doc.toString().getBytes(), HttpStatus.OK);
     }
 
-    private static final String header = "<script>BASE='%s'</script>\n" +
+    private static final String header = "<script>ORIGIN='%s'</script>\n" +
         "<script>PATH='%s'</script>\n" +
         "<script src='//code.jquery.com/jquery-3.3.1.min.js'></script>\n" +
         "<script src='//unpkg.com/xhook@latest/dist/xhook.min.js'></script>\n" +

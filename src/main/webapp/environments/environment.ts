@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   apiRoot: 'api/',
   proxyRoot: 'p/',
-  defaultColumnWidth: 240
+  defaultColumnWidth: 240,
+  minImageSize: 100
 };
 
 /*

@@ -8,6 +8,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { StorageService } from '../service/storage.service';
 import { ProxyService } from '../service/proxy.service';
 import { List, ListService } from '../service/list.service';
 import { Image, Item, ItemService } from '../service/item.service';
@@ -48,7 +49,7 @@ export class NewItemComponent implements OnInit {
     images: []
   };
   images: SelectableImage[] = [];
-  
+
   isOpen = false;
 
   selectAll() {
@@ -100,6 +101,14 @@ export class NewItemComponent implements OnInit {
     this.masonry.layout();
   }
 
+  onImageLoad(size: number, index: number) {
+    const minImageSize = Number(this.storageService.get('minImageSize', environment.minImageSize + ''));
+    if (size < minImageSize) {
+      this.images.splice(index, 1);
+    }
+    this.updateLayout();
+  }
+
   @HostListener('window:resize')
   private resize() {
     if (this.isMobile) {
@@ -119,6 +128,7 @@ export class NewItemComponent implements OnInit {
     private router: Router,
     private domSanitizer: DomSanitizer,
     private breakpointObserver: BreakpointObserver,
+    private storageService: StorageService,
     private proxyService: ProxyService,
     private listService: ListService,
     private itemService: ItemService
