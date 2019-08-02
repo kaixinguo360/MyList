@@ -8,13 +8,13 @@ import {
 } from '@angular/router';
 
 import { AuthService } from './service/auth.service';
-import { LoginComponent } from './login/login.component';
-import { ListComponent } from './list/list.component';
-import { ListEditComponent } from './list-edit/list-edit.component';
-import { ListDetailComponent } from './list-detail/list-detail.component';
-import { ItemEditComponent } from './item-edit/item-edit.component';
-import { ItemDetailComponent } from './item-detail/item-detail.component';
-import { NewItemComponent } from './new-item/new-item.component';
+import { LoginComponent } from './page/login/login.component';
+import { ListComponent } from './page/list/list.component';
+import { ListEditComponent } from './page/list-edit/list-edit.component';
+import { ListDetailComponent } from './page/list-detail/list-detail.component';
+import { ItemEditComponent } from './page/item-edit/item-edit.component';
+import { ItemDetailComponent } from './page/item-detail/item-detail.component';
+import { NewItemComponent } from './page/new-item/new-item.component';
 
 @Injectable({
   providedIn: 'root'

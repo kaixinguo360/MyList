@@ -1,0 +1,14 @@
+<mat-card class="item-card"
+          [class.item-card-selected]="selected">
+  <div class="item-card-head">
+    <span *ngIf="item.url">🔗</span>
+    {{getDomain(item.url?item.url:item.img)}}
+  </div>
+  <div class="item-card-body">
+    <img class="item-card-image" #img [src]="proxyService.proxy(item.img)" *ngIf="item.img" alt="Image" (load)="this.onLoad.next(img)">
+    <div class="item-card-info" *ngIf="item.info">{{limit(item.info)}}</div>
+  </div>
+  <div class="item-card-footer">
+    {{limit(item.title)}}
+  </div>
+</mat-card>

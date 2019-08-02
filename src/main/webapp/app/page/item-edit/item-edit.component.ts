@@ -6,10 +6,10 @@ import { MatDialog } from '@angular/material';
 import { catchError, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 
-import { StorageService } from '../service/storage.service';
-import { List, ListService } from '../service/list.service';
-import { Item, ItemService } from '../service/item.service';
-import { ProxyService } from '../service/proxy.service';
+import { StorageService } from '../../service/storage.service';
+import { List, ListService } from '../../service/list.service';
+import { Item, ItemService } from '../../service/item.service';
+import { ProxyService } from '../../service/proxy.service';
 
 @Component({
   selector: 'app-item-edit-dialog',

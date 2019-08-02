@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { Order } from './service/order.service';
 import { AuthService } from './service/auth.service';
 import { StorageService } from './service/storage.service';
-import { ItemEditDialogComponent } from './item-edit/item-edit.component';
+import { ItemEditDialogComponent } from './page/item-edit/item-edit.component';
 
 class OrderMenuItem {
   title: string;

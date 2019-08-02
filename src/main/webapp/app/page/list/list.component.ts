@@ -4,8 +4,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { catchError, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 
-import { List, ListService } from '../service/list.service';
-import { ProxyService } from '../service/proxy.service';
+import { List, ListService } from '../../service/list.service';
+import { ProxyService } from '../../service/proxy.service';
 
 @Component({
   selector: 'app-list',

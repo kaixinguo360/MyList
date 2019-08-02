@@ -12,17 +12,20 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModules } from './material-modules.module';
-import { LoginComponent } from './login/login.component';
-import { ListComponent } from './list/list.component';
-import { ListDetailComponent } from './list-detail/list-detail.component';
-import { ListEditComponent } from './list-edit/list-edit.component';
-import { ItemDetailComponent, ItemDetailDialogComponent, ItemDetailPopupComponent } from './item-detail/item-detail.component';
-import { ItemEditComponent, ItemEditDialogComponent } from './item-edit/item-edit.component';
-import { NewItemComponent } from './new-item/new-item.component';
+import { ItemCardComponent } from './com/item-card/item-card.component';
+
+import { LoginComponent } from './page/login/login.component';
+import { ListComponent } from './page/list/list.component';
+import { ListDetailComponent } from './page/list-detail/list-detail.component';
+import { ListEditComponent } from './page/list-edit/list-edit.component';
+import { ItemDetailComponent, ItemDetailDialogComponent, ItemDetailPopupComponent } from './page/item-detail/item-detail.component';
+import { ItemEditComponent, ItemEditDialogComponent } from './page/item-edit/item-edit.component';
+import { NewItemComponent } from './page/new-item/new-item.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    ItemCardComponent,
     LoginComponent,
     ListComponent,
     ListDetailComponent,

@@ -7,13 +7,13 @@ import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { environment } from '../../environments/environment';
-import { StorageService } from '../service/storage.service';
-import { ProxyService } from '../service/proxy.service';
-import { List, ListService } from '../service/list.service';
-import { Image, Item, ItemService } from '../service/item.service';
+import { environment } from '../../../environments/environment';
+import { StorageService } from '../../service/storage.service';
+import { ProxyService } from '../../service/proxy.service';
+import { List, ListService } from '../../service/list.service';
+import { Image, Item, ItemService } from '../../service/item.service';
 
-interface SelectableImage extends Image {
+interface SelectableImage extends Image, Item {
   selected?: boolean;
 }
 
@@ -64,9 +64,12 @@ export class NewItemComponent implements OnInit {
     const selectedImages = this.images.filter(i => i.selected);
     if (selectedImages.length) {
       this.item.list = list.id !== 0 ? { id: list.id } : null;
-      this.item.img = selectedImages[0].url;
+      this.item.img = selectedImages[0].img;
       if (selectedImages.length > 1) {
-        selectedImages.forEach(image => this.item.images.push(image));
+        selectedImages.forEach(image => {
+          image.url = image.img;
+          this.item.images.push(image);
+        });
       }
       this.itemService.add(this.item).pipe(
         tap(() => {
@@ -92,6 +95,10 @@ export class NewItemComponent implements OnInit {
       const item = JSON.parse(tmpItemStr);
       this.item.title = item.title;
       this.images = item.images;
+      this.images.forEach(i => {
+        i.img = i.url;
+        i.url = null;
+      });
       localStorage.removeItem('tmpItem');
       this.isLoading = false;
     }
@@ -101,11 +108,13 @@ export class NewItemComponent implements OnInit {
     this.masonry.layout();
   }
 
-  onImageLoad(size: number, index: number) {
+  onImageLoad($event, index: number) {
+    const size = $event.naturalWidth<$event.naturalHeight?$event.naturalWidth:$event.naturalHeight;
     const minImageSize = Number(this.storageService.get('minImageSize', environment.minImageSize + ''));
     if (size < minImageSize) {
       this.images.splice(index, 1);
     }
+    this.images[index].title = $event.naturalWidth + 'x' + $event.naturalHeight;
     this.updateLayout();
   }
 

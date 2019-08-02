@@ -64,20 +64,13 @@
            *ngFor="let item of loadedItems;index as index"
            class="list-card-container"
            [style.width.px]="columnWidth">
-        <mat-card class="list-card"
-                  [class.list-card-selected]="selectMode&&item.selected"
-                  (click)="selectMode?item.selected=!item.selected:openItemPopup(index)">
-          <div class="list-card-head">
-            {{getDomain(item.url?item.url:item.img)}}
-          </div>
-          <div class="list-card-body">
-            <img class="list-card-image" [src]="proxyService.proxy(item.img)" *ngIf="item.img" alt="Image" (load)="updateLayout()">
-            <div class="list-card-info" *ngIf="item.info">{{limit(item.info)}}</div>
-          </div>
-          <div class="list-card-footer">
-            {{limit(item.title)}}
-          </div>
-        </mat-card>
+        <app-item-card
+          [item]="item"
+          [maxLength]="this.columnWidth * 0.3"
+          [selected]="this.selectMode&&item.selected"
+          (onLoad)="updateLayout()"
+          (click)="selectMode?item.selected=!item.selected:openItemPopup(index)"
+        ></app-item-card>
       </div>
     </ngx-masonry>
   </div>

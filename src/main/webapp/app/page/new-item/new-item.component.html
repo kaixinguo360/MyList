@@ -35,15 +35,13 @@
            *ngFor="let image of images;index as index"
            class="list-card-container"
            [style.width.px]="columnWidth">
-        <mat-card class="list-card"
-                  [class.list-card-selected]="image.selected"
-                  (click)="image.selected=!image.selected">
-          <div class="list-card-body">
-            <img #img class="list-card-image" [src]="proxyService.proxy(image.url)" [alt]="image.url" (load)="onImageLoad(img.naturalWidth<img.naturalHeight?img.naturalWidth:img.naturalHeight, index)">
-            <div class="list-card-info">{{img.naturalWidth}}x{{img.naturalHeight}}</div>
-            <div class="list-card-info" *ngIf="image.info">{{image.info}}</div>
-          </div>
-        </mat-card>
+        <app-item-card
+          [item]="image"
+          [maxLength]="this.columnWidth * 0.3"
+          [selected]="image.selected"
+          (onLoad)="onImageLoad($event, index)"
+          (click)="image.selected=!image.selected"
+        ></app-item-card>
       </div>
     </ngx-masonry>
   </div>

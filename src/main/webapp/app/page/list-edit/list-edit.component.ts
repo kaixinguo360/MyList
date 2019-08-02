@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { List, ListService } from '../service/list.service';
+import { List, ListService } from '../../service/list.service';
 
 @Component({
   selector: 'app-list-edit',

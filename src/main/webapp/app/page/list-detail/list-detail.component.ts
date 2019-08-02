@@ -8,14 +8,14 @@ import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
-import { environment } from '../../environments/environment';
-import { StorageService } from '../service/storage.service';
-import { ProxyService } from '../service/proxy.service';
-import { List, ListService } from '../service/list.service';
-import { Item, ItemService } from '../service/item.service';
+import { environment } from '../../../environments/environment';
+import { StorageService } from '../../service/storage.service';
+import { ProxyService } from '../../service/proxy.service';
+import { List, ListService } from '../../service/list.service';
+import { Item, ItemService } from '../../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
-import { AppComponent } from '../app.component';
+import { AppComponent } from '../../app.component';
 
 interface SelectableItem extends Item {
   selected?: boolean;
@@ -77,11 +77,6 @@ export class ListDetailComponent implements OnInit {
       }
     );
     dialogRef.componentInstance.isNew = true;
-  }
-  
-  limit(str: string, length?: number): string {
-    length = length ? length : this.columnWidth * 0.3;
-    return !str || str.length <= length ? str : str.substr(0 ,length) + '…';
   }
 
   loadMoreItems() {
@@ -179,16 +174,6 @@ export class ListDetailComponent implements OnInit {
 
   updateLayout() {
     this.masonry.layout();
-  }
-
-  private getDomain(url: string) {
-    if (!url) return url;
-    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
-    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
-      return match[2];
-    } else {
-      return url;
-    }
   }
 
   private changeItems(items: Item[]) {

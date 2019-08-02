@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { ProxyService } from '../service/proxy.service';
-import { Item, ItemService } from '../service/item.service';
+import { ProxyService } from '../../service/proxy.service';
+import { Item, ItemService } from '../../service/item.service';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
-import { Message } from '../service/api.service';
+import { Message } from '../../service/api.service';
 
 @Component({
   selector: 'app-item-detail-dialog',
