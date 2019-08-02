@@ -112,9 +112,9 @@ export class NewItemComponent implements OnInit {
   @HostListener('window:resize')
   private resize() {
     if (this.isMobile) {
-      this.column = 1;
-      this.columnWidth = window.innerWidth;
-      this.masonryWidth = window.innerWidth;
+      this.column = Number(this.storageService.get('mobileColumn', '2'));
+      this.columnWidth = (window.innerWidth - 18) / this.column;
+      this.masonryWidth = (this.column === 0) ? this.columnWidth : this.column * this.columnWidth;
     } else {
       this.column = Math.round(window.innerWidth / this.columnWidth) - 1;
       this.columnWidth = environment.defaultColumnWidth;

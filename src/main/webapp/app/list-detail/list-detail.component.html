@@ -67,18 +67,15 @@
         <mat-card class="list-card"
                   [class.list-card-selected]="selectMode&&item.selected"
                   (click)="selectMode?item.selected=!item.selected:openItemPopup(index)">
-          <div class="list-card-head" *ngIf="!item.img"></div>
+          <div class="list-card-head">
+            {{getDomain(item.url?item.url:item.img)}}
+          </div>
           <div class="list-card-body">
             <img class="list-card-image" [src]="proxyService.proxy(item.img)" *ngIf="item.img" alt="Image" (load)="updateLayout()">
-            <div class="list-card-text">
-              <div class="list-card-title" *ngIf="!item.img">{{getTitle(item)}}</div>
-              <div class="list-card-info" *ngIf="item.info&&!item.img">{{item.info}}</div>
-            </div>
+            <div class="list-card-info" *ngIf="item.info">{{limit(item.info)}}</div>
           </div>
-          <div class="list-card-bottom">
-            <mat-icon class="list-card-url-icon" *ngIf="item.url">link</mat-icon>
-            <span class="list-card-footer">{{getFooter(item)}}</span>
-            <span class="list-card-time">{{item.createdTime | date:'yyyy-MM-dd'}}</span>
+          <div class="list-card-footer">
+            {{limit(item.title)}}
           </div>
         </mat-card>
       </div>

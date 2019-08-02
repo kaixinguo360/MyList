@@ -88,7 +88,7 @@
   overflow: hidden;
 }
 
-.list-card-bottom {
+.list-card-footer {
   display: flex;
   align-items: flex-end;
   flex: 0 1 auto;

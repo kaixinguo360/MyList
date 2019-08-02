@@ -81,6 +81,12 @@ export class AppComponent implements OnInit {
     this.storageService.set('minImageSize', size + '');
   }
 
+  setMobileColumn(column?: number) {
+    column = column === undefined ? Number(prompt('请输入自定义移动版列数: ')) : column;
+    this.storageService.set('mobileColumn', column + '');
+    location.reload();
+  }
+
   logout() {
     this.authService.logout().pipe(
       tap(() => this.router.navigate([ '' ])),

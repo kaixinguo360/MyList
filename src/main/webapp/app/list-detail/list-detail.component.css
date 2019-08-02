@@ -4,7 +4,6 @@
 }
 
 .grid-container {
-  padding: 20px;
   margin: 0 auto;
 }
 
@@ -13,6 +12,7 @@
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
 }
 
 .list-title {
@@ -50,7 +50,7 @@
 .counter {
   width: 100%;
   text-align: center;
-  margin: 0 0 20px;
+  margin: 20px 0;
 }
 
 .loading-icon {
@@ -72,9 +72,11 @@
 .list-card {
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin: 4px;
   outline: 0;
   cursor: pointer;
+  padding: 0;
+  border-radius: 8px;
 }
 
 .list-card-selected {
@@ -84,66 +86,41 @@
 
 .list-card-head {
   flex: 0 1 auto;
-  height: 0.8em;
-}
-
-.list-card-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  text-align: center;
-}
-
-.list-card-image {
-  width: auto;
-  max-width: 100%;
-  max-height: 100vh;
-  margin-bottom: 10px;
-}
-
-.list-card-text {
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-}
-
-.list-card-title {
-  flex: 0 1 auto;
-  font-weight: bold;
+  font-size: 12px;
+  color: gray;
+  padding: 8px 12px 4px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.list-card-info {
-  flex: 1 0;
-  margin-top: 5px;
-  font-size:0.8em;
-  color: gray;
-  overflow: hidden;
-}
-
-.list-card-bottom {
-  display: flex;
-  align-items: center;
-  flex: 0 1 auto;
-  margin-top: 5px;
-  font-size: 0.8em;
-  color: gray;
 }
 
 .list-card-footer {
-  flex: 1 0;
-  margin-right: 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  font-size: 12px;
+  color: gray;
+  padding: 4px 12px 8px;
+  word-break: break-word;
 }
 
-.list-card-url-icon, .list-card-time {
-  flex: 0 1 auto;
+.list-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.list-card-image {
+  max-width: 100%;
+  padding: 4px 0;
+  max-height: 100vh;
+}
+
+.list-card-info {
+  align-self: stretch;
+  padding: 4px 8px;
+  font-size: 16px;
+  word-break: break-word;
 }
 
 .menu {

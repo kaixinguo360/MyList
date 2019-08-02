@@ -71,6 +71,12 @@
         </mat-menu>
         <mat-menu #settingMenu xPosition="before">
           <button mat-menu-item class="menu" (click)="setMinImageSize()">最小图像大小</button>
+          <button mat-menu-item class="menu" [matMenuTriggerFor]="mobileColumn">移动版视图</button>
+        </mat-menu>
+        <mat-menu #mobileColumn xPosition="after">
+          <button mat-menu-item class="menu" (click)="setMobileColumn(1)">单列</button>
+          <button mat-menu-item class="menu" (click)="setMobileColumn(2)">双列</button>
+          <button mat-menu-item class="menu" (click)="setMobileColumn()">自定义</button>
         </mat-menu>
       </div>
     </mat-toolbar>

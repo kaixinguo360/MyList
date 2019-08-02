@@ -78,37 +78,10 @@ export class ListDetailComponent implements OnInit {
     );
     dialogRef.componentInstance.isNew = true;
   }
-
-  getTitle(item: Item): string {
-    if (item.title) {
-      return item.title;
-    } else if (item.info || item.img) {
-      return '';
-    } else if (item.url) {
-      return '来自' + this.getDomain(item.url) + '的收藏';
-    } else {
-      return '未命名收藏';
-    }
-  }
-
-  getFooter(item: Item): string {
-    if (item.img) {
-      if (item.title) {
-        return item.title;
-      } else if (item.info) {
-        return item.info;
-      } else if (item.url) {
-        return this.getDomain(item.url);
-      } else {
-        return '来自' + this.getDomain(item.img) + '的图片';
-      }
-    } else {
-      if (item.url) {
-        return this.getDomain(item.url);
-      } else {
-        return '';
-      }
-    }
+  
+  limit(str: string, length?: number): string {
+    length = length ? length : this.columnWidth * 0.3;
+    return !str || str.length <= length ? str : str.substr(0 ,length) + '…';
   }
 
   loadMoreItems() {
@@ -209,6 +182,7 @@ export class ListDetailComponent implements OnInit {
   }
 
   private getDomain(url: string) {
+    if (!url) return url;
     const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
     if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
       return match[2];
@@ -283,9 +257,9 @@ export class ListDetailComponent implements OnInit {
   @HostListener('window:resize')
   private resize() {
     if (this.isMobile) {
-      this.column = 1;
-      this.columnWidth = window.innerWidth;
-      this.masonryWidth = window.innerWidth;
+      this.column = Number(this.storageService.get('mobileColumn', '2'));
+      this.columnWidth = (window.innerWidth - 18) / this.column;
+      this.masonryWidth = (this.column === 0) ? this.columnWidth : this.column * this.columnWidth;
     } else {
       this.column = Math.round(window.innerWidth / this.columnWidth) - 1;
       this.columnWidth = environment.defaultColumnWidth;
