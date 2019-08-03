@@ -1,0 +1,28 @@
+<div>
+  {{title?title:'请选择一个列表'}}
+</div>
+<mat-action-list>
+  <mat-list-item class="list-item" (click)="isCreate=true;">
+    <div *ngIf="!isCreate" class="list-item-image" [style.background-image]="'url(\'/favicon.ico\')'"></div>
+    <div *ngIf="!isCreate">
+      <p class="list-item-title" matLine>新建列表</p>
+      <p class="list-item-info" matLine></p>
+    </div>
+    <div *ngIf="isCreate" class="list-item">
+      <mat-form-field class="full-width list-item-create">
+        <input matInput #title placeholder="列表名称" maxlength="1023">
+        <mat-icon matSuffix (click)="create(title.value)">add</mat-icon>
+      </mat-form-field>
+    </div>
+  </mat-list-item>
+  <mat-list-item
+    class="list-item"
+    *ngFor="let list of lists"
+    (click)="select(list)">
+    <div class="list-item-image" [style.background-image]="list.img?('url('+proxyService.proxy(list.img)+')'):('url(\'/favicon.ico\')')"></div>
+    <div>
+      <p class="list-item-title" matLine>{{list.title}}</p>
+      <p class="list-item-info" matLine>{{list.info}}</p>
+    </div>
+  </mat-list-item>
+</mat-action-list>

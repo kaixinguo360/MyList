@@ -21,6 +21,7 @@ import { ListEditComponent } from './page/list-edit/list-edit.component';
 import { ItemDetailComponent, ItemDetailDialogComponent, ItemDetailPopupComponent } from './page/item-detail/item-detail.component';
 import { ItemEditComponent, ItemEditDialogComponent } from './page/item-edit/item-edit.component';
 import { NewItemComponent } from './page/new-item/new-item.component';
+import { ListSelectorComponent } from './com/list-selector/list-selector.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { NewItemComponent } from './page/new-item/new-item.component';
     ItemEditDialogComponent,
     ItemEditComponent,
     NewItemComponent,
+    ListSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,7 +55,8 @@ import { NewItemComponent } from './page/new-item/new-item.component';
   bootstrap: [ AppComponent ],
   entryComponents: [
     ItemDetailPopupComponent,
-    ItemEditDialogComponent
+    ItemEditDialogComponent,
+    ListSelectorComponent
   ]
 })
 export class AppModule { }

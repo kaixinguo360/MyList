@@ -7,45 +7,6 @@
   <div class="grid-container">
     <div class="list-title-container">
       <h1 class="list-title">{{list.title}}</h1>
-      <div class="icon-box">
-        <button mat-raised-button
-                class="round-btn"
-                (click)="selectAll()"
-                *ngIf="selectMode">
-          <mat-icon>select_all</mat-icon>
-        </button>
-        <button mat-raised-button
-                class="round-btn"
-                (click)="deleteSelected()"
-                *ngIf="selectMode">
-          <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-raised-button
-                class="round-btn"
-                [matMenuTriggerFor]="moveMenu"
-                *ngIf="selectMode">
-          <mat-icon>style</mat-icon>
-        </button>
-        <mat-menu #moveMenu xPosition="before" yPosition="above">
-          <button mat-menu-item (click)="createList()">新建列表</button>
-          <button mat-menu-item *ngFor="let l of lists" (click)="moveSelected(l)">{{l.title}}</button>
-        </mat-menu>
-        <button mat-raised-button
-                class="round-btn"
-                [matMenuTriggerFor]="addMenu"
-                *ngIf="!selectMode">
-          <mat-icon>add</mat-icon>
-        </button>
-        <mat-menu #addMenu xPosition="before">
-          <button mat-menu-item class="menu" (click)="appComponent.addItem()">普通收藏</button>
-          <button mat-menu-item class="menu" (click)="appComponent.addItemFromPage()">来自网页</button>
-        </mat-menu>
-        <button mat-raised-button
-                class="round-btn"
-                (click)="toggleSelectMode()">
-          <mat-icon>collections_bookmark</mat-icon>
-        </button>
-      </div>
       <button mat-icon-button
               class="icon-btn"
               *ngIf="list.id!==0"
@@ -53,7 +14,7 @@
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <h4 class="mat-h4 list-info" *ngIf="list.info">{{list.info}}</h4>
+    <div class="list-info" *ngIf="list.info">{{list.info}}</div>
     <ngx-masonry
       [useImagesLoaded]="false"
       [options]="masonryOptions"
@@ -80,4 +41,39 @@
   <div class="loading-icon" *ngIf="isLoading||items.length!==loadedItems.length" (click)="loadMoreItems()">
     <mat-icon>autorenew</mat-icon>正在加载
   </div>
+</div>
+<div class="icon-box">
+  <button mat-raised-button
+          class="round-btn"
+          (click)="selectAll()"
+          *ngIf="selectMode">
+    <mat-icon>select_all</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          (click)="deleteSelected()"
+          *ngIf="selectMode">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          (click)="moveSelected()"
+          *ngIf="selectMode">
+    <mat-icon>style</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [matMenuTriggerFor]="addMenu"
+          *ngIf="!selectMode">
+    <mat-icon>add</mat-icon>
+  </button>
+  <mat-menu #addMenu xPosition="before">
+    <button mat-menu-item class="menu" (click)="appComponent.addItem()">普通收藏</button>
+    <button mat-menu-item class="menu" (click)="appComponent.addItemFromPage()">来自网页</button>
+  </mat-menu>
+  <button mat-raised-button
+          class="round-btn"
+          (click)="toggleSelectMode()">
+    <mat-icon>collections_bookmark</mat-icon>
+  </button>
 </div>

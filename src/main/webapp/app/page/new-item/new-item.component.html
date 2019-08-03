@@ -16,12 +16,9 @@
   </button>
   <button mat-raised-button
           class="round-btn"
-          [matMenuTriggerFor]="saveMenu">
+          (click)="saveToList()">
     <mat-icon>save</mat-icon>
   </button>
-  <mat-menu #saveMenu xPosition="before" yPosition="above">
-    <button mat-menu-item *ngFor="let l of lists" (click)="saveToList(l)">{{l.title}}</button>
-  </mat-menu>
 </div>
 <div>
   <div class="grid-container">

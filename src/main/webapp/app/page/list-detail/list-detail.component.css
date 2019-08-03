@@ -12,11 +12,14 @@
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .list-title {
   flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .icon-btn {
@@ -44,7 +47,10 @@
 
 .list-info {
   max-width: 1200px;
-  margin: 0 auto 16px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+  font-size: 15px;
+  word-wrap:break-word;
 }
 
 .counter {

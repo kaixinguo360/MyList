@@ -9,13 +9,14 @@ import { catchError, tap } from 'rxjs/operators';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 
 import { environment } from '../../../environments/environment';
+import { AppComponent } from '../../app.component';
 import { StorageService } from '../../service/storage.service';
 import { ProxyService } from '../../service/proxy.service';
 import { List, ListService } from '../../service/list.service';
 import { Item, ItemService } from '../../service/item.service';
 import { ItemDetailPopupComponent } from '../item-detail/item-detail.component';
 import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
-import { AppComponent } from '../../app.component';
+import { ListSelectorComponent } from '../../com/list-selector/list-selector.component';
 
 interface SelectableItem extends Item {
   selected?: boolean;
@@ -48,7 +49,6 @@ export class ListDetailComponent implements OnInit {
   };
 
   selectMode = false;
-  lists: List[];
 
   openItemPopup(index: number) {
     const dialogRef: MatDialogRef<ItemDetailPopupComponent> = this.dialog.open(
@@ -101,23 +101,10 @@ export class ListDetailComponent implements OnInit {
   }
 
   toggleSelectMode() {
+    this.selectMode = !this.selectMode;
     if (!this.selectMode) {
-      if (!this.lists) {
-        this.listService.getAll().pipe(
-          tap(lists => {
-            lists.unshift({ id: 0, title: '默认列表' });
-            this.lists = lists.filter(l => l.id !== this.list.id);
-          }),
-          catchError(err => {
-            alert('获取列表信息时出错!');
-            return of(err);
-          })
-        ).subscribe();
-      }
-    } else {
       this.items.forEach(item => item.selected = false);
     }
-    this.selectMode = !this.selectMode;
   }
 
   selectAll() {
@@ -148,23 +135,28 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
-  moveSelected(list: List) {
+  moveSelected() {
     const selectedItems = this.items.filter(i => i.selected);
     if (selectedItems.length) {
-      this.selectMode = !this.selectMode;
-      this.listService.addItems(list.id, selectedItems).pipe(
-        tap(() => {
-          this.loadedItems = this.loadedItems.filter(i => !i.selected);
-          this.items = this.items.filter(i => !i.selected);
-        }),
-        catchError(err => {
-          alert('移动失败!');
-          this.items.forEach(item => item.selected = false);
-          return of(err);
-        })
-      ).subscribe();
-    } else {
-      this.toggleSelectMode();
+      ListSelectorComponent.getList(this.dialog,
+        `移动${selectedItems.length}个项目到指定列表`,
+        l => l.id !== this.list.id
+      ).subscribe(list => {
+        if (list) {
+          this.selectMode = !this.selectMode;
+          this.listService.addItems(list.id, selectedItems).pipe(
+            tap(() => {
+              this.loadedItems = this.loadedItems.filter(i => !i.selected);
+              this.items = this.items.filter(i => !i.selected);
+            }),
+            catchError(err => {
+              alert('移动失败!');
+              this.items.forEach(item => item.selected = false);
+              return of(err);
+            })
+          ).subscribe();
+        }
+      });
     }
   }
 

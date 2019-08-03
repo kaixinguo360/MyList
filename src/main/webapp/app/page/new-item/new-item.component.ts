@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatDialog } from '@angular/material';
 
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
 import { catchError, tap } from 'rxjs/operators';
@@ -10,8 +11,8 @@ import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StorageService } from '../../service/storage.service';
 import { ProxyService } from '../../service/proxy.service';
-import { List, ListService } from '../../service/list.service';
 import { Image, Item, ItemService } from '../../service/item.service';
+import { ListSelectorComponent } from '../../com/list-selector/list-selector.component';
 
 interface SelectableImage extends Image, Item {
   selected?: boolean;
@@ -39,7 +40,6 @@ export class NewItemComponent implements OnInit {
 
   src: SafeUrl;
   isLoading = true;
-  lists: List[];
 
   item: Item = {
     title: '',
@@ -60,32 +60,36 @@ export class NewItemComponent implements OnInit {
     }
   }
 
-  saveToList(list: List) {
+  saveToList() {
     const selectedImages = this.images.filter(i => i.selected);
     if (selectedImages.length) {
-      this.item.list = list.id !== 0 ? { id: list.id } : null;
-      this.item.img = selectedImages[0].img;
-      if (selectedImages.length > 1) {
-        selectedImages.forEach(image => {
-          image.url = image.img;
-          this.item.images.push(image);
-        });
-      }
-      this.itemService.add(this.item).pipe(
-        tap(() => {
-          this.images = this.images.filter(i => !i.selected);
-          if (list.id !== 0) {
-            this.router.navigate([ '/list', list.id ], { replaceUrl: true });
-          } else {
-            this.router.navigate([ '/list/default' ], { replaceUrl: true });
+      ListSelectorComponent.getList(this.dialog).subscribe(list => {
+        if (list) {
+          this.item.list = list.id !== 0 ? { id: list.id } : null;
+          this.item.img = selectedImages[0].img;
+          if (selectedImages.length > 1) {
+            selectedImages.forEach(image => {
+              image.url = image.img;
+              this.item.images.push(image);
+            });
           }
-        }),
-        catchError(err => {
-          alert('保存失败!');
-          this.images.forEach(item => item.selected = false);
-          return of(err);
-        })
-      ).subscribe();
+          this.itemService.add(this.item).pipe(
+            tap(() => {
+              this.images = this.images.filter(i => !i.selected);
+              if (list.id !== 0) {
+                this.router.navigate([ '/list', list.id ], { replaceUrl: true });
+              } else {
+                this.router.navigate([ '/list/default' ], { replaceUrl: true });
+              }
+            }),
+            catchError(err => {
+              alert('保存失败!');
+              this.images.forEach(item => item.selected = false);
+              return of(err);
+            })
+          ).subscribe();
+        }
+      });
     }
   }
 
@@ -109,12 +113,15 @@ export class NewItemComponent implements OnInit {
   }
 
   onImageLoad($event, index: number) {
-    const size = $event.naturalWidth<$event.naturalHeight?$event.naturalWidth:$event.naturalHeight;
-    const minImageSize = Number(this.storageService.get('minImageSize', environment.minImageSize + ''));
-    if (size < minImageSize) {
-      this.images.splice(index, 1);
+    if ($event !== null) {
+      const size = $event.naturalWidth < $event.naturalHeight ? $event.naturalWidth : $event.naturalHeight;
+      const minImageSize = Number(this.storageService.get('minImageSize', environment.minImageSize + ''));
+      if (size < minImageSize) {
+        this.images.splice(index, 1);
+      }
+    } else {
+      this.images[index].title = '图像加载失败';
     }
-    this.images[index].title = $event.naturalWidth + 'x' + $event.naturalHeight;
     this.updateLayout();
   }
 
@@ -135,11 +142,11 @@ export class NewItemComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private dialog: MatDialog,
     private domSanitizer: DomSanitizer,
     private breakpointObserver: BreakpointObserver,
     private storageService: StorageService,
     private proxyService: ProxyService,
-    private listService: ListService,
     private itemService: ItemService
   ) { }
 
@@ -168,20 +175,6 @@ export class NewItemComponent implements OnInit {
     ).subscribe();
 
     this.resize();
-
-    // Get All Lists
-    if (!this.lists) {
-      this.listService.getAll().pipe(
-        tap(lists => {
-          lists.unshift({ id: 0, title: '默认列表' });
-          this.lists = lists;
-        }),
-        catchError(err => {
-          alert('获取列表信息时出错!');
-          return of(err);
-        })
-      ).subscribe();
-    }
   }
 
 }
