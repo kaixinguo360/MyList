@@ -1,0 +1,19 @@
+<ngx-masonry
+  [useImagesLoaded]="false"
+  [options]="masonryOptions"
+  class="masonry-container"
+  [style.width.px]="masonryWidth"
+  #masonry>
+  <div ngxMasonryItem
+       *ngFor="let item of loadedItems;index as index"
+       class="list-card-container"
+       [style.width.px]="columnWidth">
+    <app-item-card
+      [item]="item"
+      [maxLength]="this.columnWidth * 0.3"
+      [selected]="this.selectMode&&item.selected"
+      (onLoad)="this.masonry.layout()"
+      (click)="selectMode?item.selected=!item.selected:openItemPopup(index)"
+    ></app-item-card>
+  </div>
+</ngx-masonry>

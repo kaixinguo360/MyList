@@ -11,7 +11,7 @@
 <div class="icon-box">
   <button mat-raised-button
           class="round-btn"
-          (click)="selectAll()">
+          (click)="masonry.selectAll()">
     <mat-icon>select_all</mat-icon>
   </button>
   <button mat-raised-button
@@ -22,25 +22,7 @@
 </div>
 <div>
   <div class="grid-container">
-    <ngx-masonry
-      [useImagesLoaded]="false"
-      [options]="masonryOptions"
-      class="masonry-container"
-      [style.width.px]="masonryWidth"
-      #masonry>
-      <div ngxMasonryItem
-           *ngFor="let image of images;index as index"
-           class="list-card-container"
-           [style.width.px]="columnWidth">
-        <app-item-card
-          [item]="image"
-          [maxLength]="this.columnWidth * 0.3"
-          [selected]="image.selected"
-          (onLoad)="onImageLoad($event, index)"
-          (click)="image.selected=!image.selected"
-        ></app-item-card>
-      </div>
-    </ngx-masonry>
+    <app-item-card-masonry #masonry></app-item-card-masonry>
   </div>
   <div class="loading-icon" *ngIf="isLoading">
     <mat-icon>autorenew</mat-icon>正在加载

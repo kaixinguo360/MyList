@@ -3,9 +3,9 @@
      [infiniteScrollDistance]="0"
      [infiniteScrollThrottle]="300"
      [scrollWindow]="false"
-     (scrolled)="loadMoreItems()">
+     (scrolled)="masonry.loadMoreItems()">
   <div class="grid-container">
-    <div class="list-title-container">
+    <div class="list-title-container" *ngIf="list">
       <h1 class="list-title">{{list.title}}</h1>
       <button mat-icon-button
               class="icon-btn"
@@ -14,57 +14,41 @@
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <div class="list-info" *ngIf="list.info">{{list.info}}</div>
-    <ngx-masonry
-      [useImagesLoaded]="false"
-      [options]="masonryOptions"
-      class="masonry-container"
-      [style.width.px]="masonryWidth"
-      #masonry>
-      <div ngxMasonryItem
-           *ngFor="let item of loadedItems;index as index"
-           class="list-card-container"
-           [style.width.px]="columnWidth">
-        <app-item-card
-          [item]="item"
-          [maxLength]="this.columnWidth * 0.3"
-          [selected]="this.selectMode&&item.selected"
-          (onLoad)="updateLayout()"
-          (click)="selectMode?item.selected=!item.selected:openItemPopup(index)"
-        ></app-item-card>
-      </div>
-    </ngx-masonry>
+    <h4 class="mat-h4 list-info" *ngIf="list&&list.info">{{list.info}}</h4>
+    <app-item-card-masonry #masonry></app-item-card-masonry>
   </div>
-  <div class="counter" *ngIf="!isLoading" (click)="loadMoreItems()">
-    - {{items.length - loadedItems.length}}/{{items.length}} -
+  <div class="counter" *ngIf="!isLoading" (click)="masonry.loadMoreItems()">
+    - {{masonry.items.length - masonry.loadedItems.length}}/{{masonry.items.length}} -
   </div>
-  <div class="loading-icon" *ngIf="isLoading||items.length!==loadedItems.length" (click)="loadMoreItems()">
+  <div class="loading-icon" *ngIf="isLoading||masonry.items.length!==masonry.loadedItems.length" (click)="masonry.loadMoreItems()">
     <mat-icon>autorenew</mat-icon>正在加载
   </div>
 </div>
 <div class="icon-box">
   <button mat-raised-button
           class="round-btn"
-          (click)="selectAll()"
-          *ngIf="selectMode">
+          (click)="masonry.selectAll()"
+          *ngIf="masonry.selectMode">
     <mat-icon>select_all</mat-icon>
   </button>
   <button mat-raised-button
           class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
           (click)="deleteSelected()"
-          *ngIf="selectMode">
+          *ngIf="masonry.selectMode">
     <mat-icon>delete</mat-icon>
   </button>
   <button mat-raised-button
           class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
           (click)="moveSelected()"
-          *ngIf="selectMode">
+          *ngIf="masonry.selectMode">
     <mat-icon>style</mat-icon>
   </button>
   <button mat-raised-button
           class="round-btn"
           [matMenuTriggerFor]="addMenu"
-          *ngIf="!selectMode">
+          *ngIf="!masonry.selectMode">
     <mat-icon>add</mat-icon>
   </button>
   <mat-menu #addMenu xPosition="before">

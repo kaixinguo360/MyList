@@ -13,6 +13,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModules } from './material-modules.module';
 import { ItemCardComponent } from './com/item-card/item-card.component';
+import { ItemCardMasonryComponent } from './com/item-card-masonry/item-card-masonry.component';
+import { ListSelectorComponent } from './com/list-selector/list-selector.component';
 
 import { LoginComponent } from './page/login/login.component';
 import { ListComponent } from './page/list/list.component';
@@ -21,12 +23,13 @@ import { ListEditComponent } from './page/list-edit/list-edit.component';
 import { ItemDetailComponent, ItemDetailDialogComponent, ItemDetailPopupComponent } from './page/item-detail/item-detail.component';
 import { ItemEditComponent, ItemEditDialogComponent } from './page/item-edit/item-edit.component';
 import { NewItemComponent } from './page/new-item/new-item.component';
-import { ListSelectorComponent } from './com/list-selector/list-selector.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ItemCardComponent,
+    ItemCardMasonryComponent,
+    ListSelectorComponent,
     LoginComponent,
     ListComponent,
     ListDetailComponent,
@@ -37,7 +40,6 @@ import { ListSelectorComponent } from './com/list-selector/list-selector.compone
     ItemEditDialogComponent,
     ItemEditComponent,
     NewItemComponent,
-    ListSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,9 +56,9 @@ import { ListSelectorComponent } from './com/list-selector/list-selector.compone
   providers: [],
   bootstrap: [ AppComponent ],
   entryComponents: [
+    ListSelectorComponent,
     ItemDetailPopupComponent,
-    ItemEditDialogComponent,
-    ListSelectorComponent
+    ItemEditDialogComponent
   ]
 })
 export class AppModule { }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
-import { Item } from './item.service';
+import { Item, ItemService } from './item.service';
 
 export interface List {
   id?: number;
@@ -23,16 +23,29 @@ export interface List {
 export class ListService {
 
   get(id: number): Observable<List> {
-    return this.apiService.get<List>(`list/${id}`);
+    if (id === 0) {
+      return of({
+        id: 0,
+        createdTime: 0,
+        updatedTime: 0,
+        title: '默认列表'
+      });
+    } else {
+      return this.apiService.get<List>(`list/${id}`);
+    }
   }
 
   getItems(id: number): Observable<Item[]> {
-    return this.apiService.get<Item[]>(`list/${id}/item`).pipe(
-      map(items => {
-        this.orderService.sort(items);
-        return items;
-      })
-    );
+    if (id === 0) {
+      return this.itemService.getAll('list:none');
+    } else {
+      return this.apiService.get<Item[]>(`list/${id}/item`).pipe(
+        map(items => {
+          this.orderService.sort(items);
+          return items;
+        })
+      );
+    }
   }
 
   getAll(search?: string): Observable<List[]> {
@@ -51,6 +64,8 @@ export class ListService {
 
   addItems(id: number, items: Item[]): Observable<Message> {
     const ids: number[] = items.map(item => item.id);
+    items.forEach(item => item.list = { id: id});
+    this.itemService.onUpdate.next({ action: 'update', items: items });
     return this.apiService.post<Message>(`list/${id}/item`, ids);
   }
 
@@ -64,6 +79,7 @@ export class ListService {
 
   constructor(
     private apiService: ApiService,
+    private itemService: ItemService,
     private orderService: OrderService
   ) { }
 }

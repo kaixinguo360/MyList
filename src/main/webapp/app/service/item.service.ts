@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, Subject } from 'rxjs';
-import {map, tap} from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { Order, OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
@@ -36,8 +36,7 @@ export interface Item {
 }
 
 export interface UpdateEvent {
-  type: string;
-  item?: Item;
+  action: 'add'|'update'|'delete';
   items?: Item[];
 }
 
@@ -71,25 +70,25 @@ export class ItemService {
 
   add(item: Item): Observable<Item> {
     return this.apiService.post<Item>('item', item).pipe(
-      tap(i => this.onUpdate.next({ type: 'add', item: i }))
+      tap(i => this.onUpdate.next({ action: 'add', items: [i] }))
     );
   }
 
   update(item: Item): Observable<Item> {
     return this.apiService.put<Item>('item', item).pipe(
-      tap(i => this.onUpdate.next({ type: 'update', item: i }))
+      tap(i => this.onUpdate.next({ action: 'update', items: [i] }))
     );
   }
 
   delete(id: number): Observable<Message> {
     return this.apiService.delete<Message>('item', [{ id: id }]).pipe(
-      tap(() => this.onUpdate.next({ type: 'delete', item: { id: id } }))
+      tap(() => this.onUpdate.next({ action: 'delete', items: [{ id: id }] }))
     );
   }
 
   deleteAll(items: Item[]): Observable<Message> {
     return this.apiService.delete<Message>('item', items).pipe(
-      tap(() => this.onUpdate.next({ type: 'deleteAll', items: items }))
+      tap(() => this.onUpdate.next({ action: 'delete', items: items }))
     );
   }
 
