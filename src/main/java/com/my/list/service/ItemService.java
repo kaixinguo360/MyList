@@ -78,6 +78,17 @@ public class ItemService {
         }
     }
 
+    //Add Tag
+    @Transactional
+    public void addTag(@NotNull User user, List<Integer> itemIds, Integer tagId) throws DataException {
+        Tag tag = this.tagService.get(user, tagId);
+        Iterable<Item> items = itemRepository.findAllByUserIdAndIds(user.getId(), itemIds);
+        for (Item item : items) {
+            item.getTags().add(tag);
+        }
+        itemRepository.saveAll(items);
+    }
+
     //Search
     @NotNull
     public Iterable<Item> search(@NotNull User user, String title) {

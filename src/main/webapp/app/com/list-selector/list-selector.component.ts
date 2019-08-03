@@ -17,7 +17,8 @@ export class ListSelectorComponent implements OnInit {
   title: string;
   filter: (item: List, index: number, array: List[]) => boolean;
   lists: List[];
-  isCreate = false;
+  showCreate = false;
+  isCreating = false;
 
   static getList(dialog: MatDialog, title?: string, filter?: (item: List, index: number, array: List[]) => boolean): Observable<List> {
     const dialogRef: MatDialogRef<ListSelectorComponent> = dialog.open(
@@ -35,7 +36,17 @@ export class ListSelectorComponent implements OnInit {
   }
 
   create(title: string) {
-    this.listService.add({ title: title }).subscribe(list => this.dialogRef.close(list));
+    if (title) {
+      this.isCreating = true;
+      this.listService.add({ title: title }).subscribe(list => {
+        list.info = '新增列表';
+        this.lists.unshift(list);
+        this.showCreate = false;
+        this.isCreating = false;
+      });
+    } else {
+      alert('列表名称不能为空!');
+    }
   }
 
   select(list: List) {

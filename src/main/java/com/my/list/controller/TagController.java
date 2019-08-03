@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @Authorization
@@ -82,12 +83,22 @@ public class TagController {
 
     // ------------------------------ Item ------------------------------ //
 
-    //GetAll
+    //GetAllItems
     @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
     @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
     public Iterable<Item> getItemsByTagId(@CurrentUser User user,
                                           @PathVariable int tagId) {
         return itemService.getAllByTagId(user, tagId);
+    }
+
+    //AddToItems
+    @JSON
+    @RequestMapping(value = "/{tagId}/item", method = RequestMethod.POST)
+    public MessageResponse addTagByItemIds(@CurrentUser User user,
+                                            @PathVariable int tagId,
+                                            @RequestBody List<Integer> itemIds) throws DataException {
+        itemService.addTag(user, itemIds, tagId);
+        return new MessageResponse("Add Tag Successful");
     }
 }

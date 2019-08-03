@@ -2,16 +2,18 @@
   {{title?title:'请选择一个列表'}}
 </div>
 <mat-action-list>
-  <mat-list-item class="list-item" (click)="isCreate=true;">
-    <div *ngIf="!isCreate" class="list-item-image" [style.background-image]="'url(\'/favicon.ico\')'"></div>
-    <div *ngIf="!isCreate">
+  <mat-list-item class="list-item" (click)="showCreate=true;">
+    <div *ngIf="!showCreate" class="list-item-image" [style.background-image]="'url(\'/favicon.ico\')'"></div>
+    <div *ngIf="!showCreate">
       <p class="list-item-title" matLine>新建列表</p>
       <p class="list-item-info" matLine></p>
     </div>
-    <div *ngIf="isCreate" class="list-item">
+    <div *ngIf="showCreate" class="list-item">
       <mat-form-field class="full-width list-item-create">
-        <input matInput #title placeholder="列表名称" maxlength="1023">
-        <mat-icon matSuffix (click)="create(title.value)">add</mat-icon>
+        <input matInput #title [disabled]="isCreating" placeholder="列表名称" maxlength="1023">
+        <button matSuffix mat-icon-button [disabled]="isCreating" (click)="create(title.value)">
+          <mat-icon>add</mat-icon>
+        </button>
       </mat-form-field>
     </div>
   </mat-list-item>

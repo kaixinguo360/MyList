@@ -6,6 +6,7 @@ import { map, tap } from 'rxjs/operators';
 import { Order, OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
 import { List } from './list.service';
+import { Tag } from './tag.service';
 
 export interface Image {
   createdTime?: number;
@@ -26,7 +27,7 @@ export interface Item {
   img?: string;
 
   list?: List;
-  tags?: object[];
+  tags?: Tag[];
 
   texts?: object[];
   images?: Image[];

@@ -11,6 +11,9 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
 
     Iterable<Item> findAllByUserId(int userId);
 
+    @Query("SELECT i FROM Item i where i.userId = ?1 and i.id in ?2")
+    Iterable<Item> findAllByUserIdAndIds(int userId, List<Integer> id);
+
     @Query("SELECT i FROM Item i where i.userId = ?1 and i.title like %?2%")
     Iterable<Item> findAllByUserIdAndTitleLike(int userId, String title);
 
@@ -29,7 +32,7 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
 
     @Modifying
     @Query("UPDATE Item i SET i.list = ?1 where i.userId = ?2 and i.id in ?3")
-    void setListByUserIdAndIds(MyList list, int useId, List<Integer> itemId);
+    void setListByUserIdAndIds(MyList list, int useId, List<Integer> itemIds);
     
     void deleteAllByUserIdAndIdIn(int userId, Collection<Integer> id);
 }

@@ -11,7 +11,9 @@ import { StorageService } from '../../service/storage.service';
 import { ProxyService } from '../../service/proxy.service';
 import { ItemCardMasonryComponent } from '../../com/item-card-masonry/item-card-masonry.component';
 import { ListSelectorComponent } from '../../com/list-selector/list-selector.component';
+import { TagSelectorComponent } from '../../com/tag-selector/tag-selector.component';
 import { List, ListService } from '../../service/list.service';
+import { TagService } from '../../service/tag.service';
 import { ItemService } from '../../service/item.service';
 
 @Component({
@@ -43,6 +45,25 @@ export class ListDetailComponent implements OnInit {
     }
   }
 
+  tagSelected() {
+    const selectedItems = this.masonry.getSelectedItems();
+    if (selectedItems.length) {
+      TagSelectorComponent.getTags(this.dialog,
+        `为${selectedItems.length}个项目指定标签`
+      ).subscribe(tag => {
+        if (tag) {
+          this.masonry.enableSelectMode(false);
+          this.tagService.addItems(tag, selectedItems).pipe(
+            catchError(err => {
+              alert('指定标签失败!');
+              return of(err);
+            })
+          ).subscribe();
+        }
+      });
+    }
+  }
+
   moveSelected() {
     const selectedItems = this.masonry.getSelectedItems();
     if (selectedItems.length) {
@@ -52,7 +73,7 @@ export class ListDetailComponent implements OnInit {
       ).subscribe(list => {
         if (list) {
           this.masonry.enableSelectMode(false);
-          this.listService.addItems(list.id, selectedItems).pipe(
+          this.listService.addItems(list, selectedItems).pipe(
             catchError(err => {
               alert('移动失败!');
               return of(err);
@@ -98,6 +119,7 @@ export class ListDetailComponent implements OnInit {
     private storageService: StorageService,
     private proxyService: ProxyService,
     private listService: ListService,
+    private tagService: TagService,
     private itemService: ItemService,
     public appComponent: AppComponent
   ) { }

@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 
 import { OrderService } from './order.service';
 import { ApiService, Message } from './api.service';
-import { Item } from './item.service';
+import { Item, ItemService } from './item.service';
 
 export interface Tag {
   id?: number;
@@ -48,6 +48,17 @@ export class TagService {
     return this.apiService.post<Tag>('tag', tag);
   }
 
+  addItems(tag: Tag, items: Item[]): Observable<Message> {
+    const ids: number[] = items.map(item => item.id);
+    items.forEach(item => {
+      if (item.tags) {
+        item.tags.push(tag);
+      }
+    });
+    this.itemService.onUpdate.next({ action: 'update', items: items });
+    return this.apiService.post<Message>(`tag/${tag.id}/item`, ids);
+  }
+
   update(tag: Tag): Observable<Tag> {
     return this.apiService.put<Tag>('tag', tag);
   }
@@ -58,6 +69,7 @@ export class TagService {
 
   constructor(
     private apiService: ApiService,
+    private itemService: ItemService,
     private orderService: OrderService
   ) { }
 }

@@ -41,9 +41,16 @@
   <button mat-raised-button
           class="round-btn"
           [disabled]="masonry.getSelectedItems().length===0"
-          (click)="moveSelected()"
+          (click)="tagSelected()"
           *ngIf="masonry.selectMode">
     <mat-icon>style</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
+          (click)="moveSelected()"
+          *ngIf="masonry.selectMode">
+    <mat-icon>move_to_inbox</mat-icon>
   </button>
   <button mat-raised-button
           class="round-btn"

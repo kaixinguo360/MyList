@@ -62,11 +62,11 @@ export class ListService {
     return this.apiService.post<List>('list', list);
   }
 
-  addItems(id: number, items: Item[]): Observable<Message> {
+  addItems(list: List, items: Item[]): Observable<Message> {
     const ids: number[] = items.map(item => item.id);
-    items.forEach(item => item.list = { id: id});
+    items.forEach(item => item.list = list);
     this.itemService.onUpdate.next({ action: 'update', items: items });
-    return this.apiService.post<Message>(`list/${id}/item`, ids);
+    return this.apiService.post<Message>(`list/${list.id}/item`, ids);
   }
 
   update(list: List): Observable<List> {

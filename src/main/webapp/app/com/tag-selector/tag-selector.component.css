@@ -1,0 +1,23 @@
+.tag-item {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.tag-item-create {
+  margin-top: 20px;
+}
+
+.tag-item-title {
+  margin-bottom: 0;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.tag-item-info {
+  margin-top: 5px;
+  color: gray;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

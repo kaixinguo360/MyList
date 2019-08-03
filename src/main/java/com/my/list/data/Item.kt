@@ -53,7 +53,7 @@ data class Item(
             CascadeType.REFRESH
         ]
     )
-    @JoinTable(name = "post_tag")
+    @JoinTable(name = "item_tag")
     var tags: Set<Tag> = HashSet()
 
 /* ---------- * ---------- * ---------- * ---------- */
