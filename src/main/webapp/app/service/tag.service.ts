@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import { OrderService } from './order.service';
-import { ApiService, Message } from './api.service';
-import { Item, ItemService } from './item.service';
+import {OrderService} from './order.service';
+import {ApiService, Message} from './api.service';
+import {Item, ItemService} from './item.service';
 
 export interface Tag {
   id?: number;
@@ -48,15 +48,25 @@ export class TagService {
     return this.apiService.post<Tag>('tag', tag);
   }
 
-  addItems(tag: Tag, items: Item[]): Observable<Message> {
-    const ids: number[] = items.map(item => item.id);
+  addItems(tags: Tag[], items: Item[], isClear = false): Observable<Message> {
+    const params = {
+      'itemIds': items.map(item => item.id),
+      'tagIds': tags.map(tag => tag.id)
+    };
     items.forEach(item => {
       if (item.tags) {
-        item.tags.push(tag);
+        if (isClear) { item.tags.length = 0; }
+        tags.forEach(tag => {
+          let has = false;
+          item.tags.forEach(t => has = has || t.id === tag.id);
+          if (!has) {
+            item.tags.push(tag);
+          }
+        });
       }
     });
     this.itemService.onUpdate.next({ action: 'update', items: items });
-    return this.apiService.post<Message>(`tag/${tag.id}/item`, ids);
+    return this.apiService.request<Message>('post', 'tag/item', params, { isClear: String(isClear) });
   }
 
   update(tag: Tag): Observable<Tag> {

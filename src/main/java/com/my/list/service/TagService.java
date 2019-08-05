@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TagService {
@@ -27,13 +28,19 @@ public class TagService {
     //Get
     @NotNull
     public Tag get(@NotNull User user, int tagId) throws DataException {
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-        if (tag != null && tag.getUserId() == user.getId()) {
+        Tag tag = tagRepository.findByUserIdAndId(user.getId(), tagId);
+        if (tag != null) {
             return tag;
         } else {
             logger.info("getTag: Tag(" + tagId + ") Not Exist");
             throw new DataException("Tag(" + tagId + ") Not Exist", ErrorType.NOT_FOUND);
         }
+    }
+
+    //GetAll
+    @NotNull
+    public Iterable<Tag> getAll(@NotNull User user, List<Integer> tagIds) {
+        return tagRepository.findAllByUserIdAndIdIn(user.getId(), tagIds);
     }
 
     //GetAll

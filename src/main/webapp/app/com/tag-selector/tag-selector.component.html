@@ -1,7 +1,10 @@
-<div>
-  {{title?title:'请选择标签'}}
+<div class="head">
+  <div class="title">{{title?title:'请选择标签'}}</div>
+  <button class="save-btn" mat-icon-button (click)="select(tagList.selectedOptions.selected)">
+    <mat-icon>save</mat-icon>
+  </button>
 </div>
-<mat-action-list>
+<mat-selection-list #tagList>
   <mat-list-item class="tag-item" (click)="showCreate=true;">
     <div *ngIf="!showCreate">
       <p class="tag-item-title" matLine>新建标签</p>
@@ -16,11 +19,18 @@
       </mat-form-field>
     </div>
   </mat-list-item>
-  <mat-list-item
+  <mat-list-option
+    class="tag-item clear"
+    *ngIf="hasClear"
+    [value]="'clear'">
+    <p class="tag-item-title" matLine>[清空]</p>
+    <p class="tag-item-info" matLine></p>
+  </mat-list-option>
+  <mat-list-option
     class="tag-item"
     *ngFor="let tag of tags"
-    (click)="select(tag)">
+    [value]="tag">
     <p class="tag-item-title" matLine>{{tag.title}}</p>
     <p class="tag-item-info" matLine>{{tag.info}}</p>
-  </mat-list-item>
-</mat-action-list>
+  </mat-list-option>
+</mat-selection-list>

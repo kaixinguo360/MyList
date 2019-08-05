@@ -32,13 +32,19 @@ public class ItemService {
     //Get
     @NotNull
     public Item get(@NotNull User user, int postId) throws DataException {
-        Item item = itemRepository.findById(postId).orElse(null);
-        if (item != null && item.getUserId() == user.getId()) {
+        Item item = itemRepository.findByUserIdAndId(user.getId(), postId);
+        if (item != null) {
             return item;
         } else {
             logger.info("getItem: Item(" + postId + ") Not Exist");
             throw new DataException("Item(" + postId + ") Not Exist", ErrorType.NOT_FOUND);
         }
+    }
+
+    //GetAll
+    @NotNull
+    public Iterable<Item> getAll(@NotNull User user, List<Integer> postIds) {
+        return itemRepository.findAllByUserIdAndIdIn(user.getId(), postIds);
     }
 
     //GetAll
@@ -72,19 +78,22 @@ public class ItemService {
     public void setList(@NotNull User user, List<Integer> itemIds, Integer listId) throws DataException {
         if (listId != null) {
             MyList list = this.myListService.get(user, listId);
-            itemRepository.setListByUserIdAndIds(list, user.getId(), itemIds);
+            itemRepository.setListByUserIdAndIdIn(list, user.getId(), itemIds);
         } else {
-            itemRepository.setListByUserIdAndIds(null, user.getId(), itemIds);
+            itemRepository.setListByUserIdAndIdIn(null, user.getId(), itemIds);
         }
     }
 
-    //Add Tag
+    //Add Tags
     @Transactional
-    public void addTag(@NotNull User user, List<Integer> itemIds, Integer tagId) throws DataException {
-        Tag tag = this.tagService.get(user, tagId);
-        Iterable<Item> items = itemRepository.findAllByUserIdAndIds(user.getId(), itemIds);
+    public void addTags(@NotNull User user, List<Integer> itemIds, List<Integer> tagIds, boolean isClear) {
+        Iterable<Item> items = this.getAll(user, itemIds);
+        Iterable<Tag> tags = this.tagService.getAll(user, tagIds);
         for (Item item : items) {
-            item.getTags().add(tag);
+            if (isClear) item.getTags().clear();
+            for (Tag tag : tags) {
+                item.getTags().add(tag);
+            }
         }
         itemRepository.saveAll(items);
     }

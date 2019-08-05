@@ -1,14 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {ActivatedRoute, Router} from '@angular/router';
 
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import {Observable, of, throwError} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 
-import { ProxyService } from '../../service/proxy.service';
-import { Item, ItemService } from '../../service/item.service';
-import { ItemEditDialogComponent } from '../item-edit/item-edit.component';
-import { Message } from '../../service/api.service';
+import {ProxyService} from '../../service/proxy.service';
+import {Item, ItemService} from '../../service/item.service';
+import {TagService} from '../../service/tag.service';
+import {ItemEditDialogComponent} from '../item-edit/item-edit.component';
+import {TagSelectorComponent} from '../../com/tag-selector/tag-selector.component';
+import {Message} from '../../service/api.service';
 
 @Component({
   selector: 'app-item-detail-dialog',
@@ -44,6 +46,19 @@ export class ItemDetailDialogComponent {
     dialogRef.componentInstance.itemId = this.item.id;
   }
 
+  tag() {
+    TagSelectorComponent.getTags(this.dialog).subscribe(res => {
+      if (res) {
+        this.tagService.addItems(res.tags, [ this.item ], res.isClear).pipe(
+          catchError(err => {
+            alert('指定标签失败!');
+            return of(err);
+          })
+        ).subscribe();
+      }
+    });
+  }
+
   delete(): Observable<Message> {
     if (confirm('确定要删除' + (this.item.title ? `收藏'${this.item.title}'` : '这个收藏') + '吗?')) {
       return this.itemService.delete(this.item.id);
@@ -73,7 +88,8 @@ export class ItemDetailDialogComponent {
   constructor(
     private dialog: MatDialog,
     private proxyService: ProxyService,
-    private itemService: ItemService
+    private itemService: ItemService,
+    private tagService: TagService
   ) { }
 
 }
@@ -81,24 +97,29 @@ export class ItemDetailDialogComponent {
 @Component({
   selector: 'app-item-detail',
   template: `
-    <div class="icon-box"
-         style="position:fixed; bottom:24px; right:24px;">
-      <button mat-raised-button
-              class="round-btn"
-              (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
-      <button mat-raised-button
-              class="round-btn"
-              (click)="dialog.edit()">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </div>
-    <div class="medium-card">
-      <mat-card>
-        <app-item-detail-dialog #dialog></app-item-detail-dialog>
-      </mat-card>
-    </div>
+      <div class="icon-box"
+           style="position:fixed; bottom:24px; right:24px;">
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="delete()">
+              <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="dialog.tag()">
+              <mat-icon>style</mat-icon>
+          </button>
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="dialog.edit()">
+              <mat-icon>edit</mat-icon>
+          </button>
+      </div>
+      <div class="medium-card">
+          <mat-card>
+              <app-item-detail-dialog #dialog></app-item-detail-dialog>
+          </mat-card>
+      </div>
   `,
   styleUrls: ['./item-detail.component.css']
 })
@@ -145,39 +166,44 @@ export class ItemDetailComponent implements OnInit {
 @Component({
   selector: 'app-item-detail-popup',
   template: `
-    <div class="icon-box" style="position:absolute; bottom:82px; right:24px;">
-      <button mat-raised-button
-              class="round-btn"
-              (click)="dialogService.closeAll()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <a target="_blank" [routerLink]="['/item', items[index].id]">
-        <button mat-raised-button
-                class="round-btn">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </a>
-      <button mat-raised-button
-              class="round-btn"
-              (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
-      <button mat-raised-button
-              class="round-btn"
-              (click)="dialog.edit()">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </div>
-    <app-item-detail-dialog #dialog></app-item-detail-dialog>
-    <div class="dialog-actions" (window:keydown)="keyDown($event)" *ngIf="items">
-      <button mat-raised-button class="dialog-button" (click)="previous()">
-        <mat-icon>navigate_before</mat-icon>
-      </button>
-      <button mat-raised-button class="dialog-button" mat-dialog-close>{{index}}</button>
-      <button mat-raised-button class="dialog-button" (click)="next()">
-        <mat-icon>navigate_next</mat-icon>
-      </button>
-    </div>
+      <div class="icon-box" style="position:absolute; bottom:82px; right:24px;">
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="dialogService.closeAll()">
+              <mat-icon>close</mat-icon>
+          </button>
+          <a target="_blank" [routerLink]="['/item', items[index].id]">
+              <button mat-raised-button
+                      class="round-btn">
+                  <mat-icon>open_in_new</mat-icon>
+              </button>
+          </a>
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="delete()">
+              <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="dialog.tag()">
+              <mat-icon>style</mat-icon>
+          </button>
+          <button mat-raised-button
+                  class="round-btn"
+                  (click)="dialog.edit()">
+              <mat-icon>edit</mat-icon>
+          </button>
+      </div>
+      <app-item-detail-dialog #dialog></app-item-detail-dialog>
+      <div class="dialog-actions" (window:keydown)="keyDown($event)" *ngIf="items">
+          <button mat-raised-button class="dialog-button" (click)="previous()">
+              <mat-icon>navigate_before</mat-icon>
+          </button>
+          <button mat-raised-button class="dialog-button" mat-dialog-close>{{index}}</button>
+          <button mat-raised-button class="dialog-button" (click)="next()">
+              <mat-icon>navigate_next</mat-icon>
+          </button>
+      </div>
   `,
   styleUrls: ['./item-detail.component.css']
 })

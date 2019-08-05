@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import {Component, OnInit} from '@angular/core';
+import {MatDialog, MatDialogRef, MatListOption} from '@angular/material';
 
-import { catchError, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
 
-import { Tag, TagService } from '../../service/tag.service';
+import {Tag, TagService} from '../../service/tag.service';
 
 @Component({
   selector: 'app-tag-selector',
@@ -15,11 +15,15 @@ export class TagSelectorComponent implements OnInit {
 
   title: string;
   filter: (item: Tag, index: number, array: Tag[]) => boolean;
+  hasClear = false;
   tags: Tag[];
   showCreate = false;
   isCreating = false;
 
-  static getTags(dialog: MatDialog, title?: string, filter?: (item: Tag, index: number, array: Tag[]) => boolean): Observable<Tag> {
+  static getTags(dialog: MatDialog,
+                 title?: string, filter?: (item: Tag, index: number, array: Tag[]) => boolean,
+                 hasClear = true):
+    Observable<{ tags: Tag[], isClear: boolean }> {
     const dialogRef: MatDialogRef<TagSelectorComponent> = dialog.open(
       TagSelectorComponent,
       {
@@ -31,6 +35,7 @@ export class TagSelectorComponent implements OnInit {
     );
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.filter = filter;
+    dialogRef.componentInstance.hasClear = hasClear;
     return dialogRef.afterClosed();
   }
 
@@ -48,8 +53,17 @@ export class TagSelectorComponent implements OnInit {
     }
   }
 
-  select(tag: Tag) {
-    this.dialogRef.close(tag);
+  select(options: MatListOption[]) {
+    const tags = options.map(o => o.value);
+    let isClear = false;
+    if (tags[0] === 'clear') {
+      isClear = true;
+      tags.shift();
+    }
+    this.dialogRef.close({
+      tags: tags,
+      isClear: isClear
+    });
   }
 
   constructor(

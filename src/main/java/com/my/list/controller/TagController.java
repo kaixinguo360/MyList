@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Authorization
@@ -92,13 +93,15 @@ public class TagController {
         return itemService.getAllByTagId(user, tagId);
     }
 
-    //AddToItems
+    //AddTagsToItems
     @JSON
-    @RequestMapping(value = "/{tagId}/item", method = RequestMethod.POST)
-    public MessageResponse addTagByItemIds(@CurrentUser User user,
-                                            @PathVariable int tagId,
-                                            @RequestBody List<Integer> itemIds) throws DataException {
-        itemService.addTag(user, itemIds, tagId);
-        return new MessageResponse("Add Tag Successful");
+    @RequestMapping(value = "/item", method = RequestMethod.POST)
+    public MessageResponse addTagsByItemIds(@CurrentUser User user,
+                                            @RequestBody Map<String, List<Integer>> params,
+                                            @RequestParam(required = false) boolean isClear) {
+        List<Integer> itemIds = params.get("itemIds");
+        List<Integer> tagIds = params.get("tagIds");
+        itemService.addTags(user, itemIds, tagIds, isClear);
+        return new MessageResponse("Add Tags Successful");
     }
 }

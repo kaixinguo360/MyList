@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MyListService {
@@ -27,13 +28,19 @@ public class MyListService {
     //Get
     @NotNull
     public MyList get(@NotNull User user, int listId) throws DataException {
-        MyList list = myListRepository.findById(listId).orElse(null);
-        if (list != null && list.getUserId() == user.getId()) {
+        MyList list = myListRepository.findByUserIdAndId(user.getId(), listId);
+        if (list != null) {
             return list;
         } else {
             logger.info("getList: List(" + listId + ") Not Exist");
             throw new DataException("List(" + listId + ") Not Exist", ErrorType.NOT_FOUND);
         }
+    }
+
+    //GetAll
+    @NotNull
+    public Iterable<MyList> getAll(@NotNull User user, List<Integer> listIds) {
+        return myListRepository.findAllByUserIdAndIdIn(user.getId(), listIds);
     }
 
     //GetAll
