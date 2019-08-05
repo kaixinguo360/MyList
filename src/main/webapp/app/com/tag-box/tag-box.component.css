@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-flow: row;
+}
+
+.title {
+  flex: 0;
+  font-size: 13px;
+  word-break: keep-all;
+  color: gray;
+  line-height: 23px;
+  padding: 0 10px 0 5px;
+}
+
+.tag-box {
+  flex: 1 0;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  align-content: flex-start;
+}
+
+.tag-item {
+  font-size: 10px;
+  padding: 5px;
+  min-width: 0;
+  line-height: unset;
+  margin: 0 5px 4px 0;
+}

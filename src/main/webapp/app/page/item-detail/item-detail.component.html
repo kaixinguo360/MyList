@@ -1,9 +1,10 @@
 <div class="dialog-panel">
-  <div *ngIf="item.img">
+  <div class="dialog-image-box" *ngIf="item.img">
     <a [href]="proxyService.proxy(item.img)" target="_blank">
       <img class="dialog-image" [src]="proxyService.proxy(item.img)" alt="Image">
     </a>
   </div>
+  <app-tag-box *ngIf="item&&item.tags" [tags]="item.tags"></app-tag-box>
   <div class="dialog-text-box">
     <p class="dialog-text dialog-title">{{item.title}}</p>
     <p class="dialog-text dialog-info">{{item.info}}</p>

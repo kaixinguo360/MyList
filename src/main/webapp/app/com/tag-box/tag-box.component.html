@@ -1,0 +1,8 @@
+<div *ngIf="tags" class="container">
+  <div class="title">{{tags.length?'标签':'暂无标签'}}</div>
+  <div class="tag-box" *ngIf="tags.length">
+    <button class="tag-item" mat-raised-button *ngFor="let tag of tags">
+      {{tag.title}}
+    </button>
+  </div>
+</div>

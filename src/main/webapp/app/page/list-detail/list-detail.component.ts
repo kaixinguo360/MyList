@@ -136,7 +136,7 @@ export class ListDetailComponent implements OnInit {
       switch ($event.action) {
         case 'add': {
           updatedItems.forEach(u => {
-            if ((!u.list && this.list.id == 0) || (u.list && u.list.id === this.list.id)) {
+            if ((!u.list && this.list.id === 0) || (u.list && u.list.id === this.list.id)) {
               location.reload();
             }
           });
@@ -146,7 +146,7 @@ export class ListDetailComponent implements OnInit {
           items = items.filter(item => {
             for (const u of updatedItems) {
               if (u.id === item.id) {
-                if ((!u.list && this.list.id == 0) || (u.list && u.list.id === this.list.id)) {
+                if ((!u.list && this.list.id === 0) || (u.list && u.list.id === this.list.id)) {
                   item.title = u.title;
                   item.info = u.info;
                   item.url = u.url;
