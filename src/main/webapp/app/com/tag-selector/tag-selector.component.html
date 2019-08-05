@@ -24,13 +24,21 @@
     *ngIf="hasClear"
     [value]="'clear'">
     <p class="tag-item-title" matLine>[清空]</p>
-    <p class="tag-item-info" matLine></p>
   </mat-list-option>
   <mat-list-option
     class="tag-item"
     *ngFor="let tag of tags"
     [value]="tag">
-    <p class="tag-item-title" matLine>{{tag.title}}</p>
-    <p class="tag-item-info" matLine>{{tag.info}}</p>
+    <div class="tag-item-box">
+      <div class="tag-item-text" matLine>
+        <p class="tag-item-title" matLine>{{tag.title+(tag.isNew?'*':'')}}</p>
+      </div>
+      <button class="tag-item-btn" (click)="delete(tag)" mat-icon-button>
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button class="tag-item-btn" (click)="edit(tag)" mat-icon-button>
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
   </mat-list-option>
 </mat-selection-list>

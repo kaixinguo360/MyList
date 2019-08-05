@@ -38,3 +38,17 @@
 .clear {
   font-style: italic;
 }
+
+.tag-item-box {
+  display: flex;
+  flex-flow: row;
+  margin-bottom: 20px;
+}
+
+.tag-item-text {
+  flex: 1;
+}
+
+.tag-item-btn {
+  flex: 0 0 auto;
+}

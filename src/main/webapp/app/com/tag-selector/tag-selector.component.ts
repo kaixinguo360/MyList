@@ -6,6 +6,10 @@ import {Observable, of} from 'rxjs';
 
 import {Tag, TagService} from '../../service/tag.service';
 
+interface TagItem extends Tag {
+  isNew?: boolean;
+}
+
 @Component({
   selector: 'app-tag-selector',
   templateUrl: './tag-selector.component.html',
@@ -16,7 +20,7 @@ export class TagSelectorComponent implements OnInit {
   title: string;
   filter: (item: Tag, index: number, array: Tag[]) => boolean;
   hasClear = false;
-  tags: Tag[];
+  tags: TagItem[];
   showCreate = false;
   isCreating = false;
 
@@ -43,13 +47,40 @@ export class TagSelectorComponent implements OnInit {
     if (title) {
       this.isCreating = true;
       this.tagService.add({ title: title }).subscribe(tag => {
-        tag.info = '新增标签';
         this.tags.unshift(tag);
+        this.tags[0].isNew = true;
         this.showCreate = false;
         this.isCreating = false;
       });
     } else {
       alert('标签名称不能为空!');
+    }
+  }
+
+  delete(tag: Tag) {
+    if (confirm(`确定要删除'${tag.title}'标签吗?`)) {
+      this.tagService.delete(tag.id).pipe(
+        tap(() => {
+          this.tags = this.tags.filter(t => t.id !== tag.id);
+        }),
+        catchError(err => {
+          alert('删除失败!');
+          return of(err);
+        })
+      ).subscribe();
+    }
+  }
+
+  edit(tag: Tag) {
+    const newName = prompt(`重命名'${tag.title}'标签: `);
+    if (newName) {
+      tag.title = newName;
+      this.tagService.update(tag).pipe(
+        catchError(err => {
+          alert('重命名失败!');
+          return of(err);
+        })
+      ).subscribe();
     }
   }
 
