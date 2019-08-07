@@ -83,7 +83,7 @@ public class MyListController {
 
     // ------------------------------ Item ------------------------------ //
 
-    //GetAllItems
+    //GetItemsByListId
     @JSON(type = MyList.class, exclude = "createdTime,updatedTime")
     @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
     @RequestMapping(value = "/{listId}/item", method = RequestMethod.GET)
@@ -96,10 +96,10 @@ public class MyListController {
         }
     }
 
-    //SetToItems
+    //SetListToItems
     @JSON
     @RequestMapping(value = "/{listId}/item", method = RequestMethod.POST)
-    public MessageResponse setListByItemIds(@CurrentUser User user,
+    public MessageResponse setListToItems(@CurrentUser User user,
                                            @PathVariable int listId,
                                            @RequestBody List<Integer> itemIds) throws DataException {
         if (listId == 0) {

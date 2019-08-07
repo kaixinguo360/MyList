@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -84,19 +85,25 @@ public class TagController {
 
     // ------------------------------ Item ------------------------------ //
 
-    //GetAllItems
+    //GetItemsByTagIds
     @JSON(type = Tag.class, exclude = "createdTime,updatedTime")
     @JSON(type = Item.class, exclude = "tags,texts,images,musics,videos,links")
-    @RequestMapping(value = "/{tagId}/item", method = RequestMethod.GET)
-    public Iterable<Item> getItemsByTagId(@CurrentUser User user,
-                                          @PathVariable int tagId) {
-        return itemService.getAllByTagId(user, tagId);
+    @RequestMapping(value = "/item", method = RequestMethod.GET)
+    public Iterable<Item> getItemsByTagIds(@CurrentUser User user,
+                                           @RequestParam(required = false) Integer[] and,
+                                           @RequestParam(required = false) Integer[] or,
+                                           @RequestParam(required = false) Integer[] not) {
+        return itemService.searchByTagIds(user,
+            and == null ? null : Arrays.asList(and),
+            or == null ? null : Arrays.asList(or),
+            not == null ? null : Arrays.asList(not)
+        );
     }
 
     //AddTagsToItems
     @JSON
     @RequestMapping(value = "/item", method = RequestMethod.POST)
-    public MessageResponse addTagsByItemIds(@CurrentUser User user,
+    public MessageResponse addTagsToItems(@CurrentUser User user,
                                             @RequestBody Map<String, List<Integer>> params,
                                             @RequestParam(required = false) boolean isClear) {
         List<Integer> itemIds = params.get("itemIds");

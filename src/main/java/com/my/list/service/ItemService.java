@@ -4,9 +4,13 @@ import com.my.list.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -51,51 +55,6 @@ public class ItemService {
     @NotNull
     public Iterable<Item> getAll(@NotNull User user) {
         return itemRepository.findAllByUserId(user.getId());
-    }
-
-    //GetAll - Tag Id
-    @NotNull
-    public Iterable<Item> getAllByTagId(@NotNull User user, Integer tagId) {
-        if (tagId != null) {
-            return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
-        } else {
-            return itemRepository.findAllByUserIdAndTagsIsNull(user.getId());
-        }
-    }
-
-    //GetAll - List Id
-    @NotNull
-    public Iterable<Item> getAllByListId(@NotNull User user, Integer listId) {
-        if (listId != null) {
-            return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
-        } else {
-            return itemRepository.findAllByUserIdAndListIsNull(user.getId());
-        }
-    }
-
-    //Set List
-    @Transactional
-    public void setList(@NotNull User user, List<Integer> itemIds, Integer listId) throws DataException {
-        if (listId != null) {
-            MyList list = this.myListService.get(user, listId);
-            itemRepository.setListByUserIdAndIdIn(list, user.getId(), itemIds);
-        } else {
-            itemRepository.setListByUserIdAndIdIn(null, user.getId(), itemIds);
-        }
-    }
-
-    //Add Tags
-    @Transactional
-    public void addTags(@NotNull User user, List<Integer> itemIds, List<Integer> tagIds, boolean isClear) {
-        Iterable<Item> items = this.getAll(user, itemIds);
-        Iterable<Tag> tags = this.tagService.getAll(user, tagIds);
-        for (Item item : items) {
-            if (isClear) item.getTags().clear();
-            for (Tag tag : tags) {
-                item.getTags().add(tag);
-            }
-        }
-        itemRepository.saveAll(items);
     }
 
     //Search
@@ -197,5 +156,91 @@ public class ItemService {
             logger.info("removeItem: An Error Occurred: " + e.getMessage());
             throw new DataException("An Error Occurred", ErrorType.UNKNOWN_ERROR);
         }
+    }
+
+    // ---------- List ---------- //
+
+    //GetAll By List
+    @NotNull
+    public Iterable<Item> getAllByListId(@NotNull User user, Integer listId) {
+        if (listId != null) {
+            return itemRepository.findAllByUserIdAndListId(user.getId(), listId);
+        } else {
+            return itemRepository.findAllByUserIdAndListIsNull(user.getId());
+        }
+    }
+
+    //Set List
+    @Transactional
+    public void setList(@NotNull User user, List<Integer> itemIds, Integer listId) throws DataException {
+        if (listId != null) {
+            MyList list = this.myListService.get(user, listId);
+            itemRepository.setListByUserIdAndIdIn(list, user.getId(), itemIds);
+        } else {
+            itemRepository.setListByUserIdAndIdIn(null, user.getId(), itemIds);
+        }
+    }
+    
+    // ---------- Tag ---------- //
+
+    //GetAll By Tag
+    @NotNull
+    public Iterable<Item> getAllByTagId(@NotNull User user, Integer tagId) {
+        if (tagId != null) {
+            return itemRepository.findAllByUserIdAndTagId(user.getId(), tagId);
+        } else {
+            return itemRepository.findAllByUserIdAndTagsIsNull(user.getId());
+        }
+    }
+
+    //Add Tags
+    @Transactional
+    public void addTags(@NotNull User user, List<Integer> itemIds, List<Integer> tagIds, boolean isClear) {
+        Iterable<Item> items = this.getAll(user, itemIds);
+        Iterable<Tag> tags = this.tagService.getAll(user, tagIds);
+        for (Item item : items) {
+            if (isClear) item.getTags().clear();
+            for (Tag tag : tags) {
+                item.getTags().add(tag);
+            }
+        }
+        itemRepository.saveAll(items);
+    }
+
+    //Search By Tags
+    @NotNull
+    public Iterable<Item> searchByTagIds(@NotNull User user, List<Integer> andTagIds, List<Integer> orTagIds, List<Integer> notTagIds) {
+        Specification querySpecification = (Specification<Item>) (root, query, cb) -> {
+            query.distinct(true);
+            Predicate p = cb.equal(root.get("userId"), user.getId());
+            Predicate andPredicate = null;
+            if (andTagIds != null) {
+                for (int tagId : andTagIds) {
+                    if (andPredicate == null) {
+                        andPredicate = cb.equal(root.join("tags").get("id"), tagId);
+                    } else {
+                        andPredicate = cb.and(andPredicate, cb.equal(root.join("tags").get("id"), tagId));
+                    }
+                }
+                p = cb.and(p, andPredicate);
+            }
+            if (orTagIds != null) {
+                Predicate orPredicate = root.join("tags").get("id").in(orTagIds);
+                if (andPredicate != null) {
+                    orPredicate = cb.or(orPredicate, andPredicate);
+                }
+                p = cb.and(p, orPredicate);
+            }
+            if (notTagIds != null) {
+                Subquery<Item> subquery = query.subquery(Item.class);
+                Root<Item> subRoot = subquery.from(Item.class);
+                subquery = subquery.select(subRoot.get("id")).where(
+                    subRoot.join("tags").get("id").in(notTagIds)
+                );
+                p = cb.and(p, root.get("id").in(subquery).not());
+            }
+            return p;
+        };
+        return (List<Item>) this.itemRepository.findAll(querySpecification);
     }
 }

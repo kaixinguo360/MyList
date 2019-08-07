@@ -1,5 +1,6 @@
 package com.my.list.data;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -7,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Collection;
 import java.util.List;
 
-public interface ItemRepository extends CrudRepository<Item, Integer> {
+public interface ItemRepository extends CrudRepository<Item, Integer>, JpaSpecificationExecutor {
 
     Item findByUserIdAndId(int userId, int id);
 
