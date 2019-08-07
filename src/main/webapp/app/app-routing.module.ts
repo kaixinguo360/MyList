@@ -1,20 +1,15 @@
-import { Injectable, NgModule } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate, Router,
-  RouterModule,
-  RouterStateSnapshot,
-  Routes
-} from '@angular/router';
+import {Injectable, NgModule} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterModule, RouterStateSnapshot, Routes} from '@angular/router';
 
-import { AuthService } from './service/auth.service';
-import { LoginComponent } from './page/login/login.component';
-import { ListComponent } from './page/list/list.component';
-import { ListEditComponent } from './page/list-edit/list-edit.component';
-import { ListDetailComponent } from './page/list-detail/list-detail.component';
-import { ItemEditComponent } from './page/item-edit/item-edit.component';
-import { ItemDetailComponent } from './page/item-detail/item-detail.component';
-import { NewItemComponent } from './page/new-item/new-item.component';
+import {AuthService} from './service/auth.service';
+import {LoginComponent} from './page/login/login.component';
+import {ListComponent} from './page/list/list.component';
+import {ListEditComponent} from './page/list-edit/list-edit.component';
+import {ListDetailComponent} from './page/list-detail/list-detail.component';
+import {ItemEditComponent} from './page/item-edit/item-edit.component';
+import {ItemDetailComponent} from './page/item-detail/item-detail.component';
+import {ItemSearchComponent} from './page/item-search/item-search.component';
+import {NewItemComponent} from './page/new-item/new-item.component';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +34,7 @@ const routes: Routes = [
   { path: 'list/:id', component: ListDetailComponent, canActivate: [ LoginGuard ] },
   { path: 'item/new', component: ItemEditComponent, canActivate: [ LoginGuard ] },
   { path: 'item/fromPage', component: NewItemComponent, canActivate: [ LoginGuard ] },
+  { path: 'item/search', component: ItemSearchComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id/edit', component: ItemEditComponent, canActivate: [ LoginGuard ] },
   { path: 'item/:id', component: ItemDetailComponent, canActivate: [ LoginGuard ] }
 ];

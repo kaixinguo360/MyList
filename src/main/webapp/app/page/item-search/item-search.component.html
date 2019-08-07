@@ -1,0 +1,70 @@
+<div class="infinite-scroll"
+     infinite-scroll
+     [infiniteScrollDistance]="0"
+     [infiniteScrollThrottle]="300"
+     [scrollWindow]="false"
+     (scrolled)="masonry.loadMoreItems()">
+  <div class="grid-container">
+    <div class="search-box">
+      <form class="full-width">
+        <mat-form-field class="full-width">
+          <input matInput name="text" placeholder="标签" maxlength="255" autocomplete="off" [(ngModel)]="text">
+          <button matSuffix type="submit" mat-icon-button (click)="update()" >
+            <mat-icon>send</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+    </div>
+    <app-item-card-masonry #masonry></app-item-card-masonry>
+  </div>
+  <div class="counter" *ngIf="!isLoading" (click)="masonry.loadMoreItems()">
+    - {{masonry.items.length - masonry.loadedItems.length}}/{{masonry.items.length}} -
+  </div>
+  <div class="loading-icon" *ngIf="isLoading||masonry.items.length!==masonry.loadedItems.length" (click)="masonry.loadMoreItems()">
+    <mat-icon>autorenew</mat-icon>正在加载
+  </div>
+</div>
+<div class="icon-box">
+  <button mat-raised-button
+          class="round-btn"
+          (click)="masonry.selectAll()"
+          *ngIf="masonry.selectMode">
+    <mat-icon>select_all</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
+          (click)="deleteSelected()"
+          *ngIf="masonry.selectMode">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
+          (click)="tagSelected()"
+          *ngIf="masonry.selectMode">
+    <mat-icon>style</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [disabled]="masonry.getSelectedItems().length===0"
+          (click)="moveSelected()"
+          *ngIf="masonry.selectMode">
+    <mat-icon>move_to_inbox</mat-icon>
+  </button>
+  <button mat-raised-button
+          class="round-btn"
+          [matMenuTriggerFor]="addMenu"
+          *ngIf="!masonry.selectMode">
+    <mat-icon>add</mat-icon>
+  </button>
+  <mat-menu #addMenu xPosition="before">
+    <button mat-menu-item class="menu" (click)="appComponent.addItem()">普通收藏</button>
+    <button mat-menu-item class="menu" (click)="appComponent.addItemFromPage()">来自网页</button>
+  </mat-menu>
+  <button mat-raised-button
+          class="round-btn"
+          (click)="toggleSelectMode()">
+    <mat-icon>collections_bookmark</mat-icon>
+  </button>
+</div>

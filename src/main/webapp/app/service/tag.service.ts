@@ -34,6 +34,23 @@ export class TagService {
     );
   }
 
+  searchItems(andIds: number[], orIds: number[], notIds: number[]): Observable<Item[]> {
+    const params = {
+      and: String(andIds),
+      or: String(orIds),
+      not: String(notIds),
+    };
+    if (!andIds || !andIds.length) { delete params.and; }
+    if (!orIds || !orIds.length) { delete params.or; }
+    if (!notIds || !notIds.length) { delete params.not; }
+    return this.apiService.request<Item[]>('get', 'tag/item', null, params).pipe(
+      map(items => {
+        this.orderService.sort(items);
+        return items;
+      })
+    );
+  }
+
   getAll(search?: string): Observable<Tag[]> {
     const params = search ? { search: search } : null;
     return this.apiService.get<Tag[]>('tag', params).pipe(
