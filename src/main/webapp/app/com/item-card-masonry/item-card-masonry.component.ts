@@ -85,6 +85,16 @@ export class ItemCardMasonryComponent implements OnInit {
     return this.items.filter(i => i.selected);
   }
 
+  public loadAllItems() {
+    const left = this.items.length - this.loadedItems.length;
+    if (left !== 0) {
+      for (let i = 0; i < left; i++) {
+        this.loadedItems.push(this.items[this.loadedItems.length]);
+      }
+    }
+    this.masonry.layout();
+  }
+
   public loadMoreItems() {
     let num;
 

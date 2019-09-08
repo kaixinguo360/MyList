@@ -77,6 +77,7 @@ export class NewItemComponent implements OnInit {
         i.url = null;
       });
       this.masonry.changeItems(item.images);
+      this.masonry.loadAllItems();
       localStorage.removeItem('tmpItem');
       this.isLoading = false;
     }
