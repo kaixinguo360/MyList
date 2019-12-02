@@ -115,7 +115,7 @@ export class ItemDetailDialogComponent {
               <mat-icon>edit</mat-icon>
           </button>
       </div>
-      <div class="medium-card">
+      <div class="large-card">
           <mat-card>
               <app-item-detail-dialog #dialog></app-item-detail-dialog>
           </mat-card>

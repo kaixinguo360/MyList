@@ -9,7 +9,6 @@
 
 .dialog-image {
   max-width: 100%;
-  max-height: calc(90vh - 48px);
   cursor: pointer;
 }
 

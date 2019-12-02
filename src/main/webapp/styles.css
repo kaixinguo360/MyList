@@ -30,3 +30,9 @@ body {
   max-width: 450px;
   margin: 50px auto;
 }
+
+.large-card {
+  width: fit-content;
+  max-width: calc(100vw - 50px);
+  margin: 50px auto;
+}
