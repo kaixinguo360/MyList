@@ -1,0 +1,19 @@
+# Editor configuration, see https://editorconfig.org
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+[*.{ts,js}]
+quote_type = single
+indent_size = 2
+
+[*.{html,less,css,json}]
+quote_type = double
+indent_size = 2
