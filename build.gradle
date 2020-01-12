@@ -31,11 +31,12 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.1'
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-undertow"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     runtimeOnly 'mysql:mysql-connector-java'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testImplementation 'junit:junit'
 }
 
 test {
