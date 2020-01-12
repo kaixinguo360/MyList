@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.mapper.VideoMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.bean.Video">
+    <id column="video_id" jdbcType="BIGINT" property="id" />
+    <result column="video_node_id" jdbcType="BIGINT" property="nodeId" />
+    <result column="video_url" jdbcType="VARCHAR" property="url" />
+    <result column="video_fotmat" jdbcType="VARCHAR" property="fotmat" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from videos
+    where video_id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.my.list.bean.Video">
+    insert into videos (video_id, video_node_id, video_url, 
+      video_fotmat)
+    values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
+      #{fotmat,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.my.list.bean.Video">
+    update videos
+    set video_node_id = #{nodeId,jdbcType=BIGINT},
+      video_url = #{url,jdbcType=VARCHAR},
+      video_fotmat = #{fotmat,jdbcType=VARCHAR}
+    where video_id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select video_id, video_node_id, video_url, video_fotmat
+    from videos
+    where video_id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select video_id, video_node_id, video_url, video_fotmat
+    from videos
+  </select>
+</mapper>

@@ -1,6 +1,6 @@
-package com.my.list.data.node
+package com.my.list.bean
 
-class Video(
+class Music(
     var id: Long? = null,
     var node_id: Long? = null,
     var url: String? = null,

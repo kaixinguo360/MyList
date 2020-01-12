@@ -1,4 +1,4 @@
-package com.my.list.data
+package com.my.list.bean
 
 class User(
     var id: Long? = null,

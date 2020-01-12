@@ -1,4 +1,4 @@
-package com.my.list.data.node
+package com.my.list.bean
 
 class Image(
     var id: Long? = null,

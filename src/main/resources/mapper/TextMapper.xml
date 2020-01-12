@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.mapper.TextMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.bean.Text">
+    <id column="text_id" jdbcType="BIGINT" property="id" />
+    <result column="text_node_id" jdbcType="BIGINT" property="nodeId" />
+    <result column="text_content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from texts
+    where text_id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.my.list.bean.Text">
+    insert into texts (text_id, text_node_id, text_content
+      )
+    values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.my.list.bean.Text">
+    update texts
+    set text_node_id = #{nodeId,jdbcType=BIGINT},
+      text_content = #{content,jdbcType=LONGVARCHAR}
+    where text_id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select text_id, text_node_id, text_content
+    from texts
+    where text_id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select text_id, text_node_id, text_content
+    from texts
+  </select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.mapper.NodeMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.bean.Node">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="node_user" jdbcType="BIGINT" property="user" />
+    <result column="node_type" jdbcType="VARCHAR" property="type" />
+    <result column="node_ctime" jdbcType="TIMESTAMP" property="ctime" />
+    <result column="node_mtime" jdbcType="TIMESTAMP" property="mtime" />
+    <result column="node_title" jdbcType="VARCHAR" property="title" />
+    <result column="node_excerpt" jdbcType="VARCHAR" property="excerpt" />
+    <result column="node_lstatus" jdbcType="VARCHAR" property="lstatus" />
+    <result column="node_lcount" jdbcType="INTEGER" property="lcount" />
+    <result column="node_permissions" jdbcType="VARCHAR" property="permissions" />
+    <result column="node_nsfw" jdbcType="BIT" property="nsfw" />
+    <result column="node_like" jdbcType="BIT" property="like" />
+    <result column="node_source_url" jdbcType="VARCHAR" property="sourceUrl" />
+    <result column="node_comment" jdbcType="VARCHAR" property="comment" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nodes
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.bean.Node" useGeneratedKeys="true">
+    insert into nodes (node_user, node_type, node_ctime, 
+      node_mtime, node_title, node_excerpt, 
+      node_lstatus, node_lcount, node_permissions, 
+      node_nsfw, node_like, node_source_url, node_comment
+      )
+    values (#{user,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP}, 
+      #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, 
+      #{lstatus,jdbcType=VARCHAR}, #{lcount,jdbcType=INTEGER}, #{permissions,jdbcType=VARCHAR}, 
+      #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.my.list.bean.Node">
+    update nodes
+    set node_user = #{user,jdbcType=BIGINT},
+      node_type = #{type,jdbcType=VARCHAR},
+      node_ctime = #{ctime,jdbcType=TIMESTAMP},
+      node_mtime = #{mtime,jdbcType=TIMESTAMP},
+      node_title = #{title,jdbcType=VARCHAR},
+      node_excerpt = #{excerpt,jdbcType=VARCHAR},
+      node_lstatus = #{lstatus,jdbcType=VARCHAR},
+      node_lcount = #{lcount,jdbcType=INTEGER},
+      node_permissions = #{permissions,jdbcType=VARCHAR},
+      node_nsfw = #{nsfw,jdbcType=BIT},
+      node_like = #{like,jdbcType=BIT},
+      node_source_url = #{sourceUrl,jdbcType=VARCHAR},
+      node_comment = #{comment,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, node_user, node_type, node_ctime, node_mtime, node_title, node_excerpt, 
+    node_lstatus, node_lcount, node_permissions, node_nsfw, node_like, node_source_url, 
+    node_comment
+    from nodes
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, node_user, node_type, node_ctime, node_mtime, node_title, node_excerpt, 
+    node_lstatus, node_lcount, node_permissions, node_nsfw, node_like, node_source_url, 
+    node_comment
+    from nodes
+  </select>
+</mapper>

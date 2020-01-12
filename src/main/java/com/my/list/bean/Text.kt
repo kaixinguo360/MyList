@@ -1,4 +1,4 @@
-package com.my.list.data.node
+package com.my.list.bean
 
 class Text(
     var id: Long? = null,
