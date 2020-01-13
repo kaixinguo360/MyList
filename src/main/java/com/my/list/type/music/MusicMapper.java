@@ -1,8 +1,10 @@
-package com.my.list.mapper;
+package com.my.list.type.music;
 
-import com.my.list.bean.Music;
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 
+@Mapper
 public interface MusicMapper {
     int deleteByPrimaryKey(Long id);
 

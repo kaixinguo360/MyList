@@ -16,12 +16,12 @@
   </settings>
 
   <typeAliases>
-    <typeAlias alias="User" type="com.my.list.bean.User" />
-    <typeAlias alias="Node" type="com.my.list.bean.Node" />
-    <typeAlias alias="Text" type="com.my.list.bean.Text" />
-    <typeAlias alias="Image" type="com.my.list.bean.Image" />
-    <typeAlias alias="Music" type="com.my.list.bean.Music" />
-    <typeAlias alias="Video" type="com.my.list.bean.Video" />
+    <typeAlias alias="User" type="com.my.list.domain.User" />
+    <typeAlias alias="Node" type="com.my.list.domain.Node" />
+    <typeAlias alias="Text" type="com.my.list.type.text.Text" />
+    <typeAlias alias="Image" type="com.my.list.type.image.Image" />
+    <typeAlias alias="Music" type="com.my.list.type.music.Music" />
+    <typeAlias alias="Video" type="com.my.list.type.video.Video" />
   </typeAliases>
 
 </configuration>

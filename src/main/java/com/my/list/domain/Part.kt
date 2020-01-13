@@ -1,4 +1,4 @@
-package com.my.list.bean
+package com.my.list.domain
 
 class Part(
     var id: Long? = null,

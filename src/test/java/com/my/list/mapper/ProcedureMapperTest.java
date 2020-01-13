@@ -1,7 +1,16 @@
 package com.my.list.mapper;
 
-import com.my.list.bean.*;
-import org.junit.jupiter.api.*;
+import com.my.list.domain.*;
+import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageMapper;
+import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicMapper;
+import com.my.list.type.text.Text;
+import com.my.list.type.text.TextMapper;
+import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.my.list.mapper.NodeMapper">
-  <resultMap id="BaseResultMap" type="com.my.list.bean.Node">
+<mapper namespace="com.my.list.domain.NodeMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.domain.Node">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="node_user" jdbcType="BIGINT" property="user" />
     <result column="node_type" jdbcType="VARCHAR" property="type" />
@@ -21,7 +21,7 @@
     delete from nodes
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.bean.Node" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.domain.Node" useGeneratedKeys="true">
     insert into nodes (node_user, node_type, node_ctime, 
       node_mtime, node_title, node_excerpt, 
       node_lstatus, node_lcount, node_permissions, 
@@ -33,7 +33,7 @@
       #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}
       )
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.my.list.bean.Node">
+  <update id="updateByPrimaryKey" parameterType="com.my.list.domain.Node">
     update nodes
     set node_user = #{user,jdbcType=BIGINT},
       node_type = #{type,jdbcType=VARCHAR},

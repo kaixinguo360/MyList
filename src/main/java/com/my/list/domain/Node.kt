@@ -1,4 +1,4 @@
-package com.my.list.bean
+package com.my.list.domain
 
 import java.sql.Timestamp
 

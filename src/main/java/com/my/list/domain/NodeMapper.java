@@ -1,8 +1,10 @@
-package com.my.list.mapper;
+package com.my.list.domain;
 
-import com.my.list.bean.Node;
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 
+@Mapper
 public interface NodeMapper {
     int deleteByPrimaryKey(Long id);
 

@@ -1,9 +1,13 @@
-package com.my.list.mapper;
+package com.my.list.domain;
 
-import com.my.list.bean.*;
+import com.my.list.type.image.Image;
+import com.my.list.type.music.Music;
+import com.my.list.type.text.Text;
+import com.my.list.type.video.Video;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.StatementType;
 
+@Mapper
 public interface ProcedureMapper {
 
     @Options(statementType= StatementType.CALLABLE)

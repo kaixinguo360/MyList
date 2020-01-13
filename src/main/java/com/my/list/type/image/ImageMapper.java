@@ -1,8 +1,10 @@
-package com.my.list.mapper;
+package com.my.list.type.image;
 
-import com.my.list.bean.Image;
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 
+@Mapper
 public interface ImageMapper {
     int deleteByPrimaryKey(Long id);
 
