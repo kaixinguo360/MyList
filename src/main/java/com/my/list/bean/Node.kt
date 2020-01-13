@@ -15,11 +15,10 @@ class Node(
     var permissions: String? = "private",
     var nsfw: Boolean? = false,
     var like: Boolean? = false,
-    var source_url: String? = null,
-    var comment: String? = null,
-    var extra: Any? = null
+    var sourceUrl: String? = null,
+    var comment: String? = null
 ) {
     override fun toString(): String {
-        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$lstatus,$lcount,$permissions,$nsfw,$like,$source_url,$comment]"
+        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$lstatus,$lcount,$permissions,$nsfw,$like,$sourceUrl,$comment]"
     }
 }

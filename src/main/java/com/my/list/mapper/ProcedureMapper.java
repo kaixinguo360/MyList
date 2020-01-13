@@ -16,7 +16,7 @@ public interface ProcedureMapper {
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
-        "#{node.source_url,mode=IN}," +
+        "#{node.sourceUrl,mode=IN}," +
         "#{node.comment,mode=IN}," +
         "#{image.url,mode=IN}," +
         "#{image.description,mode=IN}" +
@@ -27,14 +27,13 @@ public interface ProcedureMapper {
     @Select("call add_list(" +
         "#{id,mode=OUT,jdbcType=BIGINT}," +
         "#{user,mode=IN}," +
-        "#{type,mode=IN}," +
         "#{title,mode=IN}," +
         "#{excerpt,mode=IN}," +
         "#{lstatus,mode=IN}," +
         "#{permissions,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
-        "#{source_url,mode=IN}," +
+        "#{sourceUrl,mode=IN}," +
         "#{comment,mode=IN}" +
         ")")
     void add_list(Node node);
@@ -49,7 +48,7 @@ public interface ProcedureMapper {
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
-        "#{node.source_url,mode=IN}," +
+        "#{node.sourceUrl,mode=IN}," +
         "#{node.comment,mode=IN}," +
         "#{music.url,mode=IN}," +
         "#{music.format,mode=IN}" +
@@ -67,12 +66,17 @@ public interface ProcedureMapper {
         "#{permissions,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
-        "#{source_url,mode=IN}," +
+        "#{sourceUrl,mode=IN}," +
         "#{comment,mode=IN}" +
         ")")
     void add_node(Node node);
-    
-//    void add_part(Node node);
+
+    @Options(statementType= StatementType.CALLABLE)
+    @Select("call add_part(" +
+        "#{parent_id,mode=IN}," +
+        "#{part_id,mode=IN}" +
+        ")")
+    void add_part(Long parent_id, Long part_id); // Auto call update_lcount().
     
     @Options(statementType= StatementType.CALLABLE)
     @Select("call add_text(" +
@@ -84,7 +88,7 @@ public interface ProcedureMapper {
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
-        "#{node.source_url,mode=IN}," +
+        "#{node.sourceUrl,mode=IN}," +
         "#{node.comment,mode=IN}," +
         "#{text.content,mode=IN}" +
         ")")
@@ -111,7 +115,7 @@ public interface ProcedureMapper {
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
-        "#{node.source_url,mode=IN}," +
+        "#{node.sourceUrl,mode=IN}," +
         "#{node.comment,mode=IN}," +
         "#{video.url,mode=IN}," +
         "#{video.format,mode=IN}" +
@@ -131,18 +135,18 @@ public interface ProcedureMapper {
     @Select("call clean_all()")
     void clean_all();
     @Options(statementType= StatementType.CALLABLE)
-    @Select("call clean_list(#1)")
-    void clean_list(Long list_id);
+    @Select("call clean_list(#{id})")
+    void clean_list(Long list_id); // Call delete_part() for each part, don't call clean_nodes().
     @Options(statementType= StatementType.CALLABLE)
     @Select("call clean_nodes()")
     void clean_nodes();
     @Options(statementType= StatementType.CALLABLE)
-    @Select("call delete_list(#1)")
-    void delete_list(Long list_id);
+    @Select("call delete_list(#{id})")
+    void delete_list(Long list_id); // Call clean_list() and clean_nodes(), then delete the list node.
     @Options(statementType= StatementType.CALLABLE)
-    @Select("call delete_part(#1)")
-    void delete_part(Long part_id);
+    @Select("call delete_part(#{id})")
+    void delete_part(Long part_id); // Auto call update_lcount().
     @Options(statementType= StatementType.CALLABLE)
-    @Select("call update_lcount(#1)")
+    @Select("call update_lcount(#{id})")
     void update_lcount(Long node_id);
 }

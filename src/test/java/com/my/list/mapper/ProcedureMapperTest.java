@@ -17,6 +17,7 @@ class ProcedureMapperTest {
     @Autowired private ImageMapper imageMapper;
     @Autowired private MusicMapper musicMapper;
     @Autowired private VideoMapper videoMapper;
+    @Autowired private PartMapper partMapper;
 
     private static User user = new User();
     private static Text text = new Text();
@@ -58,36 +59,82 @@ class ProcedureMapperTest {
         assertNull(procedureMapper.check_user("TestUser2", user.getPass()));
 
         // add_node
-        procedureMapper.add_node(newNode("list", "Test Node"));
+        Node node = newNode("node", "Test Node");
+        procedureMapper.add_node(node);
         assertEquals(nodeMapper.selectAll().size(), 1);
 
-        // add_text
-        procedureMapper.add_text(newNode("text", "Test Text"), text);
+        // add_list
+        Node list_node = newNode("list", "Test Node");
+        procedureMapper.add_list(list_node);
         assertEquals(nodeMapper.selectAll().size(), 2);
+
+        // add_text
+        Node text_node = newNode("text", "Test Text");
+        text_node.setLstatus("attachment");
+        procedureMapper.add_text(text_node, text);
+        assertEquals(nodeMapper.selectAll().size(), 3);
         assertEquals(textMapper.selectAll().size(), 1);
 
         // add_image
-        procedureMapper.add_image(newNode("image", "Test Image"), image);
-        assertEquals(nodeMapper.selectAll().size(), 3);
+        Node image_node = newNode("image", "Test Image");
+        procedureMapper.add_image(image_node, image);
+        assertEquals(nodeMapper.selectAll().size(), 4);
         assertEquals(imageMapper.selectAll().size(), 1);
 
         // add_music
-        procedureMapper.add_music(newNode("music", "Test Music"), music);
-        assertEquals(nodeMapper.selectAll().size(), 4);
+        Node music_node = newNode("music", "Test Music");
+        procedureMapper.add_music(music_node, music);
+        assertEquals(nodeMapper.selectAll().size(), 5);
         assertEquals(musicMapper.selectAll().size(), 1);
 
         // add_video
-        procedureMapper.add_video(newNode("video", "Test Video"), video);
-        assertEquals(nodeMapper.selectAll().size(), 5);
+        Node video_node = newNode("video", "Test Video");
+        procedureMapper.add_video(video_node, video);
+        assertEquals(nodeMapper.selectAll().size(), 6);
         assertEquals(videoMapper.selectAll().size(), 1);
         
+        // add_part
+        procedureMapper.add_part(list_node.getId(), text_node.getId());
+        procedureMapper.add_part(list_node.getId(), image_node.getId());
+        procedureMapper.add_part(list_node.getId(), music_node.getId());
+        procedureMapper.add_part(list_node.getId(), video_node.getId());
+        assertEquals(partMapper.selectAll().size(), 4);
+        
         // show_all
-        System.out.println(userMapper.selectAll());
-        System.out.println(nodeMapper.selectAll());
-        System.out.println(textMapper.selectAll());
-        System.out.println(imageMapper.selectAll());
-        System.out.println(musicMapper.selectAll());
-        System.out.println(videoMapper.selectAll());
+        showAll();
+        
+        // clean_list
+        procedureMapper.clean_list(list_node.getId());
+        assertEquals(partMapper.selectAll().size(), 0);
+
+        // clean_nodes
+        procedureMapper.clean_nodes();
+        assertEquals(nodeMapper.selectAll().size(), 5);
+        assertEquals(textMapper.selectAll().size(), 0);
+        
+        // delete_list
+        image_node.setLstatus("attachment");
+        music_node.setLstatus("attachment");
+        video_node.setLstatus("attachment");
+        nodeMapper.updateByPrimaryKey(image_node);
+        nodeMapper.updateByPrimaryKey(music_node);
+        nodeMapper.updateByPrimaryKey(video_node);
+        procedureMapper.add_part(list_node.getId(), image_node.getId());
+        procedureMapper.add_part(list_node.getId(), music_node.getId());
+        procedureMapper.add_part(list_node.getId(), video_node.getId());
+        assertEquals(partMapper.selectAll().size(), 3);
+        procedureMapper.delete_list(list_node.getId());
+        assertEquals(nodeMapper.selectAll().size(), 1);
+        assertEquals(textMapper.selectAll().size(), 0);
+        assertEquals(imageMapper.selectAll().size(), 0);
+        assertEquals(musicMapper.selectAll().size(), 0);
+        assertEquals(videoMapper.selectAll().size(), 0);
+        assertEquals(partMapper.selectAll().size(), 0);
+        
+        // delete_user
+        userMapper.deleteByPrimaryKey(user.getId());
+        assertEquals(userMapper.selectAll().size(), 0);
+        assertEquals(nodeMapper.selectAll().size(), 0);
     }
     
     private Node newNode(String type, String title) {
@@ -96,6 +143,16 @@ class ProcedureMapperTest {
         node.setType(type);
         node.setTitle(title);
         return node;
+    }
+    
+    private void showAll() {
+        System.out.println(userMapper.selectAll());
+        System.out.println(nodeMapper.selectAll());
+        System.out.println(textMapper.selectAll());
+        System.out.println(imageMapper.selectAll());
+        System.out.println(musicMapper.selectAll());
+        System.out.println(videoMapper.selectAll());
+        System.out.println(partMapper.selectAll());
     }
 
 }
