@@ -3,6 +3,7 @@ package com.my.list.service;
 import com.my.list.domain.NodeMapper;
 import com.my.list.domain.ProcedureMapper;
 import com.my.list.dto.Node;
+import com.my.list.type.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

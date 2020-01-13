@@ -1,16 +1,20 @@
 package com.my.list.type.music
 
-import com.my.list.type.ValueMap
+import com.my.list.type.ExtraValues
 
 class Music(
     var id: Long? = null,
     var nodeId: Long? = null,
     var url: String? = null,
     var format: String? = null
-): ValueMap {
+): ExtraValues {
     override fun toString(): String {
         return "Music[$id,$nodeId,$url,$format]"
     }
+    override fun getExtraId(): Long? { return id; }
+    override fun setExtraId(id: Long?) { this.id = id; }
+    override fun getParentId(): Long? { return nodeId; }
+    override fun setParentId(id: Long?) { this.nodeId = id; }
     override fun toMap(): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         map["music_id"] = id

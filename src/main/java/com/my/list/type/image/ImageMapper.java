@@ -1,18 +1,13 @@
 package com.my.list.type.image;
 
+import com.my.list.type.ExtraMapper;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface ImageMapper {
-    int deleteByPrimaryKey(Long id);
-
-    int insert(Image record);
-
-    Image selectByPrimaryKey(Long id);
-
-    List<Image> selectAll();
-
-    int updateByPrimaryKey(Image record);
+public interface ImageMapper extends ExtraMapper {
+    @Select("select * from images where image_node_id = #{id,jdbcType=BIGINT}")
+    @ResultMap("BaseResultMap")
+    Image selectByNodeId(Long id);
 }

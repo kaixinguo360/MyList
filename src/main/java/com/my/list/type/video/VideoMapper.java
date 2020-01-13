@@ -1,18 +1,14 @@
 package com.my.list.type.video;
 
+import com.my.list.type.ExtraMapper;
+import com.my.list.type.text.Text;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface VideoMapper {
-    int deleteByPrimaryKey(Long id);
-
-    int insert(Video record);
-
-    Video selectByPrimaryKey(Long id);
-
-    List<Video> selectAll();
-
-    int updateByPrimaryKey(Video record);
+public interface VideoMapper extends ExtraMapper {
+    @Select("select * from videos where video_node_id = #{id,jdbcType=BIGINT}")
+    @ResultMap("BaseResultMap")
+    Text selectByNodeId(Long id);
 }

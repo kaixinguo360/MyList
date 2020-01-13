@@ -1,4 +1,4 @@
-package com.my.list.service;
+package com.my.list.type;
 
 import com.my.list.dto.Node;
 

@@ -1,19 +1,12 @@
 package com.my.list.type.text;
 
+import com.my.list.type.ExtraMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
-
 @Mapper
-public interface TextMapper {
-    int deleteByPrimaryKey(Long id);
-    int insert(Text record);
-    Text selectByPrimaryKey(Long id);
-    List<Text> selectAll();
-    int updateByPrimaryKey(Text record);
-    
+public interface TextMapper extends ExtraMapper {
     @Select("select * from texts where text_node_id = #{id,jdbcType=BIGINT}")
     @ResultMap("BaseResultMap")
     Text selectByNodeId(Long id);

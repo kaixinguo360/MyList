@@ -2,16 +2,19 @@ package com.my.list.service;
 
 import com.my.list.domain.*;
 import com.my.list.dto.Node;
-import com.my.list.type.ValueMap;
+import com.my.list.type.ExtraValues;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageMapper;
+import com.my.list.type.image.ImageService;
 import com.my.list.type.music.Music;
 import com.my.list.type.music.MusicMapper;
+import com.my.list.type.music.MusicService;
 import com.my.list.type.text.Text;
 import com.my.list.type.text.TextMapper;
 import com.my.list.type.text.TextService;
 import com.my.list.type.video.Video;
 import com.my.list.type.video.VideoMapper;
+import com.my.list.type.video.VideoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,10 @@ public class NodeServiceTest {
     @Autowired private PartMapper partMapper;
 
     @Autowired private NodeService nodeService;
+    @Autowired private TextService textService;
+    @Autowired private ImageService imageService;
+    @Autowired private MusicService musicService;
+    @Autowired private VideoService videoService;
 
     private static User user = new User();
     private static Text text = new Text();
@@ -89,7 +96,7 @@ public class NodeServiceTest {
     @Test
     void textService() {
         // addNode
-        Node node = newNode(TextService.TYPE_NAME, "Text Node", text);
+        Node node = newNode(textService.typeName, "Text Node", text);
         nodeService.addNode(node);
         assertEquals(1, nodeMapper.selectAll().size());
         assertEquals(1, textMapper.selectAll().size());
@@ -106,7 +113,7 @@ public class NodeServiceTest {
         nodeService.updateNode(node);
         result = nodeService.getNode(node.getId());
         assertEquals(node.getComment(), result.getComment());
-        assertEquals(TextService.parse(node.getExtraValues()).getContent(), TextService.parse(result.getExtraValues()).getContent());
+        assertEquals(textService.parse(node.getExtraValues()).getContent(), textService.parse(result.getExtraValues()).getContent());
 
         // removeNode
         nodeService.removeNode(node.getId());
@@ -114,12 +121,96 @@ public class NodeServiceTest {
         assertEquals(0, textMapper.selectAll().size());
     }
 
-    private Node newNode(String type, String title, ValueMap valueMap) {
+    @Test
+    void imageService() {
+        // addNode
+        Node node = newNode(imageService.typeName, "Image Node", image);
+        nodeService.addNode(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, imageMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.getNode(node.getId());
+        assertEquals(node.getType(), result.getType());
+        assertArrayEquals(node.getExtraValues().keySet().toArray(), result.getExtraValues().keySet().toArray());
+        assertArrayEquals(node.getExtraValues().values().toArray(), result.getExtraValues().values().toArray());
+
+        // updateNode
+        node.setComment("This is comment.");
+        node.getExtraValues().put("image_description", "This is image description.");
+        nodeService.updateNode(node);
+        result = nodeService.getNode(node.getId());
+        assertEquals(node.getComment(), result.getComment());
+        assertEquals(imageService.parse(node.getExtraValues()).getDescription(), imageService.parse(result.getExtraValues()).getDescription());
+
+        // removeNode
+        nodeService.removeNode(node.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, imageMapper.selectAll().size());
+    }
+
+    @Test
+    void musicService() {
+        // addNode
+        Node node = newNode(musicService.typeName, "Music Node", music);
+        nodeService.addNode(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, musicMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.getNode(node.getId());
+        assertEquals(node.getType(), result.getType());
+        assertArrayEquals(node.getExtraValues().keySet().toArray(), result.getExtraValues().keySet().toArray());
+        assertArrayEquals(node.getExtraValues().values().toArray(), result.getExtraValues().values().toArray());
+
+        // updateNode
+        node.setComment("This is comment.");
+        node.getExtraValues().put("music_format", "mp3");
+        nodeService.updateNode(node);
+        result = nodeService.getNode(node.getId());
+        assertEquals(node.getComment(), result.getComment());
+        assertEquals(musicService.parse(node.getExtraValues()).getFormat(), musicService.parse(result.getExtraValues()).getFormat());
+
+        // removeNode
+        nodeService.removeNode(node.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, musicMapper.selectAll().size());
+    }
+
+    @Test
+    void videoService() {
+        // addNode
+        Node node = newNode(videoService.typeName, "Video Node", video);
+        nodeService.addNode(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, videoMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.getNode(node.getId());
+        assertEquals(node.getType(), result.getType());
+        assertArrayEquals(node.getExtraValues().keySet().toArray(), result.getExtraValues().keySet().toArray());
+        assertArrayEquals(node.getExtraValues().values().toArray(), result.getExtraValues().values().toArray());
+
+        // updateNode
+        node.setComment("This is comment.");
+        node.getExtraValues().put("video_format", "avi");
+        nodeService.updateNode(node);
+        result = nodeService.getNode(node.getId());
+        assertEquals(node.getComment(), result.getComment());
+        assertEquals(videoService.parse(node.getExtraValues()).getFormat(), videoService.parse(result.getExtraValues()).getFormat());
+
+        // removeNode
+        nodeService.removeNode(node.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, videoMapper.selectAll().size());
+    }
+
+    private Node newNode(String type, String title, ExtraValues extraValues) {
         Node node = new Node();
         node.setUser(user.getId());
         node.setType(type);
         node.setTitle(title);
-        if (valueMap != null) node.setExtraValues(valueMap.toMap());
+        if (extraValues != null) node.setExtraValues(extraValues.toMap());
         return node;
     }
 

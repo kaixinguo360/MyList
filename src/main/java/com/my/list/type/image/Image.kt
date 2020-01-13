@@ -1,16 +1,20 @@
 package com.my.list.type.image
 
-import com.my.list.type.ValueMap
+import com.my.list.type.ExtraValues
 
 class Image(
     var id: Long? = null,
     var nodeId: Long? = null,
     var url: String? = null,
     var description: String? = null
-): ValueMap {
+): ExtraValues {
     override fun toString(): String {
         return "Image[$id,$nodeId,$url,$description]"
     }
+    override fun getExtraId(): Long? { return id; }
+    override fun setExtraId(id: Long?) { this.id = id; }
+    override fun getParentId(): Long? { return nodeId; }
+    override fun setParentId(id: Long?) { this.nodeId = id; }
     override fun toMap(): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         map["image_id"] = id

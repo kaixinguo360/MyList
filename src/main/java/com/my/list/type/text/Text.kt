@@ -1,15 +1,19 @@
 package com.my.list.type.text
 
-import com.my.list.type.ValueMap
+import com.my.list.type.ExtraValues
 
 class Text(
     var id: Long? = null,
     var nodeId: Long? = null,
     var content: String? = null
-): ValueMap {
+): ExtraValues {
     override fun toString(): String {
         return "Text[$id,$nodeId,$content]"
     }
+    override fun getExtraId(): Long? { return id; }
+    override fun setExtraId(id: Long?) { this.id = id; }
+    override fun getParentId(): Long? { return nodeId; }
+    override fun setParentId(id: Long?) { this.nodeId = id; }
     override fun toMap(): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         map["text_id"] = id

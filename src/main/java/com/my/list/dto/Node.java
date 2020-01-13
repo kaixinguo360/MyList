@@ -1,6 +1,6 @@
 package com.my.list.dto;
 
-import com.my.list.type.ValueMap;
+import com.my.list.type.ExtraValues;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class Node {
         this.node = node;
         this.extraValues = new HashMap<>();
     }
-    public Node(com.my.list.domain.Node node, ValueMap extraValues) {
+    public Node(com.my.list.domain.Node node, ExtraValues extraValues) {
         this.node = node;
         this.extraValues = (extraValues == null) ? new HashMap<>() : extraValues.toMap();
     }

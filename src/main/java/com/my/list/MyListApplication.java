@@ -2,7 +2,10 @@ package com.my.list;
 
 import com.my.list.service.SingleNodeService;
 import com.my.list.service.TypeServiceManager;
+import com.my.list.type.image.ImageService;
+import com.my.list.type.music.MusicService;
 import com.my.list.type.text.TextService;
+import com.my.list.type.video.VideoService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +22,17 @@ public class MyListApplication {
     @Bean
     public TypeServiceManager typeServiceManager(
         SingleNodeService singleNodeService,
-        TextService textService
+        TextService textService,
+        ImageService imageService,
+        MusicService musicService,
+        VideoService videoService
     ) {
         TypeServiceManager typeServiceManager = new TypeServiceManager();
         typeServiceManager.putService("node", singleNodeService);
         typeServiceManager.putService("text", textService);
-//        typeServiceManager.putService("image", imageService);
-//        typeServiceManager.putService("music", musicService);
-//        typeServiceManager.putService("video", videoService);
+        typeServiceManager.putService("image", imageService);
+        typeServiceManager.putService("music", musicService);
+        typeServiceManager.putService("video", videoService);
         return typeServiceManager;
     }
 

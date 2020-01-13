@@ -1,5 +1,7 @@
 package com.my.list.service;
 
+import com.my.list.type.TypeService;
+
 import java.util.HashMap;
 import java.util.Map;
 
