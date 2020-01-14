@@ -1,11 +1,12 @@
 package com.my.list.service;
 
+import com.my.list.domain.Node;
 import com.my.list.domain.NodeMapper;
-import com.my.list.dto.Node;
+import com.my.list.dto.SingleNode;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SingleNodeService implements NodeService {
+public class SingleNodeService {
 
     protected final NodeMapper nodeMapper;
 
@@ -13,26 +14,23 @@ public class SingleNodeService implements NodeService {
         this.nodeMapper = nodeMapper;
     }
 
-    @Override
-    public void addNode(Node node) {
-        nodeMapper.insert(node.getDomain());
+    public void add(SingleNode singleNode) {
+        Node node = Node.Companion.fromSingleNode(singleNode);
+        if (node == null) throw new DataException("Input node is null.");
+        nodeMapper.insert(node);
+        singleNode.setId(node.getId());
     }
-
-    @Override
-    public Node getNode(Long id) {
+    
+    public SingleNode get(Long id) {
         if (id == null) throw new DataException("Id is null");
-        com.my.list.domain.Node node = nodeMapper.selectByPrimaryKey(id);
-        if (node == null) return null;
-        return new Node(node);
+        return nodeMapper.selectByPrimaryKey(id);
     }
-
-    @Override
-    public void updateNode(Node node) {
-        nodeMapper.updateByPrimaryKey(node.getDomain());
+    
+    public void update(SingleNode singleNode) {
+        nodeMapper.updateByPrimaryKey(Node.Companion.fromSingleNode(singleNode));
     }
-
-    @Override
-    public void removeNode(Long id) {
+    
+    public void remove(Long id) {
         nodeMapper.deleteByPrimaryKey(id);
     }
 }

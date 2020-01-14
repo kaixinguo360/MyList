@@ -1,93 +1,60 @@
 package com.my.list.service;
 
-import com.my.list.domain.NodeMapper;
-import com.my.list.dto.Node;
+import com.my.list.dto.ExtraNode;
+import com.my.list.dto.NodeDTO;
+import com.my.list.dto.SingleNode;
 import com.my.list.type.ExtraData;
-import com.my.list.type.ExtraMapper;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+@Service
+public class ExtraNodeService {
 
-public class ExtraNodeService extends SingleNodeService {
+    private final TypeConfig typeConfig;
+    private final SingleNodeService singleNodeService;
     
-    public final Config config;
-    
-    public ExtraNodeService(Config config, NodeMapper nodeMapper) {
-        super(nodeMapper);
-        this.config = config;
+    public ExtraNodeService(TypeConfig typeConfig, SingleNodeService singleNodeService) {
+        this.typeConfig = typeConfig;
+        this.singleNodeService = singleNodeService;
     }
 
-    @Override
-    public void addNode(Node node) {
-        Handler handler = config.getHandler(node.getType());
-        super.addNode(node);
-        if (handler.hasExtraData()) {
-            ExtraData extraData = ExtraData.parse(handler.extraDataClass, node.getExtraData());
-            extraData.setParentId(node.getId());
-            handler.extraMapper.insert(extraData);
-            node.setExtraData(extraData.toMap());
+    public void add(ExtraNode extraNode) {
+        Type type = typeConfig.getType(extraNode.getSingleNode().getType());
+        singleNodeService.add(extraNode.getSingleNode());
+        if (type.hasExtraData()) {
+            ExtraData extraData = ExtraData.parse(type.extraDataClass, extraNode.getExtraData());
+            extraData.setParentId(extraNode.getSingleNode().getId());
+            type.extraMapper.insert(extraData);
+            extraNode.setExtraData(extraData.toMap());
         }
     }
 
-    @Override
-    public Node getNode(Long id) {
-        Node node = super.getNode(id);
-        if (node == null) return null;
-        Handler handler = config.getHandler(node.getType());
-        if (handler.hasExtraData()) {
-            ExtraData extraData = handler.extraMapper.selectByNodeId(node.getId());
+    public ExtraNode get(Long id) {
+        SingleNode singleNode = singleNodeService.get(id);
+        if (singleNode == null) return null;
+        ExtraNode extraNode = new NodeDTO(singleNode);
+        Type type = typeConfig.getType(singleNode.getType());
+        if (type.hasExtraData()) {
+            ExtraData extraData = type.extraMapper.selectByNodeId(singleNode.getId());
             if (extraData == null) throw new DataException("Can't find extra data for node with id=" + id);
-            node.setExtraData(extraData.toMap());
+            extraNode.setExtraData(extraData.toMap());
         }
-        return node;
+        return extraNode;
     }
 
-    @Override
-    public void updateNode(Node node) {
-        Handler handler = config.getHandler(node.getType());
-        if (handler.hasExtraData()) {
-            ExtraData extraData = ExtraData.parse(handler.extraDataClass, node.getExtraData());
+    public void update(ExtraNode extraNode) {
+        Type type = typeConfig.getType(extraNode.getSingleNode().getType());
+        if (type.hasExtraData()) {
+            ExtraData extraData = ExtraData.parse(type.extraDataClass, extraNode.getExtraData());
             if (extraData.getExtraId() == null) throw new DataException("Id of extra data is null");
-            if (handler.extraMapper.selectByPrimaryKey(extraData.getExtraId()) == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
-            super.updateNode(node);
-            handler.extraMapper.updateByPrimaryKey(extraData);
+            if (type.extraMapper.selectByPrimaryKey(extraData.getExtraId()) == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
+            singleNodeService.update(extraNode.getSingleNode());
+            type.extraMapper.updateByPrimaryKey(extraData);
         } else {
-            super.updateNode(node);
+            singleNodeService.update(extraNode.getSingleNode());
         }
     }
 
-    public static class Handler {
-        
-        public final String typeName;
-        public final Class<? extends ExtraData> extraDataClass;
-        public final ExtraMapper extraMapper;
-
-        public Handler(String typeName) {
-            this(typeName, null, null);
-        }
-        public Handler(String typeName, Class<? extends ExtraData> extraDataClass, ExtraMapper extraMapper) {
-            this.typeName = typeName;
-            this.extraDataClass = extraDataClass;
-            this.extraMapper = extraMapper;
-        }
-        
-        private boolean hasExtraData() {
-            return extraDataClass != null;
-        }
-    }
-    
-    public static class Config {
-        
-        private Map<String, Handler> handlers = new HashMap<>();
-
-        public void addHandler(Handler handler) {
-            handlers.put(handler.typeName, handler);
-        }
-
-        private Handler getHandler(String typeName) {
-            Handler handler = handlers.get(typeName);
-            if (handler == null) throw new DataException("No such handler, typeName=" + typeName);
-            return handler;
-        }
+    public void remove(Long id) {
+        singleNodeService.remove(id);
     }
 }

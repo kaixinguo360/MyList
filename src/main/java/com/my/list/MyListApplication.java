@@ -1,7 +1,7 @@
 package com.my.list;
 
-import com.my.list.domain.NodeMapper;
-import com.my.list.service.ExtraNodeService;
+import com.my.list.service.Type;
+import com.my.list.service.TypeConfig;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageMapper;
 import com.my.list.type.music.Music;
@@ -24,20 +24,20 @@ public class MyListApplication {
     }
     
     @Bean
-    public ExtraNodeService extraNodeService(
-        NodeMapper nodeMapper,
+    public TypeConfig typeConfig(
         TextMapper textMapper,
         ImageMapper imageMapper,
         MusicMapper musicMapper,
         VideoMapper videoMapper
     ) {
-        ExtraNodeService.Config config = new ExtraNodeService.Config();
-        config.addHandler(new ExtraNodeService.Handler("node"));
-        config.addHandler(new ExtraNodeService.Handler(Text.TYPE_NAME, Text.class, textMapper));
-        config.addHandler(new ExtraNodeService.Handler(Image.TYPE_NAME, Image.class, imageMapper));
-        config.addHandler(new ExtraNodeService.Handler(Music.TYPE_NAME, Music.class, musicMapper));
-        config.addHandler(new ExtraNodeService.Handler(Video.TYPE_NAME, Video.class, videoMapper));
-        return new ExtraNodeService(config, nodeMapper);
+        TypeConfig typeConfig = new TypeConfig();
+        typeConfig.addType(new Type("node"));
+        typeConfig.addType(new Type("list"));
+        typeConfig.addType(new Type(Text.TYPE_NAME, Text.class, textMapper));
+        typeConfig.addType(new Type(Image.TYPE_NAME, Image.class, imageMapper));
+        typeConfig.addType(new Type(Music.TYPE_NAME, Music.class, musicMapper));
+        typeConfig.addType(new Type(Video.TYPE_NAME, Video.class, videoMapper));
+        return typeConfig;
     }
 
 }
