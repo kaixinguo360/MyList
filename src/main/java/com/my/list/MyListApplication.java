@@ -1,11 +1,15 @@
 package com.my.list;
 
-import com.my.list.service.SingleNodeService;
-import com.my.list.service.TypeServiceManager;
-import com.my.list.type.image.ImageService;
-import com.my.list.type.music.MusicService;
-import com.my.list.type.text.TextService;
-import com.my.list.type.video.VideoService;
+import com.my.list.domain.NodeMapper;
+import com.my.list.service.ExtraNodeService;
+import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageMapper;
+import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicMapper;
+import com.my.list.type.text.Text;
+import com.my.list.type.text.TextMapper;
+import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,20 +24,20 @@ public class MyListApplication {
     }
     
     @Bean
-    public TypeServiceManager typeServiceManager(
-        SingleNodeService singleNodeService,
-        TextService textService,
-        ImageService imageService,
-        MusicService musicService,
-        VideoService videoService
+    public ExtraNodeService extraNodeService(
+        NodeMapper nodeMapper,
+        TextMapper textMapper,
+        ImageMapper imageMapper,
+        MusicMapper musicMapper,
+        VideoMapper videoMapper
     ) {
-        TypeServiceManager typeServiceManager = new TypeServiceManager();
-        typeServiceManager.putService("node", singleNodeService);
-        typeServiceManager.putService("text", textService);
-        typeServiceManager.putService("image", imageService);
-        typeServiceManager.putService("music", musicService);
-        typeServiceManager.putService("video", videoService);
-        return typeServiceManager;
+        ExtraNodeService.Config config = new ExtraNodeService.Config();
+        config.addHandler(new ExtraNodeService.Handler("node"));
+        config.addHandler(new ExtraNodeService.Handler(Text.TYPE_NAME, Text.class, textMapper));
+        config.addHandler(new ExtraNodeService.Handler(Image.TYPE_NAME, Image.class, imageMapper));
+        config.addHandler(new ExtraNodeService.Handler(Music.TYPE_NAME, Music.class, musicMapper));
+        config.addHandler(new ExtraNodeService.Handler(Video.TYPE_NAME, Video.class, videoMapper));
+        return new ExtraNodeService(config, nodeMapper);
     }
 
 }

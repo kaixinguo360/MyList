@@ -1,13 +1,14 @@
 package com.my.list.type.video
 
-import com.my.list.type.ExtraValues
+import com.my.list.type.ExtraData
 
 class Video(
     var id: Long? = null,
     var nodeId: Long? = null,
     var url: String? = null,
     var format: String? = null
-): ExtraValues {
+): ExtraData {
+    companion object { const val TYPE_NAME = "video" }
     override fun toString(): String {
         return "Video[$id,$nodeId,$url,$format]"
     }

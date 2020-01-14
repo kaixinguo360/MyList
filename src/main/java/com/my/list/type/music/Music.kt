@@ -1,13 +1,14 @@
 package com.my.list.type.music
 
-import com.my.list.type.ExtraValues
+import com.my.list.type.ExtraData
 
 class Music(
     var id: Long? = null,
     var nodeId: Long? = null,
     var url: String? = null,
     var format: String? = null
-): ExtraValues {
+): ExtraData {
+    companion object { const val TYPE_NAME = "music" }
     override fun toString(): String {
         return "Music[$id,$nodeId,$url,$format]"
     }

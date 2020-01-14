@@ -1,6 +1,6 @@
 package com.my.list.dto;
 
-import com.my.list.type.ExtraValues;
+import com.my.list.type.ExtraData;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -9,27 +9,27 @@ import java.util.Map;
 public class Node {
     
     private com.my.list.domain.Node node;
-    private Map<String, Object> extraValues;
+    private Map<String, Object> extraData;
 
     // ---- Constructor ---- //
     public Node() {
         this.node = new com.my.list.domain.Node();
-        this.extraValues = new HashMap<>();
+        this.extraData = new HashMap<>();
     }
     public Node(com.my.list.domain.Node node) {
         this.node = node;
-        this.extraValues = new HashMap<>();
+        this.extraData = new HashMap<>();
     }
-    public Node(com.my.list.domain.Node node, ExtraValues extraValues) {
+    public Node(com.my.list.domain.Node node, ExtraData extraData) {
         this.node = node;
-        this.extraValues = (extraValues == null) ? new HashMap<>() : extraValues.toMap();
+        this.extraData = (extraData == null) ? new HashMap<>() : extraData.toMap();
     }
 
     // ---- Getter & Setter of DTO ---- //
     public com.my.list.domain.Node getDomain() { return node; }
     public void setDomain(com.my.list.domain.Node node) { this.node = node; }
-    public Map<String, Object> getExtraValues() { return extraValues; }
-    public void setExtraValues(Map<String, Object> extraValues) { this.extraValues = extraValues; }
+    public Map<String, Object> getExtraData() { return extraData; }
+    public void setExtraData(Map<String, Object> extraData) { this.extraData = extraData; }
     
     // ---- Getter & Setter of Domain ---- //
     public Long getId() { return node.getId(); }

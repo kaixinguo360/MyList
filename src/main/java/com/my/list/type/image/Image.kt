@@ -1,13 +1,14 @@
 package com.my.list.type.image
 
-import com.my.list.type.ExtraValues
+import com.my.list.type.ExtraData
 
 class Image(
     var id: Long? = null,
     var nodeId: Long? = null,
     var url: String? = null,
     var description: String? = null
-): ExtraValues {
+): ExtraData {
+    companion object { const val TYPE_NAME = "image" }
     override fun toString(): String {
         return "Image[$id,$nodeId,$url,$description]"
     }

@@ -1,26 +1,21 @@
 package com.my.list.service;
 
 import com.my.list.domain.NodeMapper;
-import com.my.list.domain.ProcedureMapper;
 import com.my.list.dto.Node;
-import com.my.list.type.TypeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SingleNodeService implements TypeService {
+public class SingleNodeService implements NodeService {
 
-    @Autowired protected ProcedureMapper procedureMapper;
-    @Autowired protected NodeMapper nodeMapper;
+    protected final NodeMapper nodeMapper;
+
+    public SingleNodeService(NodeMapper nodeMapper) {
+        this.nodeMapper = nodeMapper;
+    }
 
     @Override
     public void addNode(Node node) {
         nodeMapper.insert(node.getDomain());
-    }
-
-    @Override
-    public void removeNode(Long id) {
-        nodeMapper.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -34,5 +29,10 @@ public class SingleNodeService implements TypeService {
     @Override
     public void updateNode(Node node) {
         nodeMapper.updateByPrimaryKey(node.getDomain());
+    }
+
+    @Override
+    public void removeNode(Long id) {
+        nodeMapper.deleteByPrimaryKey(id);
     }
 }

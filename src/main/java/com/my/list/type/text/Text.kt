@@ -1,12 +1,13 @@
 package com.my.list.type.text
 
-import com.my.list.type.ExtraValues
+import com.my.list.type.ExtraData
 
 class Text(
     var id: Long? = null,
     var nodeId: Long? = null,
     var content: String? = null
-): ExtraValues {
+): ExtraData {
+    companion object { const val TYPE_NAME = "text" }
     override fun toString(): String {
         return "Text[$id,$nodeId,$content]"
     }
