@@ -321,6 +321,21 @@ BEGIN
 
 END;;
 
+DROP PROCEDURE IF EXISTS `get_list`;;
+CREATE PROCEDURE `get_list`(IN `list` bigint(20) unsigned)
+BEGIN
+
+    SELECT n.* FROM nodes n, parts
+    WHERE
+            part_content_id = n.id
+      AND
+            part_parent_id = list
+    ORDER BY
+        part_content_order
+    ;
+
+END;;
+
 DROP PROCEDURE IF EXISTS `show_all`;;
 CREATE PROCEDURE `show_all`()
 BEGIN
@@ -444,6 +459,9 @@ BEGIN
     CALL add_part(@list_id, @video_id);
     CALL add_part(@list_id, @video_id);
 
+-- Get List --
+    CALL get_list(@list_id);
+
 -- Delete List --
     CALL delete_list(
             @list_id
@@ -487,7 +505,7 @@ CREATE TABLE `images` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `images` (`image_id`, `image_node_id`, `image_url`, `image_description`) VALUES
-(131,	644,	'http://example.com/image.png',	'This is image description.');
+(145,	714,	'http://example.com/image.png',	'This is image description.');
 
 DROP TABLE IF EXISTS `musics`;
 CREATE TABLE `musics` (
@@ -501,7 +519,7 @@ CREATE TABLE `musics` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `musics` (`music_id`, `music_node_id`, `music_url`, `music_format`) VALUES
-(123,	645,	'http://example.com/music.mp3',	'mp3');
+(137,	715,	'http://example.com/music.mp3',	'mp3');
 
 DROP TABLE IF EXISTS `nodemeta`;
 CREATE TABLE `nodemeta` (
@@ -539,9 +557,8 @@ CREATE TABLE `nodes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `nodes` (`id`, `node_user`, `node_type`, `node_ctime`, `node_mtime`, `node_title`, `node_excerpt`, `node_lstatus`, `node_lcount`, `node_permissions`, `node_nsfw`, `node_like`, `node_source_url`, `node_comment`) VALUES
-(644,	140,	'image',	'2020-01-12 02:02:35',	'2020-01-12 02:02:35',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://image.example.com',	'This is comment of image.'),
-(645,	140,	'music',	'2020-01-12 02:02:35',	'2020-01-12 02:02:35',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://music.example.com',	'This is comment of music.'),
-(646,	140,	'video',	'2020-01-12 02:02:35',	'2020-01-12 02:02:35',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://video.example.com',	'This is comment of video.');
+(714,	154,	'image',	'2020-01-15 00:54:54',	'2020-01-15 00:54:54',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://image.example.com',	'This is comment of image.'),
+(715,	154,	'music',	'2020-01-15 00:54:54',	'2020-01-15 00:54:54',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://music.example.com',	'This is comment of music.');
 
 DROP TABLE IF EXISTS `parts`;
 CREATE TABLE `parts` (
@@ -552,7 +569,9 @@ CREATE TABLE `parts` (
                          `part_content_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image' COMMENT 'Type of part node',
                          PRIMARY KEY (`part_id`),
                          KEY `part_node_id` (`part_parent_id`),
-                         CONSTRAINT `parts_ibfk_2` FOREIGN KEY (`part_parent_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                         KEY `part_content_id` (`part_content_id`),
+                         CONSTRAINT `parts_ibfk_2` FOREIGN KEY (`part_parent_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                         CONSTRAINT `parts_ibfk_3` FOREIGN KEY (`part_content_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -580,7 +599,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `user_email`, `user_status`) VALUES
-(140,	'TestUser',	'*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5',	'test@example.com',	'activated');
+(154,	'TestUser',	'*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5',	'test@example.com',	'activated');
 
 DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
@@ -593,7 +612,5 @@ CREATE TABLE `videos` (
                           CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`video_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `videos` (`video_id`, `video_node_id`, `video_url`, `video_format`) VALUES
-(122,	646,	'http://example.com/video.avi',	'avi');
 
--- 2020-01-12 14:25:26
+-- 2020-01-15 08:03:45

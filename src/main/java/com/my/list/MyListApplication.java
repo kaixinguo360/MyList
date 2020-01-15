@@ -32,7 +32,7 @@ public class MyListApplication {
     ) {
         TypeConfig typeConfig = new TypeConfig();
         typeConfig.addType(new Type("node"));
-        typeConfig.addType(new Type("list"));
+        typeConfig.addType(new Type("list", true));
         typeConfig.addType(new Type(Text.TYPE_NAME, Text.class, textMapper));
         typeConfig.addType(new Type(Image.TYPE_NAME, Image.class, imageMapper));
         typeConfig.addType(new Type(Music.TYPE_NAME, Music.class, musicMapper));
