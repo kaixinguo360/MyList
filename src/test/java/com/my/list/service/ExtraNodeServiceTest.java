@@ -32,10 +32,10 @@ public class ExtraNodeServiceTest {
     @Autowired private ImageMapper imageMapper;
     @Autowired private MusicMapper musicMapper;
     @Autowired private VideoMapper videoMapper;
+    @Autowired private UserService userService;
+    
+    private String token;
 
-    @Autowired private ExtraNodeService extraNodeService;
-
-    private static User user = new User();
     private static Text text = new Text();
     private static Image image = new Image();
     private static Music music = new Music();
@@ -43,6 +43,7 @@ public class ExtraNodeServiceTest {
 
     @BeforeEach
     void beforeAll() {
+        User user = new User();
         user.setName("TestUser");
         user.setPass("1234567");
         user.setEmail("test@example.com");
@@ -62,10 +63,15 @@ public class ExtraNodeServiceTest {
         // clean_all & add_user
         procedureMapper.clean_all();
         procedureMapper.add_user(user);
+        
+        // login
+        token = userService.generateToken(user.getName(), user.getPass());
     }
 
     @Test
     void textService() {
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+        
         // addNode
         ExtraNode extraNode = newNode(Text.TYPE_NAME, "Text Node", text);
         SingleNode singleNode = extraNode.getSingleNode();
@@ -95,6 +101,8 @@ public class ExtraNodeServiceTest {
 
     @Test
     void imageService() {
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+        
         // addNode
         ExtraNode extraNode = newNode(Image.TYPE_NAME, "Image Node", image);
         SingleNode singleNode = extraNode.getSingleNode();
@@ -124,6 +132,8 @@ public class ExtraNodeServiceTest {
 
     @Test
     void musicService() {
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+        
         // addNode
         ExtraNode extraNode = newNode(Music.TYPE_NAME, "Music Node", music);
         SingleNode singleNode = extraNode.getSingleNode();
@@ -153,6 +163,8 @@ public class ExtraNodeServiceTest {
 
     @Test
     void videoService() {
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+        
         // addNode
         ExtraNode extraNode = newNode(Video.TYPE_NAME, "Video Node", video);
         SingleNode singleNode = extraNode.getSingleNode();
@@ -183,7 +195,6 @@ public class ExtraNodeServiceTest {
     private ExtraNode newNode(String type, String title, ExtraData extraData) {
         ExtraNode extraNode = new NodeDTO();
         SingleNode singleNode = extraNode.getSingleNode();
-        singleNode.setUser(user.getId());
         singleNode.setType(type);
         singleNode.setTitle(title);
         if (extraData != null) extraNode.setExtraData(extraData.toMap());

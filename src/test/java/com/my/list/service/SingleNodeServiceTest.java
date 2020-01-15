@@ -17,13 +17,13 @@ public class SingleNodeServiceTest {
 
     @Autowired private ProcedureMapper procedureMapper;
     @Autowired private NodeMapper nodeMapper;
+    @Autowired private UserService userService;
 
-    @Autowired private SingleNodeService singleNodeService;
-
-    private static User user = new User();
+    private String token;
 
     @BeforeEach
     void beforeAll() {
+        User user = new User();
         user.setName("TestUser");
         user.setPass("1234567");
         user.setEmail("test@example.com");
@@ -32,10 +32,15 @@ public class SingleNodeServiceTest {
         // clean_all & add_user
         procedureMapper.clean_all();
         procedureMapper.add_user(user);
+        
+        // login
+        token = userService.generateToken(user.getName(), user.getPass());
     }
 
     @Test
     void singleNodeService() {
+        SingleNodeService singleNodeService = userService.getUserContext(token).singleNodeService;
+        
         // addNode
         SingleNode singleNode = newNode();
         singleNodeService.add(singleNode);
@@ -57,7 +62,6 @@ public class SingleNodeServiceTest {
 
     private SingleNode newNode() {
         SingleNode singleNode = new Node();
-        singleNode.setUser(user.getId());
         singleNode.setType("node");
         singleNode.setTitle("Single Node");
         return singleNode;

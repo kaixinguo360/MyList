@@ -28,10 +28,10 @@ public class ListServiceTest {
 
     @Autowired private ProcedureMapper procedureMapper;
     @Autowired private NodeMapper nodeMapper;
+    @Autowired private UserService userService;
 
-    @Autowired private ExtraNodeService extraNodeService;
+    private String token;
 
-    private static User user = new User();
     private static ExtraNode textNode;
     private static ExtraNode imageNode;
     private static ExtraNode musicNode;
@@ -39,6 +39,7 @@ public class ListServiceTest {
 
     @BeforeEach
     void beforeAll() {
+        User user = new User();
         Text text = new Text();
         Image image = new Image();
         Music music = new Music();
@@ -64,6 +65,9 @@ public class ListServiceTest {
         procedureMapper.clean_all();
         procedureMapper.add_user(user);
         
+        // login
+        token = userService.generateToken(user.getName(), user.getPass());
+        
         // add_nodes
         //
         // nodes(2): name       lcount  lstatus
@@ -78,12 +82,15 @@ public class ListServiceTest {
         videoNode = newNode(Video.TYPE_NAME, "Video Node", video);
         textNode.getSingleNode().setLstatus("attachment");
         imageNode.getSingleNode().setLstatus("attachment");
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
         extraNodeService.add(textNode);
         extraNodeService.add(imageNode);
     }
     
     @Test
     void listService() {
+        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+        
         // add list
         //
         // list(4):
@@ -163,7 +170,6 @@ public class ListServiceTest {
     private ExtraNode newNode(String type, String title, ExtraData extraData) {
         ExtraNode extraNode = new NodeDTO();
         SingleNode singleNode = extraNode.getSingleNode();
-        singleNode.setUser(user.getId());
         singleNode.setType(type);
         singleNode.setTitle(title);
         if (extraData != null) extraNode.setExtraData(extraData.toMap());

@@ -2,18 +2,19 @@ package com.my.list.service;
 
 import com.my.list.domain.NodeMapper;
 import com.my.list.domain.ProcedureMapper;
+import com.my.list.domain.User;
 import com.my.list.dto.ExtraNode;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.NodeDTO;
 import com.my.list.dto.SingleNode;
 import com.my.list.type.ExtraData;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class ExtraNodeService {
+    
+    private final Long userId;
 
     private final TypeConfig typeConfig;
     private final SingleNodeService singleNodeService;
@@ -21,7 +22,11 @@ public class ExtraNodeService {
     private final NodeMapper nodeMapper;
     private final ProcedureMapper procedureMapper;
     
-    public ExtraNodeService(TypeConfig typeConfig, SingleNodeService singleNodeService, NodeMapper nodeMapper, ProcedureMapper procedureMapper) {
+    public ExtraNodeService(User user, TypeConfig typeConfig, SingleNodeService singleNodeService,
+                            NodeMapper nodeMapper, ProcedureMapper procedureMapper) {
+        if (user == null) throw new DataException("User is null");
+        if (user.getId() == null) throw new DataException("Id of user is null");
+        this.userId = user.getId();
         this.typeConfig = typeConfig;
         this.singleNodeService = singleNodeService;
         this.nodeMapper = nodeMapper;
@@ -42,7 +47,6 @@ public class ExtraNodeService {
             saveList(singleNode.getId(), extraNode.getExtraList());
         }
     }
-
     public ExtraNode get(Long id) {
         SingleNode singleNode = singleNodeService.get(id);
         if (singleNode == null) return null;
@@ -59,10 +63,10 @@ public class ExtraNodeService {
         }
         return extraNode;
     }
-
     public void update(ExtraNode extraNode) {
         SingleNode singleNode = extraNode.getSingleNode();
         Type type = typeConfig.getType(singleNode.getType());
+        singleNodeService.update(singleNode);
         if (type.hasExtraData) {
             ExtraData extraData = ExtraData.parse(type.extraDataClass, extraNode.getExtraData());
             if (extraData.getExtraId() == null) throw new DataException("Id of extra data is null");
@@ -72,9 +76,7 @@ public class ExtraNodeService {
         if (type.hasExtraList) {
             saveList(singleNode.getId(), extraNode.getExtraList());
         }
-        singleNodeService.update(singleNode);
     }
-
     public void remove(Long id) {
         SingleNode singleNode = singleNodeService.get(id);
         if (singleNode == null) throw new DataException("No such node, id=" + id);
@@ -114,7 +116,7 @@ public class ExtraNodeService {
     }
     private List<ListItem> getList(Long listId) {
         if (listId == null) throw new DataException("List id is null");
-        return nodeMapper.selectAllByListId(listId)
+        return nodeMapper.selectAllByListIdWithUserId(userId, listId)
             .stream().map(ListItem::new).collect(Collectors.toList());
     }
 }

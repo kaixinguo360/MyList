@@ -54,15 +54,66 @@
     from nodes
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select *
-    from nodes
-  </select>
   <select id="selectAllByListId" resultMap="BaseResultMap">
     SELECT n.*
     FROM nodes n, parts
     WHERE part_content_id = n.id
-      AND part_parent_id = #{list_id}
+      AND part_parent_id = #{listId}
     ORDER BY part_content_order
+  </select>
+  
+  <delete id="deleteByPrimaryKeyWithUserId">
+    delete
+    from nodes
+    where id = #{id,jdbcType=BIGINT}
+      and node_user = #{userId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertWithUserId" keyColumn="id" keyProperty="node.id" useGeneratedKeys="true">
+    insert into nodes (node_user, node_type, node_ctime,
+                       node_mtime, node_title, node_excerpt,
+                       node_lstatus, node_lcount, node_permissions,
+                       node_nsfw, node_like, node_source_url, node_comment)
+    values (#{userId,jdbcType=BIGINT}, #{node.type,jdbcType=VARCHAR}, #{node.ctime,jdbcType=TIMESTAMP},
+            #{node.mtime,jdbcType=TIMESTAMP}, #{node.title,jdbcType=VARCHAR}, #{node.excerpt,jdbcType=VARCHAR},
+            #{node.lstatus,jdbcType=VARCHAR}, #{node.lcount,jdbcType=INTEGER}, #{node.permissions,jdbcType=VARCHAR},
+            #{node.nsfw,jdbcType=BIT}, #{node.like,jdbcType=BIT}, #{node.sourceUrl,jdbcType=VARCHAR}, #{node.comment,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeyWithUserId">
+    update nodes
+    set node_user        = #{userId,jdbcType=BIGINT},
+        node_type        = #{node.type,jdbcType=VARCHAR},
+        node_ctime       = #{node.ctime,jdbcType=TIMESTAMP},
+        node_mtime       = #{node.mtime,jdbcType=TIMESTAMP},
+        node_title       = #{node.title,jdbcType=VARCHAR},
+        node_excerpt     = #{node.excerpt,jdbcType=VARCHAR},
+        node_lstatus     = #{node.lstatus,jdbcType=VARCHAR},
+        node_lcount      = #{node.lcount,jdbcType=INTEGER},
+        node_permissions = #{node.permissions,jdbcType=VARCHAR},
+        node_nsfw        = #{node.nsfw,jdbcType=BIT},
+        node_like        = #{node.like,jdbcType=BIT},
+        node_source_url  = #{node.sourceUrl,jdbcType=VARCHAR},
+        node_comment     = #{node.comment,jdbcType=VARCHAR}
+    where id = #{node.id,jdbcType=BIGINT}
+      and node_user = #{userId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKeyWithUserId" resultMap="BaseResultMap">
+    select *
+    from nodes
+    where id = #{id,jdbcType=BIGINT}
+      and node_user = #{userId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAllByListIdWithUserId" resultMap="BaseResultMap">
+    SELECT n.*
+    FROM nodes n, parts, nodes parent
+    WHERE part_content_id = n.id
+      AND part_parent_id = parent.id
+      AND parent.id = #{listId,jdbcType=BIGINT}
+      AND parent.node_user = #{userId,jdbcType=BIGINT}
+    ORDER BY part_content_order
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select *
+    from nodes
   </select>
 </mapper>

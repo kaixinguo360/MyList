@@ -6,5 +6,10 @@ import java.util.List;
 
 @Mapper
 public interface NodeMapper extends SimpleMapper<Node> {
-    List<Node> selectAllByListId(Long list_id);
+    int updateByPrimaryKeyWithUserId(Long userId, Node node);
+    int deleteByPrimaryKeyWithUserId(Long userId, Long id);
+    int insertWithUserId(Long userId, Node node);
+    Node selectByPrimaryKeyWithUserId(Long userId, Long id);
+    List<Node> selectAllByListIdWithUserId(Long userId, Long listId);
+    List<Node> selectAllByListId(Long listId);
 }
