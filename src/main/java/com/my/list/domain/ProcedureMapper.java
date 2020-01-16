@@ -16,7 +16,8 @@ public interface ProcedureMapper {
         "#{node.user,mode=IN}," +
         "#{node.title,mode=IN}," +
         "#{node.excerpt,mode=IN}," +
-        "#{node.lstatus,mode=IN}," +
+        "#{node.linkDelete,mode=IN}," +
+        "#{node.linkVirtual,mode=IN}," +
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
@@ -33,7 +34,8 @@ public interface ProcedureMapper {
         "#{user,mode=IN}," +
         "#{title,mode=IN}," +
         "#{excerpt,mode=IN}," +
-        "#{lstatus,mode=IN}," +
+        "#{linkDelete,mode=IN}," +
+        "#{linkVirtual,mode=IN}," +
         "#{permissions,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
@@ -48,7 +50,8 @@ public interface ProcedureMapper {
         "#{node.user,mode=IN}," +
         "#{node.title,mode=IN}," +
         "#{node.excerpt,mode=IN}," +
-        "#{node.lstatus,mode=IN}," +
+        "#{node.linkDelete,mode=IN}," +
+        "#{node.linkVirtual,mode=IN}," +
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
@@ -66,7 +69,8 @@ public interface ProcedureMapper {
         "#{type,mode=IN}," +
         "#{title,mode=IN}," +
         "#{excerpt,mode=IN}," +
-        "#{lstatus,mode=IN}," +
+        "#{linkDelete,mode=IN}," +
+        "#{linkVirtual,mode=IN}," +
         "#{permissions,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
@@ -88,7 +92,8 @@ public interface ProcedureMapper {
         "#{node.user,mode=IN}," +
         "#{node.title,mode=IN}," +
         "#{node.excerpt,mode=IN}," +
-        "#{node.lstatus,mode=IN}," +
+        "#{node.linkDelete,mode=IN}," +
+        "#{node.linkVirtual,mode=IN}," +
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
@@ -115,7 +120,8 @@ public interface ProcedureMapper {
         "#{node.user,mode=IN}," +
         "#{node.title,mode=IN}," +
         "#{node.excerpt,mode=IN}," +
-        "#{node.lstatus,mode=IN}," +
+        "#{node.linkDelete,mode=IN}," +
+        "#{node.linkVirtual,mode=IN}," +
         "#{node.permissions,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +

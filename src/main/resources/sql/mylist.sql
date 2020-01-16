@@ -10,7 +10,7 @@ SET NAMES utf8mb4;
 DELIMITER ;;
 
 DROP PROCEDURE IF EXISTS `add_image`;;
-CREATE PROCEDURE `add_image`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `description` text CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_image`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `description` text CHARACTER SET 'utf8mb4')
 BEGIN
 
     CALL add_node(
@@ -19,7 +19,8 @@ BEGIN
             'image',
             title,
             excerpt,
-            lstatus,
+            link_delete,
+            link_virtual,
             permissions,
             is_nsfw,
             is_like,
@@ -43,7 +44,7 @@ BEGIN
 END;;
 
 DROP PROCEDURE IF EXISTS `add_list`;;
-CREATE PROCEDURE `add_list`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_list`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4')
 BEGIN
 
     CALL add_node(
@@ -52,7 +53,8 @@ BEGIN
             'list',
             title,
             excerpt,
-            lstatus,
+            link_delete,
+            link_virtual,
             permissions,
             is_nsfw,
             is_like,
@@ -65,7 +67,7 @@ BEGIN
 END;;
 
 DROP PROCEDURE IF EXISTS `add_music`;;
-CREATE PROCEDURE `add_music`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `format` varchar(20) CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_music`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `format` varchar(20) CHARACTER SET 'utf8mb4')
 BEGIN
 
     CALL add_node(
@@ -74,7 +76,8 @@ BEGIN
             'music',
             title,
             excerpt,
-            lstatus,
+            link_delete,
+            link_virtual,
             permissions,
             is_nsfw,
             is_like,
@@ -97,7 +100,7 @@ BEGIN
 END;;
 
 DROP PROCEDURE IF EXISTS `add_node`;;
-CREATE PROCEDURE `add_node`(OUT `id` bigint(20) unsigned, IN `user` bigint(10) unsigned, IN `type` varchar(20) CHARACTER SET 'utf8mb4', IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_node`(OUT `id` bigint(20) unsigned, IN `user` bigint(10) unsigned, IN `type` varchar(20) CHARACTER SET 'utf8mb4', IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4')
 BEGIN
 
     INSERT INTO nodes(
@@ -105,8 +108,9 @@ BEGIN
         node_type,
         node_title,
         node_excerpt,
-        node_lstatus,
-        node_lcount,
+        node_link_delete,
+        node_link_virtual,
+        node_link_back,
         node_permissions,
         node_nsfw,
         node_like,
@@ -117,7 +121,8 @@ BEGIN
              type,
              title,
              excerpt,
-             lstatus,
+             link_delete,
+             link_virtual,
              0,
              permissions,
              is_nsfw,
@@ -158,12 +163,13 @@ BEGIN
              part
         );
 
-    CALL update_lcount(part);
+    CALL update_link_forward(parent);
+    CALL update_link_back(part);
 
 END;;
 
 DROP PROCEDURE IF EXISTS `add_text`;;
-CREATE PROCEDURE `add_text`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `content` text CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_text`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `content` text CHARACTER SET 'utf8mb4')
 BEGIN
 
     CALL add_node(
@@ -172,7 +178,8 @@ BEGIN
             'text',
             title,
             excerpt,
-            lstatus,
+            link_delete,
+            link_virtual,
             permissions,
             is_nsfw,
             is_like,
@@ -213,7 +220,7 @@ BEGIN
 END;;
 
 DROP PROCEDURE IF EXISTS `add_video`;;
-CREATE PROCEDURE `add_video`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `lstatus` varchar(20) CHARACTER SET 'utf8mb4', IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `format` varchar(20) CHARACTER SET 'utf8mb4')
+CREATE PROCEDURE `add_video`(OUT `id` bigint(20) unsigned, IN `user` bigint(20) unsigned, IN `title` text CHARACTER SET 'utf8mb4', IN `excerpt` text CHARACTER SET 'utf8mb4', IN `link_delete` tinyint(1), IN `link_virtual` tinyint(1), IN `permissions` varchar(20) CHARACTER SET 'utf8mb4', IN `is_nsfw` tinyint(1), IN `is_like` tinyint(1), IN `source_url` varchar(511) CHARACTER SET 'utf8mb4', IN `comment` text CHARACTER SET 'utf8mb4', IN `url` varchar(511) CHARACTER SET 'utf8mb4', IN `format` varchar(20) CHARACTER SET 'utf8mb4')
 BEGIN
 
     CALL add_node(
@@ -222,7 +229,8 @@ BEGIN
             'video',
             title,
             excerpt,
-            lstatus,
+            link_delete,
+            link_virtual,
             permissions,
             is_nsfw,
             is_like,
@@ -256,13 +264,13 @@ DROP PROCEDURE IF EXISTS `clean_all`;;
 CREATE PROCEDURE `clean_all`()
 BEGIN
 
-    DELETE FROM users;
-    DELETE FROM nodes;
-    DELETE FROM texts;
-    DELETE FROM images;
-    DELETE FROM musics;
-    DELETE FROM videos;
-    DELETE FROM parts;
+    DELETE FROM users WHERE true;
+    DELETE FROM nodes WHERE true;
+    DELETE FROM texts WHERE true;
+    DELETE FROM images WHERE true;
+    DELETE FROM musics WHERE true;
+    DELETE FROM videos WHERE true;
+    DELETE FROM parts WHERE true;
 
 END;;
 
@@ -292,9 +300,9 @@ DROP PROCEDURE IF EXISTS `clean_nodes`;;
 CREATE PROCEDURE `clean_nodes`()
 DELETE FROM nodes
 WHERE
-        node_lcount = 0
+        node_link_back = 0
   AND
-        node_lstatus = 'attachment';;
+        node_link_delete = 1;;
 
 DROP PROCEDURE IF EXISTS `delete_list`;;
 CREATE PROCEDURE `delete_list`(IN `list` bigint(20) unsigned)
@@ -317,7 +325,7 @@ BEGIN
             part_content_id = part
     ;
 
-    CALL update_lcount(part);
+    CALL update_link_back(part);
 
 END;;
 
@@ -366,6 +374,15 @@ BEGIN
             'activated'
         );
 
+-- Add User2 --
+    CALL add_user(
+            @user2_id,
+            'TestUser2',
+            '1234567',
+            'test2@example.com',
+            'activated'
+        );
+
 -- Check User --
     CALL check_user(
             'TestUser',
@@ -378,12 +395,43 @@ BEGIN
             @user_id,
             'Test List',
             'excerpt',
-            'alone',
+            0,
+            0,
             'private',
             0,
             0,
             'http://list.example.com',
             'This is comment of list.'
+        );
+
+-- Add List2 --
+    CALL add_list(
+            @list2_id,
+            @user_id,
+            'Test List2',
+            'excerpt',
+            0,
+            1,
+            'private',
+            0,
+            0,
+            'http://list.example.com',
+            'This is comment of list2.'
+        );
+
+-- Add List3 --
+    CALL add_list(
+            @list3_id,
+            @user2_id,
+            'Test List3',
+            'excerpt',
+            0,
+            0,
+            'private',
+            0,
+            0,
+            'http://list.example.com',
+            'This is comment of list3.'
         );
 
 -- Add Text --
@@ -392,7 +440,8 @@ BEGIN
             @user_id,
             'Test List',
             'excerpt',
-            'attachment',
+            1,
+            0,
             'private',
             0,
             0,
@@ -407,7 +456,8 @@ BEGIN
             @user_id,
             'Test List',
             'excerpt',
-            'alone',
+            1,
+            0,
             'private',
             0,
             0,
@@ -423,7 +473,8 @@ BEGIN
             @user_id,
             'Test List',
             'excerpt',
-            'alone',
+            1,
+            0,
             'private',
             0,
             0,
@@ -439,7 +490,8 @@ BEGIN
             @user_id,
             'Test List',
             'excerpt',
-            'alone',
+            1,
+            0,
             'private',
             0,
             0,
@@ -452,16 +504,47 @@ BEGIN
 -- Show IDs --
     SELECT @user_id, @list_id, @text_id, @image_id, @music_id, @video_id;
 
--- Add Parts To List --
+
+    -- -- -- -- -- -- -- -- -- --
+-- -- Add Parts To List -- --
     CALL add_part(@list_id, @text_id);
     CALL add_part(@list_id, @image_id);
     CALL add_part(@list_id, @music_id);
     CALL add_part(@list_id, @video_id);
     CALL add_part(@list_id, @video_id);
 
--- Get List --
-    CALL get_list(@list_id);
+    -- Get List --
+--  CALL get_list(@list_id);
+    SELECT * FROM nodes;
 
+
+    -- -- -- -- -- -- -- -- -- --
+-- -- Add Parts To List2 -- --
+    CALL add_part(@list2_id, @text_id);
+    CALL add_part(@list2_id, @image_id);
+    CALL add_part(@list2_id, @music_id);
+    CALL add_part(@list2_id, @video_id);
+    CALL add_part(@list2_id, @video_id);
+
+    -- Get List2 --
+--  CALL get_list(@list2_id);
+    SELECT * FROM nodes;
+
+
+    -- -- -- -- -- -- -- -- -- --
+-- -- Add Parts To List3 -- --
+    CALL add_part(@list3_id, @text_id);
+    CALL add_part(@list3_id, @image_id);
+    CALL add_part(@list3_id, @music_id);
+    CALL add_part(@list3_id, @video_id);
+    CALL add_part(@list3_id, @video_id);
+
+    -- Get List3 --
+--  CALL get_list(@list3_id);
+    SELECT * FROM nodes;
+
+
+    -- -- -- -- -- -- -- -- -- --
 -- Delete List --
     CALL delete_list(
             @list_id
@@ -472,20 +555,46 @@ BEGIN
 
 END;;
 
-DROP PROCEDURE IF EXISTS `update_lcount`;;
-CREATE PROCEDURE `update_lcount`(IN `node_id` bigint(20) unsigned)
+DROP PROCEDURE IF EXISTS `update_link_back`;;
+CREATE PROCEDURE `update_link_back`(IN `node_id` bigint(20) unsigned)
 BEGIN
 
-    SET @lcount = 0;
+    SET @link_back = 0;
 
-    SELECT COUNT(*) INTO @lcount FROM parts
+    SELECT COUNT(part_id) INTO @link_back
+    FROM nodes parent
+             JOIN parts ON part_parent_id = parent.id
+             JOIN nodes content ON part_content_id = content.id
     WHERE
-            part_content_id = node_id
+            content.id = node_id
+      AND
+            parent.node_user = content.node_user
+      AND
+            parent.node_link_virtual = 0
     GROUP BY
         part_content_id;
 
     UPDATE nodes SET
-        node_lcount = @lcount
+        node_link_back = @link_back
+    WHERE
+            id = node_id;
+
+END;;
+
+DROP PROCEDURE IF EXISTS `update_link_forward`;;
+CREATE PROCEDURE `update_link_forward`(IN `node_id` bigint(20) unsigned)
+BEGIN
+
+    SET @link_forward = 0;
+
+    SELECT COUNT(part_id) INTO @link_forward FROM parts
+    WHERE
+            part_parent_id = node_id
+    GROUP BY
+        part_parent_id;
+
+    UPDATE nodes SET
+        node_link_forward = @link_forward
     WHERE
             id = node_id;
 
@@ -504,8 +613,6 @@ CREATE TABLE `images` (
                           CONSTRAINT `images_ibfk_3` FOREIGN KEY (`image_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `images` (`image_id`, `image_node_id`, `image_url`, `image_description`) VALUES
-(145,	714,	'http://example.com/image.png',	'This is image description.');
 
 DROP TABLE IF EXISTS `musics`;
 CREATE TABLE `musics` (
@@ -518,8 +625,6 @@ CREATE TABLE `musics` (
                           CONSTRAINT `musics_ibfk_2` FOREIGN KEY (`music_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `musics` (`music_id`, `music_node_id`, `music_url`, `music_format`) VALUES
-(137,	715,	'http://example.com/music.mp3',	'mp3');
 
 DROP TABLE IF EXISTS `nodemeta`;
 CREATE TABLE `nodemeta` (
@@ -542,11 +647,14 @@ CREATE TABLE `nodes` (
                          `node_mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modify Time',
                          `node_title` text COLLATE utf8mb4_unicode_ci,
                          `node_excerpt` text COLLATE utf8mb4_unicode_ci,
-                         `node_lstatus` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'alone' COMMENT 'Link status',
-                         `node_lcount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Link Count',
+                         `node_link_forward` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Forward link count',
+                         `node_link_back` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Back link count',
+                         `node_link_delete` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Auto delete when link_back = 0',
+                         `node_link_virtual` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Don''t influence link_back in linked node',
                          `node_permissions` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
                          `node_nsfw` tinyint(1) NOT NULL DEFAULT '0',
                          `node_like` tinyint(1) NOT NULL DEFAULT '0',
+                         `node_hide` tinyint(1) NOT NULL DEFAULT '0',
                          `node_source_url` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                          `node_comment` text COLLATE utf8mb4_unicode_ci,
                          PRIMARY KEY (`id`),
@@ -556,17 +664,17 @@ CREATE TABLE `nodes` (
                          CONSTRAINT `nodes_ibfk_1` FOREIGN KEY (`node_user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `nodes` (`id`, `node_user`, `node_type`, `node_ctime`, `node_mtime`, `node_title`, `node_excerpt`, `node_lstatus`, `node_lcount`, `node_permissions`, `node_nsfw`, `node_like`, `node_source_url`, `node_comment`) VALUES
-(714,	154,	'image',	'2020-01-15 00:54:54',	'2020-01-15 00:54:54',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://image.example.com',	'This is comment of image.'),
-(715,	154,	'music',	'2020-01-15 00:54:54',	'2020-01-15 00:54:54',	'Test List',	'excerpt',	'alone',	0,	'private',	0,	0,	'http://music.example.com',	'This is comment of music.');
+INSERT INTO `nodes` (`id`, `node_user`, `node_type`, `node_ctime`, `node_mtime`, `node_title`, `node_excerpt`, `node_link_forward`, `node_link_back`, `node_link_delete`, `node_link_virtual`, `node_permissions`, `node_nsfw`, `node_like`, `node_hide`, `node_source_url`, `node_comment`) VALUES
+(138,	27,	'list',	'2020-01-16 23:33:23',	'2020-01-16 23:33:24',	'Test List2',	'excerpt',	5,	0,	0,	1,	'private',	0,	0,	0,	'http://list.example.com',	'This is comment of list2.'),
+(139,	28,	'list',	'2020-01-16 23:33:23',	'2020-01-16 23:33:24',	'Test List3',	'excerpt',	5,	0,	0,	0,	'private',	0,	0,	0,	'http://list.example.com',	'This is comment of list3.');
 
 DROP TABLE IF EXISTS `parts`;
 CREATE TABLE `parts` (
                          `part_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                         `part_parent_id` bigint(20) unsigned NOT NULL,
-                         `part_content_id` bigint(20) unsigned NOT NULL COMMENT 'ID of part node',
-                         `part_content_order` int(15) unsigned NOT NULL DEFAULT '0' COMMENT 'Order of part node',
-                         `part_content_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image' COMMENT 'Type of part node',
+                         `part_parent_id` bigint(20) unsigned NOT NULL COMMENT 'ID of parent node',
+                         `part_content_id` bigint(20) unsigned NOT NULL COMMENT 'ID of content node',
+                         `part_content_order` int(15) unsigned NOT NULL DEFAULT '0' COMMENT 'Order of content node',
+                         `part_content_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image' COMMENT 'Type of content node',
                          PRIMARY KEY (`part_id`),
                          KEY `part_node_id` (`part_parent_id`),
                          KEY `part_content_id` (`part_content_id`),
@@ -599,7 +707,8 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `user_email`, `user_status`) VALUES
-(154,	'TestUser',	'*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5',	'test@example.com',	'activated');
+(27,	'TestUser',	'*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5',	'test@example.com',	'activated'),
+(28,	'TestUser2',	'*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5',	'test2@example.com',	'activated');
 
 DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
@@ -613,4 +722,4 @@ CREATE TABLE `videos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2020-01-15 08:03:45
+-- 2020-01-16 15:34:40

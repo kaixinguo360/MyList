@@ -79,7 +79,7 @@ class ProcedureMapperTest {
 
         // add_text
         Node text_node = newNode("text", "Test Text");
-        text_node.setLstatus("attachment");
+        text_node.setLinkDelete(true);
         procedureMapper.add_text(text_node, text);
         assertEquals(nodeMapper.selectAll().size(), 3);
         assertEquals(textMapper.selectAll().size(), 1);
@@ -122,9 +122,9 @@ class ProcedureMapperTest {
         assertEquals(textMapper.selectAll().size(), 0);
         
         // delete_list
-        image_node.setLstatus("attachment");
-        music_node.setLstatus("attachment");
-        video_node.setLstatus("attachment");
+        image_node.setLinkDelete(true);
+        music_node.setLinkDelete(true);
+        video_node.setLinkDelete(true);
         nodeMapper.updateByPrimaryKey(image_node);
         nodeMapper.updateByPrimaryKey(music_node);
         nodeMapper.updateByPrimaryKey(video_node);

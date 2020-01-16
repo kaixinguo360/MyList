@@ -76,8 +76,8 @@ public class ListDataTest {
         imageNode = newNode(Image.TYPE_NAME, "Image Node", image);
         musicNode = newNode(Music.TYPE_NAME, "Music Node", music);
         videoNode = newNode(Video.TYPE_NAME, "Video Node", video);
-        textNode.getMainData().setLstatus("attachment");
-        imageNode.getMainData().setLstatus("attachment");
+        textNode.getMainData().setLinkDelete(true);
+        imageNode.getMainData().setLinkDelete(true);
         NodeService nodeService = userService.getUserContext(token).nodeService;
         nodeService.add(textNode);
         nodeService.add(imageNode);

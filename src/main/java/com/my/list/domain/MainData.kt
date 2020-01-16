@@ -10,11 +10,14 @@ interface MainData {
     var mtime: Timestamp?
     var title: String?
     var excerpt: String?
-    var lstatus: String?
-    var lcount: Int?
+    var linkForward: Int?
+    var linkBack: Int?
+    var linkDelete: Boolean?
+    var linkVirtual: Boolean?
     var permissions: String?
     var nsfw: Boolean?
     var like: Boolean?
+    var hide: Boolean?
     var sourceUrl: String?
     var comment: String?
 }
