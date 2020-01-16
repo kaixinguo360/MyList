@@ -1,8 +1,9 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
+import com.my.list.service.DataException;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,12 +1,13 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.MainData;
 import com.my.list.domain.Node;
 import com.my.list.domain.NodeMapper;
+import com.my.list.service.DataException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MainDataService {
+class MainDataService {
 
     private final NodeMapper nodeMapper;
     

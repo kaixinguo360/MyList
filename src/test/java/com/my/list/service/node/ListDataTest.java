@@ -1,9 +1,10 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.*;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
+import com.my.list.service.UserService;
 import com.my.list.type.image.Image;
 import com.my.list.type.music.Music;
 import com.my.list.type.text.Text;

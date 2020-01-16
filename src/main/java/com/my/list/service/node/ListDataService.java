@@ -1,17 +1,18 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.NodeMapper;
 import com.my.list.domain.ProcedureMapper;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
+import com.my.list.service.DataException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ListDataService {
+class ListDataService {
 
     private final NodeMapper nodeMapper;
     private final ProcedureMapper procedureMapper;

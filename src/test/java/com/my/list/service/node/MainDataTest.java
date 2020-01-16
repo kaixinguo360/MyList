@@ -1,4 +1,4 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.MainData;
 import com.my.list.domain.NodeMapper;
@@ -6,6 +6,7 @@ import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
+import com.my.list.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

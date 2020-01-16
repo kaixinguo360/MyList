@@ -1,4 +1,4 @@
-package com.my.list.service;
+package com.my.list.service.node;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
@@ -7,6 +7,9 @@ import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
+import com.my.list.service.AuthException;
+import com.my.list.service.DataException;
+import org.springframework.stereotype.Service;
 
 public class NodeService {
     
@@ -19,13 +22,13 @@ public class NodeService {
 
     public NodeService(User user, TypeConfig typeConfig, MainDataService mainDataService, 
                        ExtraDataService extraDataService, ListDataService listDataService) {
-        this.extraDataService = extraDataService;
-        this.listDataService = listDataService;
         if (user == null) throw new DataException("User is null");
         if (user.getId() == null) throw new DataException("Id of user is null");
         this.userId = user.getId();
         this.typeConfig = typeConfig;
         this.mainDataService = mainDataService;
+        this.extraDataService = extraDataService;
+        this.listDataService = listDataService;
     }
 
     public void add(Node node) {
@@ -101,6 +104,26 @@ public class NodeService {
         }
         if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermissions() +
             ", expectedUserId=" + mainData.getUser() + ", actualUserId=" + userId);
+    }
+    
+    @Service
+    public static class NodeServiceFactory {
+        
+        private final TypeConfig typeConfig;
+        private final MainDataService mainDataService;
+        private final ExtraDataService extraDataService;
+        private final ListDataService listDataService;
+
+        public NodeServiceFactory(TypeConfig typeConfig, MainDataService mainDataService, ExtraDataService extraDataService, ListDataService listDataService) {
+            this.typeConfig = typeConfig;
+            this.mainDataService = mainDataService;
+            this.extraDataService = extraDataService;
+            this.listDataService = listDataService;
+        }
+        
+        public NodeService create(User user) {
+            return new NodeService(user, typeConfig, mainDataService, extraDataService, listDataService);
+        }
     }
     
 }
