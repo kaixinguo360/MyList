@@ -1,7 +1,7 @@
 package com.my.list;
 
-import com.my.list.service.Type;
-import com.my.list.service.TypeConfig;
+import com.my.list.dto.Type;
+import com.my.list.dto.TypeConfig;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageMapper;
 import com.my.list.type.music.Music;

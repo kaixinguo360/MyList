@@ -1,23 +1,19 @@
 package com.my.list.dto;
 
 public class ListItem {
-    
-    public ItemStatus itemStatus;
-    public ExtraNode extraNode;
-    public SingleNode singleNode;
 
-    public ListItem(ExtraNode extraNode) {
-        this.extraNode = extraNode;
-        itemStatus = (extraNode.getSingleNode().getId() == null) ? ItemStatus.NEW : ItemStatus.UPDATE;
+    public Node node;
+    public ItemStatus itemStatus;
+
+    public ListItem(Node node, ItemStatus itemStatus) {
+        this.node = node;
+        this.itemStatus = itemStatus;
     }
-    public ListItem(SingleNode singleNode) {
-        this.singleNode = singleNode;
-        itemStatus = ItemStatus.EXIST;
-    }
-    
+
     public enum ItemStatus {
-        NEW,        // use extraNode
-        UPDATE,     // use extraNode
-        EXIST,      // use singleNode
+        NEW,        // has all data
+        UPDATE,     // has all data
+        EXIST,      // only has main data
     }
+
 }

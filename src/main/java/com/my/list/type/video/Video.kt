@@ -1,6 +1,6 @@
 package com.my.list.type.video
 
-import com.my.list.type.ExtraData
+import com.my.list.domain.ExtraData
 
 class Video(
     var id: Long? = null,

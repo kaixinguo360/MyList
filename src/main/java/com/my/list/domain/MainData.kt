@@ -1,8 +1,8 @@
-package com.my.list.dto
+package com.my.list.domain
 
 import java.sql.Timestamp
 
-interface SingleNode {
+interface MainData {
     var id: Long?
     var user: Long?
     var type: String?

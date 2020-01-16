@@ -1,6 +1,6 @@
 package com.my.list.type.music
 
-import com.my.list.type.ExtraData
+import com.my.list.domain.ExtraData
 
 class Music(
     var id: Long? = null,

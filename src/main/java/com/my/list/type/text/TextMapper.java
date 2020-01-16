@@ -1,6 +1,6 @@
 package com.my.list.type.text;
 
-import com.my.list.type.ExtraDataMapper;
+import com.my.list.domain.ExtraDataMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;

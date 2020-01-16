@@ -1,6 +1,6 @@
 package com.my.list.type.video;
 
-import com.my.list.type.ExtraDataMapper;
+import com.my.list.domain.ExtraDataMapper;
 import com.my.list.type.text.Text;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;

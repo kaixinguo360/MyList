@@ -1,10 +1,11 @@
 package com.my.list.service;
 
-import com.my.list.domain.Node;
+import com.my.list.domain.MainData;
 import com.my.list.domain.NodeMapper;
 import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
-import com.my.list.dto.SingleNode;
+import com.my.list.dto.Node;
+import com.my.list.dto.NodeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
-public class SingleNodeServiceTest {
+public class MainDataTest {
 
     @Autowired private ProcedureMapper procedureMapper;
     @Autowired private NodeMapper nodeMapper;
@@ -38,33 +39,35 @@ public class SingleNodeServiceTest {
     }
 
     @Test
-    void singleNodeService() {
-        SingleNodeService singleNodeService = userService.getUserContext(token).singleNodeService;
+    void mainDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // addNode
-        SingleNode singleNode = newNode();
-        singleNodeService.add(singleNode);
+        Node node = newNode();
+        MainData mainData = node.getMainData();
+        nodeService.add(node);
         assertEquals(1, nodeMapper.selectAll().size());
 
         // getNode
-        SingleNode singleNode1 = singleNodeService.get(singleNode.getId());
-        assertEquals(singleNode.getType(), singleNode1.getType());
+        Node node1 = nodeService.get(mainData.getId());
+        assertEquals(mainData.getType(), node1.getMainData().getType());
 
         // updateNode
-        singleNode.setComment("This is comment.");
-        singleNodeService.update(singleNode);
-        assertEquals(singleNode.getComment(), singleNodeService.get(singleNode.getId()).getComment());
+        mainData.setComment("This is comment.");
+        nodeService.update(node);
+        assertEquals(mainData.getComment(), nodeService.get(mainData.getId()).getMainData().getComment());
 
         // removeNode
-        singleNodeService.remove(singleNode.getId());
+        nodeService.remove(mainData.getId());
         assertEquals(0, nodeMapper.selectAll().size());
     }
 
-    private SingleNode newNode() {
-        SingleNode singleNode = new Node();
-        singleNode.setType("node");
-        singleNode.setTitle("Single Node");
-        return singleNode;
+    private Node newNode() {
+        com.my.list.dto.Node node = new NodeDTO();
+        MainData mainData = node.getMainData();
+        mainData.setType("node");
+        mainData.setTitle("Simple Node");
+        return node;
     }
     
 }

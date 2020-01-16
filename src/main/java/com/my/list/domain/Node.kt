@@ -1,6 +1,5 @@
 package com.my.list.domain
 
-import com.my.list.dto.SingleNode
 import java.sql.Timestamp
 
 class Node(
@@ -18,12 +17,12 @@ class Node(
     override var like: Boolean? = false,
     override var sourceUrl: String? = null,
     override var comment: String? = null
-): SingleNode {
+): MainData {
     override fun toString(): String {
         return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$lstatus,$lcount,$permissions,$nsfw,$like,$sourceUrl,$comment]"
     }
     companion object { 
-        fun fromSingleNode(s: SingleNode?): Node? {
+        fun fromSingleNode(s: MainData?): Node? {
             if (s == null) return null
             if (s is Node) return s
             return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.lstatus, s.lcount, s.permissions, s.nsfw, s.like, s.sourceUrl, s.comment)

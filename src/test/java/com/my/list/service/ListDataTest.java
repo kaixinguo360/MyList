@@ -1,13 +1,9 @@
 package com.my.list.service;
 
-import com.my.list.domain.NodeMapper;
-import com.my.list.domain.ProcedureMapper;
-import com.my.list.domain.User;
-import com.my.list.dto.ExtraNode;
+import com.my.list.domain.*;
 import com.my.list.dto.ListItem;
+import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
-import com.my.list.dto.SingleNode;
-import com.my.list.type.ExtraData;
 import com.my.list.type.image.Image;
 import com.my.list.type.music.Music;
 import com.my.list.type.text.Text;
@@ -24,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
-public class ListServiceTest {
+public class ListDataTest {
 
     @Autowired private ProcedureMapper procedureMapper;
     @Autowired private NodeMapper nodeMapper;
@@ -32,10 +28,10 @@ public class ListServiceTest {
 
     private String token;
 
-    private static ExtraNode textNode;
-    private static ExtraNode imageNode;
-    private static ExtraNode musicNode;
-    private static ExtraNode videoNode;
+    private static Node textNode;
+    private static Node imageNode;
+    private static Node musicNode;
+    private static Node videoNode;
 
     @BeforeEach
     void beforeAll() {
@@ -80,16 +76,16 @@ public class ListServiceTest {
         imageNode = newNode(Image.TYPE_NAME, "Image Node", image);
         musicNode = newNode(Music.TYPE_NAME, "Music Node", music);
         videoNode = newNode(Video.TYPE_NAME, "Video Node", video);
-        textNode.getSingleNode().setLstatus("attachment");
-        imageNode.getSingleNode().setLstatus("attachment");
-        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
-        extraNodeService.add(textNode);
-        extraNodeService.add(imageNode);
+        textNode.getMainData().setLstatus("attachment");
+        imageNode.getMainData().setLstatus("attachment");
+        NodeService nodeService = userService.getUserContext(token).nodeService;
+        nodeService.add(textNode);
+        nodeService.add(imageNode);
     }
     
     @Test
-    void listService() {
-        ExtraNodeService extraNodeService = userService.getUserContext(token).extraNodeService;
+    void listDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // add list
         //
@@ -104,22 +100,22 @@ public class ListServiceTest {
         //    [=]    imageNode  0 -> 1  attachment
         //    [+]    musicNode  0 -> 1  alone
         //    [ ]    videoNode  0       alone
-        ExtraNode listNode = newNode("list", "List Node", null);
+        Node listNode = newNode("list", "List Node", null);
         List<ListItem> list = new ArrayList<>();
-        list.add(new ListItem(textNode.getSingleNode()));
-        list.add(new ListItem(imageNode.getSingleNode()));
-        list.add(new ListItem(musicNode));
+        list.add(new ListItem(textNode, ListItem.ItemStatus.EXIST));
+        list.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));
+        list.add(new ListItem(musicNode, ListItem.ItemStatus.NEW));
         listNode.setExtraList(list);
-        extraNodeService.add(listNode);
+        nodeService.add(listNode);
         
         // get list
-        ExtraNode result = extraNodeService.get(listNode.getSingleNode().getId());
+        Node result = nodeService.get(listNode.getMainData().getId());
         list = result.getExtraList();
         showList("Get result", list);
         assertEquals(3, list.size());
-        assertEquals(textNode.getSingleNode().getTitle(), list.get(0).singleNode.getTitle());
-        assertEquals(imageNode.getSingleNode().getTitle(), list.get(1).singleNode.getTitle());
-        assertEquals(musicNode.getSingleNode().getTitle(), list.get(2).singleNode.getTitle());
+        assertEquals(textNode.getMainData().getTitle(), list.get(0).node.getMainData().getTitle());
+        assertEquals(imageNode.getMainData().getTitle(), list.get(1).node.getMainData().getTitle());
+        assertEquals(musicNode.getMainData().getTitle(), list.get(2).node.getMainData().getTitle());
         assertEquals(4, nodeMapper.selectAll().size());
 
         // update list
@@ -137,22 +133,22 @@ public class ListServiceTest {
         //    [=]    musicNode  1 -> 1  alone
         //    [+]    videoNode  0 -> 1  alone
         list.remove(0);
-        list.add(new ListItem(videoNode));
-        list.add(new ListItem(imageNode.getSingleNode()));
-        ExtraNode updatedImageNode = extraNodeService.get(list.get(3).singleNode.getId());
-        updatedImageNode.getSingleNode().setTitle("Updated Image Node");
-        list.set(3, new ListItem(updatedImageNode));
+        list.add(new ListItem(videoNode, ListItem.ItemStatus.NEW));
+        list.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));
+        Node updatedImageNode = nodeService.get(list.get(3).node.getMainData().getId());
+        updatedImageNode.getMainData().setTitle("Updated Image Node");
+        list.set(3, new ListItem(updatedImageNode, ListItem.ItemStatus.UPDATE));
         showList("Updated list", list);
-        extraNodeService.update(result);
+        nodeService.update(result);
         
-        ExtraNode result1 = extraNodeService.get(listNode.getSingleNode().getId());
+        Node result1 = nodeService.get(listNode.getMainData().getId());
         list = result1.getExtraList();
         showList("Updated result", list);
         assertEquals(4, list.size());
-        assertEquals(updatedImageNode.getSingleNode().getTitle(), list.get(0).singleNode.getTitle());
-        assertEquals(musicNode.getSingleNode().getTitle(), list.get(1).singleNode.getTitle());
-        assertEquals(videoNode.getSingleNode().getTitle(), list.get(2).singleNode.getTitle());
-        assertEquals(updatedImageNode.getSingleNode().getTitle(), list.get(3).singleNode.getTitle());
+        assertEquals(updatedImageNode.getMainData().getTitle(), list.get(0).node.getMainData().getTitle());
+        assertEquals(musicNode.getMainData().getTitle(), list.get(1).node.getMainData().getTitle());
+        assertEquals(videoNode.getMainData().getTitle(), list.get(2).node.getMainData().getTitle());
+        assertEquals(updatedImageNode.getMainData().getTitle(), list.get(3).node.getMainData().getTitle());
         assertEquals(4, nodeMapper.selectAll().size());
         
         // delete list
@@ -163,28 +159,30 @@ public class ListServiceTest {
         //    [-]    imageNode  2 -> 0  attachment
         //    [=]    musicNode  1 -> 0  alone
         //    [=]    videoNode  1 -> 0  alone
-        extraNodeService.remove(listNode.getSingleNode().getId());
+        nodeService.remove(listNode.getMainData().getId());
         assertEquals(2, nodeMapper.selectAll().size());
     }
 
-    private ExtraNode newNode(String type, String title, ExtraData extraData) {
-        ExtraNode extraNode = new NodeDTO();
-        SingleNode singleNode = extraNode.getSingleNode();
-        singleNode.setType(type);
-        singleNode.setTitle(title);
-        if (extraData != null) extraNode.setExtraData(extraData.toMap());
-        return extraNode;
+    private Node newNode(String type, String title, ExtraData extraData) {
+        Node node = new NodeDTO();
+        MainData mainData = node.getMainData();
+        mainData.setType(type);
+        mainData.setTitle(title);
+        if (extraData != null) node.setExtraData(extraData);
+        return node;
     }
     private void showList(String msg, List<ListItem> list) {
         System.out.println("==== " + msg + " ====");
         AtomicInteger i = new AtomicInteger();
         list.forEach(item -> {
-            System.out.print("[" + i.getAndIncrement() + "] ");
+            String status;
             switch (item.itemStatus) {
-                case EXIST:  System.out.println("EXIST  " + item.singleNode); break;
-                case NEW:    System.out.println("NEW    " + item.extraNode); break;
-                case UPDATE: System.out.println("UPDATE " + item.extraNode); break;
+                case EXIST:  status = "EXIST "; break;
+                case NEW:    status = "NEW   "; break;
+                case UPDATE: status = "UPDATE"; break;
+                default: status = null; break;
             }
+            System.out.println("[" + i.getAndIncrement() + "] " + status + " " + item.node.getMainData());
         });
     }
     

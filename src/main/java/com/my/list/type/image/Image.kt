@@ -1,6 +1,6 @@
 package com.my.list.type.image
 
-import com.my.list.type.ExtraData
+import com.my.list.domain.ExtraData
 
 class Image(
     var id: Long? = null,

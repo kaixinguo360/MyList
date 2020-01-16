@@ -1,7 +1,7 @@
-package com.my.list.service;
+package com.my.list.dto;
 
-import com.my.list.type.ExtraData;
-import com.my.list.type.ExtraDataMapper;
+import com.my.list.domain.ExtraData;
+import com.my.list.domain.ExtraDataMapper;
 
 public class Type {
     

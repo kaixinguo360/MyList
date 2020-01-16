@@ -1,6 +1,6 @@
 package com.my.list.type.text
 
-import com.my.list.type.ExtraData
+import com.my.list.domain.ExtraData
 
 class Text(
     var id: Long? = null,

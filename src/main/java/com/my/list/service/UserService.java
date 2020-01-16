@@ -12,7 +12,6 @@ import java.util.UUID;
 public class UserService {
 
     private final UserMapper userMapper;
-    private final UserContext.UserContextFactory userContextFactory;
 
     public UserService(UserMapper userMapper, UserContext.UserContextFactory userContextFactory) {
         this.userMapper = userMapper;
@@ -41,6 +40,8 @@ public class UserService {
     // ---- Token ---- //
     private final Map<String, UserContext> tokens = new HashMap<>();
     private final Map<Long, UserContext> userContexts = new HashMap<>();
+    private final UserContext.UserContextFactory userContextFactory;
+    
     public String generateToken(String name, String pass) {
         // check password
         User user = getByNameAndPass(name, pass);

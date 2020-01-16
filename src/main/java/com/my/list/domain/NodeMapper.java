@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface NodeMapper extends SimpleMapper<Node> {
+public interface NodeMapper extends CrudMapper<Node> {
     int updateByPrimaryKeyWithUserId(Long userId, Node node);
     int deleteByPrimaryKeyWithUserId(Long userId, Long id);
     int insertWithUserId(Long userId, Node node);

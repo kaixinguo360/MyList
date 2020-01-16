@@ -1,39 +1,37 @@
 package com.my.list.service;
 
-import com.my.list.domain.NodeMapper;
-import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
+import com.my.list.dto.TypeConfig;
 import org.springframework.stereotype.Service;
 
 public class UserContext {
 
     public final User user;
-    public final SingleNodeService singleNodeService;
-    public final ExtraNodeService extraNodeService;
-    
-    public UserContext(User user, SingleNodeService singleNodeService, ExtraNodeService extraNodeService) {
+    public final NodeService nodeService;
+
+    public UserContext(User user, NodeService nodeService) {
         this.user = user;
-        this.singleNodeService = singleNodeService;
-        this.extraNodeService = extraNodeService;
+        this.nodeService = nodeService;
     }
 
     @Service
     public static class UserContextFactory {
-    
+
         private final TypeConfig typeConfig;
-        private final NodeMapper nodeMapper;
-        private final ProcedureMapper procedureMapper;
-        
-        public UserContextFactory(TypeConfig typeConfig, NodeMapper nodeMapper, ProcedureMapper procedureMapper) {
+        private final MainDataService mainDataService;
+        private final ExtraDataService extraDataService;
+        private final ListDataService listDataService;
+
+        public UserContextFactory(TypeConfig typeConfig, MainDataService mainDataService, ExtraDataService extraDataService, ListDataService listDataService) {
             this.typeConfig = typeConfig;
-            this.nodeMapper = nodeMapper;
-            this.procedureMapper = procedureMapper;
+            this.mainDataService = mainDataService;
+            this.extraDataService = extraDataService;
+            this.listDataService = listDataService;
         }
-    
+
         public UserContext create(User user) {
-            SingleNodeService singleNodeService = new SingleNodeService(user, nodeMapper);
-            ExtraNodeService extraNodeService = new ExtraNodeService(user, typeConfig, singleNodeService, nodeMapper, procedureMapper);
-            return new UserContext(user, singleNodeService, extraNodeService);
+            NodeService nodeService = new NodeService(user, typeConfig, mainDataService, extraDataService, listDataService);
+            return new UserContext(user, nodeService);
         }
         
     }

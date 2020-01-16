@@ -1,0 +1,200 @@
+package com.my.list.service;
+
+import com.my.list.domain.*;
+import com.my.list.dto.Node;
+import com.my.list.dto.NodeDTO;
+import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageMapper;
+import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicMapper;
+import com.my.list.type.text.Text;
+import com.my.list.type.text.TextMapper;
+import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+@SpringBootTest
+public class ExtraDataTest {
+
+    @Autowired private ProcedureMapper procedureMapper;
+    @Autowired private NodeMapper nodeMapper;
+    @Autowired private TextMapper textMapper;
+    @Autowired private ImageMapper imageMapper;
+    @Autowired private MusicMapper musicMapper;
+    @Autowired private VideoMapper videoMapper;
+    @Autowired private UserService userService;
+    
+    private String token;
+
+    private static Text text = new Text();
+    private static Image image = new Image();
+    private static Music music = new Music();
+    private static Video video = new Video();
+
+    @BeforeEach
+    void beforeAll() {
+        User user = new User();
+        user.setName("TestUser");
+        user.setPass("1234567");
+        user.setEmail("test@example.com");
+        user.setStatus("activated");
+
+        text.setContent("Test Content");
+
+        image.setUrl("http://exmaple/image.png");
+        image.setDescription("Test Image Description");
+
+        music.setUrl("http://exmaple/music.mp3");
+        music.setFormat("mp3");
+
+        video.setUrl("http://exmaple/video.avi");
+        video.setFormat("avi");
+        
+        // clean_all & add_user
+        procedureMapper.clean_all();
+        procedureMapper.add_user(user);
+        
+        // login
+        token = userService.generateToken(user.getName(), user.getPass());
+    }
+
+    @Test
+    void textDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
+        
+        // addNode
+        Node node = newNode(Text.TYPE_NAME, "Text Node", text);
+        MainData mainData = node.getMainData();
+        nodeService.add(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, textMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getType(), result.getMainData().getType());
+        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
+        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+
+        // updateNode
+        mainData.setComment("This is comment.");
+        node.getExtraData(Text.class).setContent("This is text content.");
+        nodeService.update(node);
+        result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getComment(), result.getMainData().getComment());
+        assertEquals(node.getExtraData(Text.class).getContent(), result.getExtraData(Text.class).getContent());
+
+        // removeNode
+        nodeService.remove(mainData.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, textMapper.selectAll().size());
+    }
+
+    @Test
+    void imageDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
+        
+        // addNode
+        Node node = newNode(Image.TYPE_NAME, "Image Node", image);
+        MainData mainData = node.getMainData();
+        nodeService.add(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, imageMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getType(), result.getMainData().getType());
+        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
+        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+
+        // updateNode
+        mainData.setComment("This is comment.");
+        node.getExtraData(Image.class).setDescription("This is image description.");
+        nodeService.update(node);
+        result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getComment(), result.getMainData().getComment());
+        assertEquals(node.getExtraData(Image.class).getDescription(), result.getExtraData(Image.class).getDescription());
+
+        // removeNode
+        nodeService.remove(mainData.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, imageMapper.selectAll().size());
+    }
+
+    @Test
+    void musicDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
+        
+        // addNode
+        Node node = newNode(Music.TYPE_NAME, "Music Node", music);
+        MainData mainData = node.getMainData();
+        nodeService.add(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, musicMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getType(), result.getMainData().getType());
+        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
+        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+
+        // updateNode
+        mainData.setComment("This is comment.");
+        node.getExtraData(Music.class).setFormat("mp3");
+        nodeService.update(node);
+        result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getComment(), result.getMainData().getComment());
+        assertEquals(node.getExtraData(Music.class).getFormat(), result.getExtraData(Music.class).getFormat());
+
+        // removeNode
+        nodeService.remove(mainData.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, musicMapper.selectAll().size());
+    }
+
+    @Test
+    void videoDataTest() {
+        NodeService nodeService = userService.getUserContext(token).nodeService;
+        
+        // addNode
+        Node node = newNode(Video.TYPE_NAME, "Video Node", video);
+        MainData mainData = node.getMainData();
+        nodeService.add(node);
+        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, videoMapper.selectAll().size());
+
+        // getNode
+        Node result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getType(), result.getMainData().getType());
+        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
+        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+
+        // updateNode
+        mainData.setComment("This is comment.");
+        node.getExtraData(Video.class).setFormat("avi");
+        nodeService.update(node);
+        result = nodeService.get(mainData.getId());
+        assertEquals(mainData.getComment(), result.getMainData().getComment());
+        assertEquals(node.getExtraData(Video.class).getFormat(), result.getExtraData(Video.class).getFormat());
+
+        // removeNode
+        nodeService.remove(mainData.getId());
+        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, videoMapper.selectAll().size());
+    }
+
+    private Node newNode(String type, String title, ExtraData extraData) {
+        Node node = new NodeDTO();
+        MainData mainData = node.getMainData();
+        mainData.setType(type);
+        mainData.setTitle(title);
+        if (extraData != null) node.setExtraData(extraData);
+        return node;
+    }
+    
+}

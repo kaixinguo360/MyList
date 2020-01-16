@@ -1,6 +1,6 @@
 package com.my.list.type.music;
 
-import com.my.list.type.ExtraDataMapper;
+import com.my.list.domain.ExtraDataMapper;
 import com.my.list.type.image.Image;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;

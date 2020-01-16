@@ -1,34 +1,38 @@
 package com.my.list.dto;
 
-import com.my.list.domain.Node;
+import com.my.list.domain.ExtraData;
+import com.my.list.domain.MainData;
 
 import java.util.List;
-import java.util.Map;
 
-public class NodeDTO implements ExtraNode {
+public class NodeDTO implements Node {
     
-    private final Node node;
-    private Map<String, Object> extraData = null;
+    private final com.my.list.domain.Node node;
+    private ExtraData extraData = null;
     private List<ListItem> extraList = null;
 
     // ---- Constructor ---- //
     public NodeDTO() {
-        this.node = new Node();
+        this.node = new com.my.list.domain.Node();
     }
-    public NodeDTO(SingleNode singleNode) {
-        this.node = Node.Companion.fromSingleNode(singleNode);
+    public NodeDTO(MainData mainData) {
+        this.node = com.my.list.domain.Node.Companion.fromSingleNode(mainData);
     }
 
     // ---- Getter of SingleNode ---- //
-    public SingleNode getSingleNode() {
+    public MainData getMainData() {
         return node;
     }
 
     // ---- Getter & Setter of ExtraData ---- //
-    public Map<String, Object> getExtraData() {
+    public ExtraData getExtraData() {
         return extraData;
     }
-    public void setExtraData(Map<String, Object> extraData) {
+    public <T extends ExtraData> T getExtraData(Class<T> extraDataClass) {
+        @SuppressWarnings("unchecked") T t = (T) extraData;
+        return t;
+    }
+    public void setExtraData(ExtraData extraData) {
         this.extraData = extraData;
     }
 
@@ -39,4 +43,5 @@ public class NodeDTO implements ExtraNode {
     public void setExtraList(List<ListItem> extraList) {
         this.extraList = extraList;
     }
+    
 }

@@ -2,7 +2,7 @@ package com.my.list.domain;
 
 import java.util.List;
 
-public interface SimpleMapper<T> {
+public interface CrudMapper<T> {
     int deleteByPrimaryKey(Long id);
     int insert(T record);
     T selectByPrimaryKey(Long id);

@@ -1,4 +1,4 @@
-package com.my.list.type;
+package com.my.list.domain;
 
 import com.my.list.service.DataException;
 
