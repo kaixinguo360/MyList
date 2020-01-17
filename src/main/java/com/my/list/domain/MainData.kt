@@ -14,7 +14,7 @@ interface MainData {
     var linkBack: Int?
     var linkDelete: Boolean?
     var linkVirtual: Boolean?
-    var permissions: String?
+    var permission: String?
     var nsfw: Boolean?
     var like: Boolean?
     var hide: Boolean?

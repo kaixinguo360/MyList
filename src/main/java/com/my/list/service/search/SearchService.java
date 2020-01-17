@@ -22,7 +22,7 @@ public class SearchService {
     }
 
     public List<Node> simpleSearch(Query query) {
-        return searchMapper.simpleSearch(query.conditions, query.sorts)
+        return searchMapper.simpleSearch(userId, query)
             .stream().map(NodeDTO::new).collect(Collectors.toList());
     }
 

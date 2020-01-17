@@ -86,7 +86,7 @@ public class NodeService {
     }
     
     private void checkPermission(MainData mainData, boolean readOnly) {
-        String permission = mainData.getPermissions();
+        String permission = mainData.getPermission();
         if (permission == null) throw new AuthException("Permission is null");
         boolean success;
         switch (permission) {
@@ -102,7 +102,7 @@ public class NodeService {
             default:
                 throw new AuthException("Unknown permission: " + permission);
         }
-        if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermissions() +
+        if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermission() +
             ", expectedUserId=" + mainData.getUser() + ", actualUserId=" + userId);
     }
     

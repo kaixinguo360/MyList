@@ -13,7 +13,7 @@
     <result column="node_link_back" jdbcType="INTEGER" property="linkBack"/>
     <result column="node_link_delete" jdbcType="BIT" property="linkDelete"/>
     <result column="node_link_virtual" jdbcType="BIT" property="linkVirtual"/>
-    <result column="node_permissions" jdbcType="VARCHAR" property="permissions"/>
+    <result column="node_permission" jdbcType="VARCHAR" property="permission"/>
     <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
     <result column="node_like" jdbcType="BIT" property="like"/>
     <result column="node_hide" jdbcType="BIT" property="hide"/>
@@ -22,19 +22,80 @@
   </resultMap>
   
   <select id="simpleSearch" resultMap="BaseResultMap">
-    select *
-    from nodes
+    select content.*
+    from nodes content
     <where>
-      <if test="conditions!=null">
-        <foreach collection="conditions" item="cond" separator="and">
-          ${cond.column} ${cond.oper} ${cond.value}
+      <!-- dynamic conditions -->
+      <if test="query.conditions!=null">
+        <foreach collection="query.conditions" item="cond" separator="and">
+          content.${cond.column} ${cond.oper} ${cond.value}
         </foreach>
       </if>
+      <!-- permission -->
+      <if test="userId!=null and query.permission!=null">
+        <choose>
+          <when test="query.permission == @com.my.list.service.search.Permission@PRIVATE">
+            and content.node_user = ${userId}
+            and content.node_permission = 'private'
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@PROTECT">
+            and content.node_user = ${userId}
+            and content.node_permission = 'protect'
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@PUBLIC">
+            and content.node_user = ${userId}
+            and content.node_permission = 'public'
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@SHARED">
+            and content.node_user = ${userId}
+            and content.node_permission in ('public', 'protect')
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@SELF">
+            and content.node_user = ${userId}
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PROTECT">
+            and content.node_user != ${userId}
+            and content.node_permission = 'protect'
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PUBLIC">
+            and content.node_user != ${userId}
+            and content.node_permission = 'public'
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_SHARED">
+            and content.node_user != ${userId}
+            and content.node_permission in ('public', 'protect')
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@EDITABLE">
+            and content.node_user = ${userId}
+            or (
+            content.node_user != ${userId}
+            and content.node_permission = 'public'
+            )
+          </when>
+          <when test="query.permission == @com.my.list.service.search.Permission@AVAILABLE">
+            and content.node_user = ${userId}
+            or (
+            content.node_user != ${userId}
+            and content.node_permission in ('public', 'protect')
+            )
+          </when>
+        </choose>
+      </if>
+      <!-- nsfw & like & hide -->
+      <if test="query.nsfw!=null">
+        and content.node_nsfw = ${query.nsfw}
+      </if>
+      <if test="query.like!=null">
+        and content.node_like = ${query.like}
+      </if>
+      <if test="query.hide!=null">
+        and content.node_hide = ${query.hide}
+      </if>
     </where>
-    <if test="sorts!=null">
+    <if test="query.sorts!=null">
       order by
-      <foreach collection="sorts" item="sort" separator=",">
-        ${sort.property} ${sort.direction}
+      <foreach collection="query.sorts" item="sort" separator=",">
+        content.${sort.property} ${sort.direction}
       </foreach>
     </if>
   </select>

@@ -18,7 +18,7 @@ public interface ProcedureMapper {
         "#{node.excerpt,mode=IN}," +
         "#{node.linkDelete,mode=IN}," +
         "#{node.linkVirtual,mode=IN}," +
-        "#{node.permissions,mode=IN}," +
+        "#{node.permission,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
         "#{node.sourceUrl,mode=IN}," +
@@ -36,7 +36,7 @@ public interface ProcedureMapper {
         "#{excerpt,mode=IN}," +
         "#{linkDelete,mode=IN}," +
         "#{linkVirtual,mode=IN}," +
-        "#{permissions,mode=IN}," +
+        "#{permission,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
         "#{sourceUrl,mode=IN}," +
@@ -52,7 +52,7 @@ public interface ProcedureMapper {
         "#{node.excerpt,mode=IN}," +
         "#{node.linkDelete,mode=IN}," +
         "#{node.linkVirtual,mode=IN}," +
-        "#{node.permissions,mode=IN}," +
+        "#{node.permission,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
         "#{node.sourceUrl,mode=IN}," +
@@ -71,7 +71,7 @@ public interface ProcedureMapper {
         "#{excerpt,mode=IN}," +
         "#{linkDelete,mode=IN}," +
         "#{linkVirtual,mode=IN}," +
-        "#{permissions,mode=IN}," +
+        "#{permission,mode=IN}," +
         "#{nsfw,mode=IN}," +
         "#{like,mode=IN}," +
         "#{sourceUrl,mode=IN}," +
@@ -94,7 +94,7 @@ public interface ProcedureMapper {
         "#{node.excerpt,mode=IN}," +
         "#{node.linkDelete,mode=IN}," +
         "#{node.linkVirtual,mode=IN}," +
-        "#{node.permissions,mode=IN}," +
+        "#{node.permission,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
         "#{node.sourceUrl,mode=IN}," +
@@ -122,7 +122,7 @@ public interface ProcedureMapper {
         "#{node.excerpt,mode=IN}," +
         "#{node.linkDelete,mode=IN}," +
         "#{node.linkVirtual,mode=IN}," +
-        "#{node.permissions,mode=IN}," +
+        "#{node.permission,mode=IN}," +
         "#{node.nsfw,mode=IN}," +
         "#{node.like,mode=IN}," +
         "#{node.sourceUrl,mode=IN}," +

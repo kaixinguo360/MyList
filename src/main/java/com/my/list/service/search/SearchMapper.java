@@ -7,5 +7,5 @@ import java.util.List;
 
 @Mapper
 public interface SearchMapper {
-    List<Node> simpleSearch(List<Condition> conditions, List<Sort> sorts);
+    List<Node> simpleSearch(Long userId, Query query);
 }
