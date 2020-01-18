@@ -3,41 +3,39 @@ package com.my.list.service.search;
 import com.my.list.dto.Node;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Query {
     
     List<Condition> conditions = null;
-    List<Sort> sorts = null;
-    Permission permission = null;
-    Boolean nsfw = null;
-    Boolean like = null;
-    Boolean hide = null;
-
     public Query addCondition(Condition condition) {
         if (conditions == null) conditions = new ArrayList<>();
         conditions.add(condition);
         return this;
     }
     public Query addCondition(String column, String oper, Object value) {
-        addCondition(new Condition(column, oper, value));
-        return this;
+        return addCondition(new Condition(column, oper, value));
     }
 
+    List<Sort> sorts = null;
     public Query addSort(Sort sort) {
         if (sorts == null) sorts = new ArrayList<>();
         sorts.add(sort);
         return this;
     }
     public Query addSort(String property, Sort.Direction direction) {
-        addSort(new Sort(property, direction));
-        return this;
+        return addSort(new Sort(property, direction));
     }
     public Query addSort(String property) {
-        addSort(property, Sort.Direction.ASC);
-        return this;
+        return addSort(property, Sort.Direction.ASC);
     }
 
+    Permission permission = null;
+    Boolean nsfw = null;
+    Boolean like = null;
+    Boolean hide = null;
     public Query setPermission(Permission permission) {
         this.permission = permission;
         return this;
@@ -54,8 +52,27 @@ public class Query {
         this.hide = hide;
         return this;
     }
+
+    Set<Tag> andTags = null;
+    Set<Tag> orTags = null;
+    Set<Tag> notTags = null;
+    public Query addAndTag(Tag tag) {
+        if (andTags == null) andTags = new HashSet<>();
+        andTags.add(tag);
+        return this;
+    }
+    public Query addOrTag(Tag tag) {
+        if (orTags == null) orTags = new HashSet<>();
+        orTags.add(tag);
+        return this;
+    }
+    public Query addNotTag(Tag tag) {
+        if (notTags == null) notTags = new HashSet<>();
+        notTags.add(tag);
+        return this;
+    }
     
     public List<Node> search(SearchService searchService) {
-        return searchService.simpleSearch(this);
+        return searchService.search(this);
     }
 }

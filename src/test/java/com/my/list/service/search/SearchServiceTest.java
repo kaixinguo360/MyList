@@ -1,9 +1,9 @@
 package com.my.list.service.search;
 
-import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
 import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
+import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.service.UserContext;
@@ -28,6 +28,10 @@ public class SearchServiceTest {
 
     private String token1;
     private String token2;
+
+    private Node tagNode1;
+    private Node tagNode2;
+    private Node tagNode3;
 
     @BeforeEach
     void beforeAll() {
@@ -57,9 +61,8 @@ public class SearchServiceTest {
 
         // create nodes
         List<Node> nodes1 = new ArrayList<>();
-        for (int i=1; i<=5; i++) nodes1.add(newNode("Node1-" + i));
-        
         List<Node> nodes2 = new ArrayList<>();
+        for (int i=1; i<=5; i++) nodes1.add(newNode("Node1-" + i));
         for (int i=1; i<=5; i++) nodes2.add(newNode("Node2-" + i));
 
         nodes1.get(0).getMainData().setPermission("private");
@@ -74,9 +77,45 @@ public class SearchServiceTest {
         nodes2.get(3).getMainData().setHide(true);
         nodes2.get(4).getMainData().setLike(true);
 
+        // create tags
+        tagNode1 = nodes1.get(3);
+        tagNode1.getMainData().setType("tag");
+        List<ListItem> list1 = new ArrayList<>();
+        tagNode1.setExtraList(list1);
+        
+        tagNode2 = nodes1.get(4);
+        tagNode2.getMainData().setType("tag");
+        List<ListItem> list2 = new ArrayList<>();
+        tagNode2.setExtraList(list2);
+        
+        tagNode3 = nodes2.get(2);
+        tagNode3.getMainData().setType("tag");
+        List<ListItem> list3 = new ArrayList<>();
+        tagNode3.setExtraList(list3);
+
         // add nodes
         for (int i=1; i<=5; i++) nodeService1.add(nodes1.get(i-1));
         for (int i=1; i<=5; i++) nodeService2.add(nodes2.get(i-1));
+
+        // add tags
+        list1.add(new ListItem(nodes1.get(0), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes2.get(2), ListItem.ItemStatus.EXIST));
+        nodeService1.update(tagNode1);
+        
+        list2.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
+        list2.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
+        list2.add(new ListItem(nodes1.get(3), ListItem.ItemStatus.EXIST));
+        list2.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
+        nodeService1.update(tagNode2);
+        
+        list3.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
+        list3.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
+        list3.add(new ListItem(nodes2.get(0), ListItem.ItemStatus.EXIST));
+        list3.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
+        nodeService2.update(tagNode3);
     }
 
     @Test
@@ -84,23 +123,23 @@ public class SearchServiceTest {
         UserContext userContext = userService.getUserContext(token1);
         SearchService searchService = userContext.searchService;
 
-        assertNodes("ALL", 10, new Query()
+        assertNodes("ALL", 5, new Query()
             .search(searchService));
 
         assertNodes("%Node1%", 5, new Query()
             .addCondition("node_title", "like", "'%Node1%'")
             .search(searchService));
         
-        assertNodes("%Node% + hide=false", 8, new Query()
+        assertNodes("%Node%, hide=false", 4, new Query()
             .addCondition("node_title", "like", "'%Node%'")
             .setHide(false)
             .search(searchService));
 
-        assertNodes("hide=true", 2, new Query()
+        assertNodes("hide=true", 1, new Query()
             .setHide(true)
             .search(searchService));
 
-        assertNodes("like=true", 2, new Query()
+        assertNodes("like=true", 1, new Query()
             .setLike(true)
             .search(searchService));
     }
@@ -160,16 +199,108 @@ public class SearchServiceTest {
             .setPermission(Permission.AVAILABLE)
             .search(searchService));
     }
+    
+    @Test
+    void tagTest() {
+        UserContext userContext = userService.getUserContext(token1);
+        SearchService searchService = userContext.searchService;
+
+        // or + title + strict
+        assertNodes("orTag=$tag1, strict=true", 3, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getTitle()))
+            .search(searchService));
+        assertNodes("orTag=$tag2, strict=true", 3, new Query()
+            .addOrTag(new Tag(tagNode2.getMainData().getTitle()))
+            .search(searchService));
+        assertNodes("orTag=$tag1+$tag2, strict=true", 4, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getTitle()))
+            .addOrTag(new Tag(tagNode2.getMainData().getTitle()))
+            .search(searchService));
+
+        // or + id
+        assertNodes("orTag=$tag1, use tag's id", 3, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getId()))
+            .search(searchService));
+        assertNodes("orTag=$tag2, use tag's id", 3, new Query()
+            .addOrTag(new Tag(tagNode2.getMainData().getId()))
+            .search(searchService));
+        assertNodes("orTag=$tag1+$tag2, use tag's id", 4, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getId()))
+            .addOrTag(new Tag(tagNode2.getMainData().getId()))
+            .search(searchService));
+        
+        // or + title + not strict
+        assertNodes("orTag=$tag1, strict=false", 3, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getTitle(), false))
+            .search(searchService));
+        assertNodes("orTag=$tag2, strict=false", 3, new Query()
+            .addOrTag(new Tag(tagNode2.getMainData().getTitle(), false))
+            .search(searchService));
+        assertNodes("orTag=$tag1+$tag2, strict=false", 4, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getTitle(), false))
+            .addOrTag(new Tag(tagNode2.getMainData().getTitle(), false))
+            .search(searchService));
+        assertNodes("orTag='Node', strict=false", 4, new Query()
+            .addOrTag(new Tag("Node", false))
+            .search(searchService));
+
+        // not
+        assertNodes("notTag=$tag1", 2, new Query()
+            .addNotTag(new Tag(tagNode1.getMainData().getId()))
+            .search(searchService));
+        assertNodes("notTag='Node', strict=false", 1, new Query()
+            .addNotTag(new Tag("Node", false))
+            .search(searchService));
+        
+        // or + not
+        assertNodes("or=tag1, not=tag2", 1, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getId()))
+            .addNotTag(new Tag(tagNode2.getMainData().getId()))
+            .search(searchService));
+
+        // and
+        assertNodes("andTag=tag1", 3, new Query()
+            .addAndTag(new Tag(tagNode1.getMainData().getId()))
+            .search(searchService));
+        assertNodes("andTag=tag1+tag2", 2, new Query()
+            .addAndTag(new Tag(tagNode1.getMainData().getId()))
+            .addAndTag(new Tag(tagNode2.getMainData().getId()))
+            .search(searchService));
+        
+        // others
+        assertNodes("andTag=tag1, permission=AVAILABLE", 5, new Query()
+            .addAndTag(new Tag(tagNode1.getMainData().getId()))
+            .setPermission(Permission.AVAILABLE)
+            .search(searchService));
+        assertNodes("andTag=tag1+tag2, permission=AVAILABLE", 3, new Query()
+            .addAndTag(new Tag(tagNode1.getMainData().getId()))
+            .addAndTag(new Tag(tagNode2.getMainData().getId()))
+            .setPermission(Permission.AVAILABLE)
+            .search(searchService));
+        assertNodes("orTag=tag1+tag2, permission=AVAILABLE", 6, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getId()))
+            .addOrTag(new Tag(tagNode2.getMainData().getId()))
+            .setPermission(Permission.AVAILABLE)
+            .search(searchService));
+        assertNodes("orTag=tag1, notTag=tag2, permission=AVAILABLE", 2, new Query()
+            .addOrTag(new Tag(tagNode1.getMainData().getId()))
+            .addNotTag(new Tag(tagNode2.getMainData().getId()))
+            .setPermission(Permission.AVAILABLE)
+            .search(searchService));
+        assertNodes("orTag=tag3, permission=AVAILABLE", 3, new Query()
+            .addOrTag(new Tag(tagNode3.getMainData().getId()))
+            .setPermission(Permission.AVAILABLE)
+            .search(searchService));
+        assertNodes("orTag=tag3, permission=SELF", 2, new Query()
+            .addOrTag(new Tag(tagNode3.getMainData().getId()))
+            .search(searchService));
+    }
 
     private Node newNode(String title) {
-        return newNode("node", title, null);
-    }
-    private Node newNode(String type, String title, ExtraData extraData) {
         Node node = new NodeDTO();
         MainData mainData = node.getMainData();
-        mainData.setType(type);
+        mainData.setType("node");
         mainData.setTitle(title);
-        if (extraData != null) node.setExtraData(extraData);
         return node;
     }
     

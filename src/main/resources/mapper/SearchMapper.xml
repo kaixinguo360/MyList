@@ -20,66 +20,147 @@
     <result column="node_source_url" jdbcType="VARCHAR" property="sourceUrl"/>
     <result column="node_comment" jdbcType="VARCHAR" property="comment"/>
   </resultMap>
+  <sql id="selectMap">
+    select distinct content.id from nodes content
+    left join parts p on content.id = p.part_content_id
+    left join nodes parent on parent.id = p.part_parent_id
+  </sql>
+  <sql id="tagCheck">
+    parent.node_type = 'tag'
+    <if test="userId!=null">
+      and (
+      content.node_user = ${userId}
+      or
+      (content.node_user != ${userId} and content.node_permission in ('public', 'protect'))
+      )
+    </if>
+  </sql>
+  <sql id="tagChoose">
+    <choose>
+      <when test="tag.id!=null">
+        parent.id = '${tag.id}'
+      </when>
+      <when test="tag.strict">
+        parent.node_title = '${tag.value}'
+      </when>
+      <when test="!tag.strict">
+        parent.node_title like '%${tag.value}%'
+      </when>
+    </choose>
+  </sql>
   
-  <select id="simpleSearch" resultMap="BaseResultMap">
-    select content.*
+  <select id="search" resultMap="BaseResultMap">
+    select distinct content.*
     from nodes content
+    <!-- tags or -->
+    <if test="query.orTags!=null">
+      left join parts p on content.id = p.part_content_id
+      left join nodes parent on parent.id = p.part_parent_id
+    </if>
     <where>
       <!-- dynamic conditions -->
       <if test="query.conditions!=null">
+        and
         <foreach collection="query.conditions" item="cond" separator="and">
           content.${cond.column} ${cond.oper} ${cond.value}
         </foreach>
       </if>
+      <!-- tags and -->
+      <if test="query.andTags!=null">
+        and content.id in (
+        <include refid="selectMap"/>
+        <where>
+          <include refid="tagCheck"/>
+          and (
+          <foreach collection="query.andTags" item="tag" separator="or">
+            <include refid="tagChoose"/>
+          </foreach>
+          )
+        </where>
+        group by content.id
+        having count(parent.id) = ${query.andTags.size()}
+        )
+      </if>
+      <!-- tags or -->
+      <if test="query.orTags!=null">
+        <include refid="tagCheck"/>
+        <if test="query.orTags!=null">
+          and (
+          <foreach collection="query.orTags" item="tag" separator="or">
+            <include refid="tagChoose"/>
+          </foreach>
+          )
+        </if>
+      </if>
+      <!-- tags not -->
+      <if test="query.notTags!=null">
+        and content.id not in (
+        <include refid="selectMap"/>
+        <where>
+          <include refid="tagCheck"/>
+          and (
+          <foreach collection="query.notTags" item="tag" separator="or">
+            <include refid="tagChoose"/>
+          </foreach>
+          )
+        </where>
+        )
+      </if>
       <!-- permission -->
-      <if test="userId!=null and query.permission!=null">
-        <choose>
-          <when test="query.permission == @com.my.list.service.search.Permission@PRIVATE">
-            and content.node_user = ${userId}
-            and content.node_permission = 'private'
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@PROTECT">
-            and content.node_user = ${userId}
-            and content.node_permission = 'protect'
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@PUBLIC">
-            and content.node_user = ${userId}
-            and content.node_permission = 'public'
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@SHARED">
-            and content.node_user = ${userId}
-            and content.node_permission in ('public', 'protect')
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@SELF">
-            and content.node_user = ${userId}
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PROTECT">
-            and content.node_user != ${userId}
-            and content.node_permission = 'protect'
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PUBLIC">
-            and content.node_user != ${userId}
-            and content.node_permission = 'public'
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_SHARED">
-            and content.node_user != ${userId}
-            and content.node_permission in ('public', 'protect')
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@EDITABLE">
-            and content.node_user = ${userId}
-            or (
-            content.node_user != ${userId}
-            and content.node_permission = 'public'
-            )
-          </when>
-          <when test="query.permission == @com.my.list.service.search.Permission@AVAILABLE">
-            and content.node_user = ${userId}
-            or (
-            content.node_user != ${userId}
-            and content.node_permission in ('public', 'protect')
-            )
-          </when>
-        </choose>
+      <if test="userId!=null">
+        <if test="query.permission!=null">
+          <choose>
+            <when test="query.permission == @com.my.list.service.search.Permission@PRIVATE">
+              and content.node_user = ${userId}
+              and content.node_permission = 'private'
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@PROTECT">
+              and content.node_user = ${userId}
+              and content.node_permission = 'protect'
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@PUBLIC">
+              and content.node_user = ${userId}
+              and content.node_permission = 'public'
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@SHARED">
+              and content.node_user = ${userId}
+              and content.node_permission in ('public', 'protect')
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@SELF">
+              and content.node_user = ${userId}
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PROTECT">
+              and content.node_user != ${userId}
+              and content.node_permission = 'protect'
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_PUBLIC">
+              and content.node_user != ${userId}
+              and content.node_permission = 'public'
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@OTHERS_SHARED">
+              and content.node_user != ${userId}
+              and content.node_permission in ('public', 'protect')
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@EDITABLE">
+              and (
+              content.node_user = ${userId}
+              or
+              (content.node_user != ${userId} and content.node_permission = 'public')
+              )
+            </when>
+            <when test="query.permission == @com.my.list.service.search.Permission@AVAILABLE">
+              and (
+              content.node_user = ${userId}
+              or
+              (content.node_user != ${userId} and content.node_permission in ('public', 'protect'))
+              )
+            </when>
+          </choose>
+        </if>
+        <if test="query.permission==null">
+          <!-- default permission = SELF -->
+          and content.node_user = ${userId}
+        </if>
       </if>
       <!-- nsfw & like & hide -->
       <if test="query.nsfw!=null">

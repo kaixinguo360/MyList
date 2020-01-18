@@ -1,5 +1,7 @@
 package com.my.list.service.search;
 
+import com.my.list.service.DataException;
+
 public enum Permission {
     PRIVATE("private"),
     PROTECT("protect"),
@@ -12,14 +14,23 @@ public enum Permission {
     EDITABLE("editable"),               // = SELF + OTHERS_PUBLIC
     AVAILABLE("available");             // = SELF + OTHERS_PROTECT + OTHERS_PUBLIC
 
-    private String sql;
+    private String value;
 
-    Permission(String sql) {
-        this.sql = sql;
+    Permission(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return sql;
+        return value;
+    }
+    
+    public static Permission parse(String value) {
+        for (Permission p : Permission.values()) {
+            if (p.value.equalsIgnoreCase(value)) {
+                return p;
+            }
+        }
+        throw new DataException("No such permission type, value=" + value);
     }
 }

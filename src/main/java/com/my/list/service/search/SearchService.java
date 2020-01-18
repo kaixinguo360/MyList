@@ -21,8 +21,8 @@ public class SearchService {
         this.searchMapper = searchMapper;
     }
 
-    public List<Node> simpleSearch(Query query) {
-        return searchMapper.simpleSearch(userId, query)
+    public List<Node> search(Query query) {
+        return searchMapper.search(userId, query)
             .stream().map(NodeDTO::new).collect(Collectors.toList());
     }
 
