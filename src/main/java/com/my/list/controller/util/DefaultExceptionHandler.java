@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-class DefaultExceptionHandler {
+public class DefaultExceptionHandler {
 
     @ExceptionHandler(value = {
         DataException.class,
         AuthException.class,
     })
-    public ResponseEntity<SimpleResponse> exceptionHandler(Exception e) {
-        SimpleResponse response = new SimpleResponse(e);
+    public ResponseEntity<SimpleResponseEntity> exceptionHandler(Exception e) {
+        SimpleResponseEntity response = new SimpleResponseEntity(e);
         return new ResponseEntity<>(response, response.status);
     }
 }

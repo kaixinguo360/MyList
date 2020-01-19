@@ -3,6 +3,7 @@ package com.my.list;
 import com.my.list.controller.util.AuthorizationInterceptor;
 import com.my.list.controller.util.CurrentContextArgumentResolver;
 import com.my.list.controller.util.CurrentTokenArgumentResolver;
+import com.my.list.controller.util.SimpleResponseReturnHandler;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
 import com.my.list.type.image.Image;
@@ -19,9 +20,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -63,5 +68,18 @@ public class MyListApplication implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(currentContextArgumentResolver);
         argumentResolvers.add(currentTokenArgumentResolver);
+    }
+    
+    @Autowired private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+    @Autowired private SimpleResponseReturnHandler simpleResponseReturnHandler;
+    @PostConstruct
+    public void init() {
+        List<HandlerMethodReturnValueHandler> newReturnValueHandlers = new ArrayList<>();
+        newReturnValueHandlers.add(0, simpleResponseReturnHandler);
+
+        List<HandlerMethodReturnValueHandler> returnValueHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
+        if (returnValueHandlers != null) newReturnValueHandlers.addAll(returnValueHandlers);
+
+        requestMappingHandlerAdapter.setReturnValueHandlers(newReturnValueHandlers);
     }
 }
