@@ -54,8 +54,8 @@ public class SearchServiceTest {
         procedureMapper.add_user(user2);
         
         // login
-        token1 = userService.generateToken(user1.getName(), user1.getPass());
-        token2 = userService.generateToken(user2.getName(), user2.getPass());
+        token1 = userService.generateToken(user1.getName(), user1.getPass(), false);
+        token2 = userService.generateToken(user2.getName(), user2.getPass(), false);
         NodeService nodeService1 = userService.getUserContext(token1).nodeService;
         NodeService nodeService2 = userService.getUserContext(token2).nodeService;
 

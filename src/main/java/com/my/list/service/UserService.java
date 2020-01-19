@@ -19,33 +19,45 @@ public class UserService {
     }
 
     // ---- CRUD ---- //
-    public void add(User object) {
-        userMapper.insert(object);
+    public void add(User user) {
+        if (user == null) throw new DataException("Input user is null");
+        if (user.getId() != null) throw new DataException("Id of input user has already set.");
+        userMapper.insert(user);
     }
     public User get(Long id) {
+        if (id == null) throw new DataException("Input id is null");
         return userMapper.selectByPrimaryKey(id);
     }
-    public void update(User object) {
-        userMapper.updateByPrimaryKey(object);
+    public void update(User user) {
+        if (user == null) throw new DataException("Input user is null");
+        if (user.getId() == null) throw new DataException("Id of input user is not set.");
+        userMapper.updateByPrimaryKey(user);
     }
     public void remove(Long id) {
+        if (id == null) throw new DataException("Input id is null");
         userMapper.deleteByPrimaryKey(id);
     }
 
     // ---- Auth ---- //
-    public User getByNameAndPass(String name, String pass) {
-        return userMapper.selectByNameAndPass(name, pass);
+    public User getByNameAndPass(String name, String pass, boolean safe) {
+        if (name == null) throw new DataException("Input name is null");
+        if (pass == null) throw new DataException("Input password is null");
+        return safe ?
+            userMapper.selectByNameAndPass(name, pass) :
+            userMapper.selectByNameAndPassUnsafe(name, pass);
     }
 
     // ---- Token ---- //
     private final Map<String, UserContext> tokens = new HashMap<>();
     private final Map<Long, UserContext> userContexts = new HashMap<>();
     private final UserContext.UserContextFactory userContextFactory;
-    
-    public String generateToken(String name, String pass) {
+
+    public String generateToken(String name, String pass, boolean safe) {
+        if (name == null) throw new DataException("Input name is null");
+        if (pass == null) throw new DataException("Input password is null");
         // check password
-        User user = getByNameAndPass(name, pass);
-        if (user == null) throw new AuthException("Wrong user name or password, name=" + name + ", pass=" + pass);
+        User user = getByNameAndPass(name, pass, safe);
+        if (user == null) throw new AuthException("Wrong user name or password, name=" + name + ", pass=" + pass + ", safe=" + safe);
         // create token and user context
         String token = UUID.randomUUID().toString();
         if (!userContexts.containsKey(user.getId())) userContexts.put(user.getId(), userContextFactory.create(user));
@@ -55,11 +67,13 @@ public class UserService {
         return token;
     }
     public void invalidateToken(String token) {
+        if (token == null) throw new DataException("Input token is null");
         if (!tokens.containsKey(token)) throw new AuthException("No such token, token=" + token);
         UserContext userContext = tokens.remove(token);
         if (!tokens.containsValue(userContext)) userContexts.remove(userContext.user.getId());
     }
     public UserContext getUserContext(String token) {
+        if (token == null) throw new DataException("Input token is null");
         if (!tokens.containsKey(token)) throw new AuthException("No such token, token=" + token);
         return tokens.get(token);
     }

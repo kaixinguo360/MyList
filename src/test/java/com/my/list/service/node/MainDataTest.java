@@ -36,7 +36,7 @@ public class MainDataTest {
         procedureMapper.add_user(user);
         
         // login
-        token = userService.generateToken(user.getName(), user.getPass());
+        token = userService.generateToken(user.getName(), user.getPass(), false);
     }
 
     @Test

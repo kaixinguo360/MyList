@@ -40,6 +40,12 @@
     SELECT *
     FROM users
     WHERE user_name = #{name}
+      AND user_pass = #{pass}
+  </select>
+  <select id="selectByNameAndPassUnsafe" resultMap="BaseResultMap">
+    SELECT *
+    FROM users
+    WHERE user_name = #{name}
       AND user_pass = PASSWORD(#{pass})
   </select>
 </mapper>

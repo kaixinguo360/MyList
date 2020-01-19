@@ -1,5 +1,8 @@
 package com.my.list;
 
+import com.my.list.controller.util.AuthorizationInterceptor;
+import com.my.list.controller.util.CurrentContextArgumentResolver;
+import com.my.list.controller.util.CurrentTokenArgumentResolver;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
 import com.my.list.type.image.Image;
@@ -10,14 +13,20 @@ import com.my.list.type.text.Text;
 import com.my.list.type.text.TextMapper;
 import com.my.list.type.video.Video;
 import com.my.list.type.video.VideoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 @SpringBootApplication
-public class MyListApplication {
+public class MyListApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
         SpringApplication.run(MyListApplication.class, args);
@@ -40,5 +49,19 @@ public class MyListApplication {
         typeConfig.addType(new Type(Video.TYPE_NAME, Video.class, videoMapper));
         return typeConfig;
     }
+    
+    @Autowired private AuthorizationInterceptor authorizationInterceptor;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authorizationInterceptor)
+            .addPathPatterns("/**");
+    }
 
+    @Autowired private CurrentContextArgumentResolver currentContextArgumentResolver;
+    @Autowired private CurrentTokenArgumentResolver currentTokenArgumentResolver;
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(currentContextArgumentResolver);
+        argumentResolvers.add(currentTokenArgumentResolver);
+    }
 }
