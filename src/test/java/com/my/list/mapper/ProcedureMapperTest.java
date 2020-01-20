@@ -147,7 +147,7 @@ class ProcedureMapperTest {
     }
     
     private Node newNode(String type, String title) {
-        Node node = new Node();
+        Node node = Node.Companion.defaultNode();
         node.setUser(user.getId());
         node.setType(type);
         node.setTitle(title);

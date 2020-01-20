@@ -2,35 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.my.list.type.image.ImageMapper">
   <resultMap id="BaseResultMap" type="com.my.list.type.image.Image">
-    <id column="image_id" jdbcType="BIGINT" property="id" />
-    <result column="image_node_id" jdbcType="BIGINT" property="nodeId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="image_url" jdbcType="VARCHAR" property="url" />
     <result column="image_description" jdbcType="LONGVARCHAR" property="description" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from images
-    where image_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.my.list.type.image.Image" keyColumn="image_id" keyProperty="id" useGeneratedKeys="true">
-    insert into images (image_id, image_node_id, image_url, 
+    insert into images (id, image_url, 
       image_description)
-    values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
       #{description,jdbcType=LONGVARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.type.image.Image">
     update images
-    set image_node_id = #{nodeId,jdbcType=BIGINT},
+    set
       image_url = #{url,jdbcType=VARCHAR},
       image_description = #{description,jdbcType=LONGVARCHAR}
-    where image_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select image_id, image_node_id, image_url, image_description
+    select *
     from images
-    where image_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select image_id, image_node_id, image_url, image_description
+    select *
     from images
   </select>
 </mapper>

@@ -64,7 +64,7 @@ public class MainDataTest {
     }
 
     private Node newNode() {
-        com.my.list.dto.Node node = new NodeDTO();
+        Node node = new NodeDTO(com.my.list.domain.Node.Companion.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType("node");
         mainData.setTitle("Simple Node");

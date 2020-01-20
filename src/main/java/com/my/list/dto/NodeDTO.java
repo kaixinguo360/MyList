@@ -7,7 +7,7 @@ import java.util.List;
 
 public class NodeDTO implements Node {
     
-    private final com.my.list.domain.Node node;
+    private com.my.list.domain.Node node;
     private ExtraData extraData = null;
     private List<ListItem> extraList = null;
 
@@ -19,9 +19,12 @@ public class NodeDTO implements Node {
         this.node = com.my.list.domain.Node.Companion.fromSingleNode(mainData);
     }
 
-    // ---- Getter of SingleNode ---- //
+    // ---- Getter & Setter of SingleNode ---- //
     public MainData getMainData() {
         return node;
+    }
+    public void setMainData(MainData node) {
+        this.node = (com.my.list.domain.Node) node;
     }
 
     // ---- Getter & Setter of ExtraData ---- //

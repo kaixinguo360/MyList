@@ -43,8 +43,8 @@ public class NodeService {
         if (type.hasExtraData) {
             ExtraData extraData = node.getExtraData();
             if (extraData == null) throw new DataException("Input extraData is null.");
-            extraData.setParentId(mainData.getId());
-            extraDataService.add(node.getExtraData());
+            extraData.setExtraId(mainData.getId());
+            extraDataService.add(extraData);
         }
         if (type.hasExtraList) listDataService.save(mainData.getId(), node.getExtraList(), this);
     }
@@ -69,7 +69,12 @@ public class NodeService {
         Type type = typeConfig.getType(mainData);
         
         mainDataService.update(mainData);
-        if (type.hasExtraData) extraDataService.update(node.getExtraData());
+        if (type.hasExtraData) {
+            ExtraData extraData = node.getExtraData();
+            if (extraData == null) throw new DataException("Input extraData is null.");
+            extraData.setExtraId(mainData.getId());
+            extraDataService.update(extraData);
+        }
         if (type.hasExtraList) listDataService.save(mainData.getId(), node.getExtraList(), this);
     }
     public void remove(Long nodeId) {

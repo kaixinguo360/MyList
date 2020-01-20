@@ -83,6 +83,7 @@
       </if>
       <!-- tags or -->
       <if test="query.orTags!=null">
+        and
         <include refid="tagCheck"/>
         <if test="query.orTags!=null">
           and (

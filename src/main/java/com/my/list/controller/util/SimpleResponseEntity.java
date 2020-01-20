@@ -14,6 +14,7 @@ public class SimpleResponseEntity {
     String message;
     HttpStatus status;
 
+    SimpleResponseEntity() {}
     SimpleResponseEntity(Object result) {
         this.result = result;
         this.success = true;
@@ -55,5 +56,21 @@ public class SimpleResponseEntity {
     }
     public int getStatus() {
         return status.value();
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+    public void setError(String error) {
+        this.error = error;
+    }
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    public void setStatus(int status) {
+        this.status = HttpStatus.valueOf(status);
     }
 }

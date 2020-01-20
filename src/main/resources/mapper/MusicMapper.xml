@@ -2,35 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.my.list.type.music.MusicMapper">
   <resultMap id="BaseResultMap" type="com.my.list.type.music.Music">
-    <id column="music_id" jdbcType="BIGINT" property="id" />
-    <result column="music_node_id" jdbcType="BIGINT" property="nodeId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="music_url" jdbcType="VARCHAR" property="url" />
     <result column="music_format" jdbcType="VARCHAR" property="format" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from musics
-    where music_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.my.list.type.music.Music" keyColumn="music_id" keyProperty="id" useGeneratedKeys="true">
-    insert into musics (music_id, music_node_id, music_url, 
+    insert into musics (id, music_url, 
       music_format)
-    values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
       #{format,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.type.music.Music">
     update musics
-    set music_node_id = #{nodeId,jdbcType=BIGINT},
+    set
       music_url = #{url,jdbcType=VARCHAR},
       music_format = #{format,jdbcType=VARCHAR}
-    where music_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select music_id, music_node_id, music_url, music_format
+    select *
     from musics
-    where music_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select music_id, music_node_id, music_url, music_format
+    select *
     from musics
   </select>
 </mapper>

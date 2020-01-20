@@ -5,19 +5,19 @@ import java.sql.Timestamp
 class Node(
     override var id: Long? = null,
     override var user: Long? = null,
-    override var type: String? = "list",
+    override var type: String? = null,
     override var ctime: Timestamp? = Timestamp(System.currentTimeMillis()),
     override var mtime: Timestamp? = Timestamp(System.currentTimeMillis()),
     override var title: String? = null,
     override var excerpt: String? = null,
-    override var linkForward: Int? = 0,
-    override var linkBack: Int? = 0,
-    override var linkDelete: Boolean? = false,
-    override var linkVirtual: Boolean? = false,
-    override var permission: String? = "private",
-    override var nsfw: Boolean? = false,
-    override var like: Boolean? = false,
-    override var hide: Boolean? = false,
+    override var linkForward: Int? = null,
+    override var linkBack: Int? = null,
+    override var linkDelete: Boolean? = null,
+    override var linkVirtual: Boolean? = null,
+    override var permission: String? = null,
+    override var nsfw: Boolean? = null,
+    override var like: Boolean? = null,
+    override var hide: Boolean? = null,
     override var sourceUrl: String? = null,
     override var comment: String? = null
 ): MainData {
@@ -29,6 +29,18 @@ class Node(
             if (s == null) return null
             if (s is Node) return s
             return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.linkForward, s.linkBack, s.linkDelete, s.linkVirtual, s.permission, s.nsfw, s.like, s.hide, s.sourceUrl, s.comment)
+        }
+        fun defaultNode(): Node {
+            val node = Node()
+            node.permission = "private"
+            node.linkForward = 0
+            node.linkBack = 0
+            node.linkDelete = false
+            node.linkVirtual = false
+            node.nsfw = false
+            node.like = false
+            node.hide = false
+            return node
         }
     }
 }

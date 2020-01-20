@@ -1,7 +1,9 @@
 package com.my.list.domain
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.sql.Timestamp
 
+@JsonDeserialize(`as` = Node::class)
 interface MainData {
     var id: Long?
     var user: Long?

@@ -17,8 +17,7 @@ class ExtraDataService {
 
     void add(ExtraData extraData) {
         if (extraData == null) throw new DataException("Input extraData is null.");
-        if (extraData.getParentId() == null) throw new DataException("ParentId of input extraData is not set.");
-        if (extraData.getExtraId() != null) throw new DataException("Id of input extraData have already set.");
+        if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
 
         Type type = typeConfig.getType(extraData);
         type.extraDataMapper.insert(extraData);
@@ -27,7 +26,7 @@ class ExtraDataService {
         if (extraDataId == null) throw new DataException("Input extraDataId is null.");
 
         Type type = typeConfig.getType(extraDataClass);
-        ExtraData extraData = type.extraDataMapper.selectByNodeId(extraDataId);
+        ExtraData extraData = type.extraDataMapper.selectByPrimaryKey(extraDataId);
         if (extraData == null) throw new DataException("Can't find extraData for node with id=" + extraDataId);
 
         @SuppressWarnings("unchecked") T t = (T) extraData;
@@ -35,11 +34,13 @@ class ExtraDataService {
     }
     void update(ExtraData extraData) {
         if (extraData == null) throw new DataException("Input extraData is null.");
-        if (extraData.getParentId() == null) throw new DataException("ParentId of input extraData is not set.");
         if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
-
         Type type = typeConfig.getType(extraData);
-        if (type.extraDataMapper.selectByPrimaryKey(extraData.getExtraId()) == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
+        
+        ExtraData old = type.extraDataMapper.selectByPrimaryKey(extraData.getExtraId());
+        if (old == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
+        extraData.setExtraId(old.getExtraId());
+        
         type.extraDataMapper.updateByPrimaryKey(extraData);
     }
     void remove(Long extraDataId, Class<? extends ExtraData> extraDataClass) {

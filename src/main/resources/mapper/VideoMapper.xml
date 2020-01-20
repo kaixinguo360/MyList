@@ -2,35 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.my.list.type.video.VideoMapper">
   <resultMap id="BaseResultMap" type="com.my.list.type.video.Video">
-    <id column="video_id" jdbcType="BIGINT" property="id" />
-    <result column="video_node_id" jdbcType="BIGINT" property="nodeId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="video_url" jdbcType="VARCHAR" property="url" />
     <result column="video_format" jdbcType="VARCHAR" property="format" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from videos
-    where video_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.my.list.type.video.Video" keyColumn="video_id" keyProperty="id" useGeneratedKeys="true">
-    insert into videos (video_id, video_node_id, video_url, 
-      video_format)
-    values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
-      #{format,jdbcType=VARCHAR})
+    insert into videos (id, video_url, video_format)
+    values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.type.video.Video">
     update videos
-    set video_node_id = #{nodeId,jdbcType=BIGINT},
+    set
       video_url = #{url,jdbcType=VARCHAR},
       video_format = #{format,jdbcType=VARCHAR}
-    where video_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select video_id, video_node_id, video_url, video_format
+    select *
     from videos
-    where video_id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select video_id, video_node_id, video_url, video_format
+    select *
     from videos
   </select>
 </mapper>

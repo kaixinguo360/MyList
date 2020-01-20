@@ -294,16 +294,20 @@ public class SearchServiceTest {
         assertNodes("orTag=tag3, permission=SELF", 2, new Query()
             .addOrTag(new Tag(tagNode3.getMainData().getId()))
             .search(searchService));
+        assertNodes("orTag=tag3, permission=SELF", 0, new Query()
+            .addAndTag(new Tag(tagNode1.getMainData().getId()))
+            .addOrTag(new Tag(tagNode2.getMainData().getId()))
+            .addNotTag(new Tag(tagNode3.getMainData().getId()))
+            .search(searchService));
     }
 
     private Node newNode(String title) {
-        Node node = new NodeDTO();
+        Node node = new NodeDTO(com.my.list.domain.Node.Companion.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType("node");
         mainData.setTitle(title);
         return node;
     }
-    
     private void assertNodes(String message, int expectedSize, List<Node> nodes) {
         System.out.println("==== " + message + " [" + nodes.size() + "/" + expectedSize + "] ====");
         AtomicInteger i = new AtomicInteger();

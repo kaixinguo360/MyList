@@ -29,7 +29,7 @@ BEGIN
         );
 
     INSERT INTO images(
-        image_node_id,
+        id,
         image_url,
         image_description
     ) VALUE (
@@ -86,7 +86,7 @@ BEGIN
         );
 
     INSERT INTO musics(
-        music_node_id,
+        id,
         music_url,
         music_format
     ) VALUE (
@@ -188,7 +188,7 @@ BEGIN
         );
 
     INSERT INTO texts(
-        text_node_id,
+        id,
         text_content
     ) VALUE (
              @node_id,
@@ -239,7 +239,7 @@ BEGIN
         );
 
     INSERT INTO videos(
-        video_node_id,
+        id,
         video_url,
         video_format
     ) VALUE (
@@ -604,25 +604,21 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
-                          `image_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                          `image_node_id` bigint(20) unsigned NOT NULL,
+                          `id` bigint(20) unsigned NOT NULL,
                           `image_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
                           `image_description` text COLLATE utf8mb4_unicode_ci,
-                          PRIMARY KEY (`image_id`),
-                          UNIQUE KEY `image_node_id` (`image_node_id`),
-                          CONSTRAINT `images_ibfk_3` FOREIGN KEY (`image_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                          PRIMARY KEY (`id`),
+                          CONSTRAINT `images_ibfk_3` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 DROP TABLE IF EXISTS `musics`;
 CREATE TABLE `musics` (
-                          `music_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                          `music_node_id` bigint(20) unsigned NOT NULL,
+                          `id` bigint(20) unsigned NOT NULL,
                           `music_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
                           `music_format` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          PRIMARY KEY (`music_id`),
-                          KEY `music_node_id` (`music_node_id`),
-                          CONSTRAINT `musics_ibfk_2` FOREIGN KEY (`music_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                          PRIMARY KEY (`id`),
+                          CONSTRAINT `musics_ibfk_2` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -682,12 +678,10 @@ CREATE TABLE `parts` (
 
 DROP TABLE IF EXISTS `texts`;
 CREATE TABLE `texts` (
-                         `text_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                         `text_node_id` bigint(20) unsigned NOT NULL,
+                         `id` bigint(20) unsigned NOT NULL,
                          `text_content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                         PRIMARY KEY (`text_id`),
-                         UNIQUE KEY `text_node_id` (`text_node_id`),
-                         CONSTRAINT `texts_ibfk_2` FOREIGN KEY (`text_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                         PRIMARY KEY (`id`),
+                         CONSTRAINT `texts_ibfk_4` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -706,14 +700,12 @@ CREATE TABLE `users` (
 
 DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
-                          `video_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                          `video_node_id` bigint(20) unsigned NOT NULL,
+                          `id` bigint(20) unsigned NOT NULL,
                           `video_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
                           `video_format` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          PRIMARY KEY (`video_id`),
-                          UNIQUE KEY `video_node_id` (`video_node_id`),
-                          CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`video_node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                          PRIMARY KEY (`id`),
+                          CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 2020-01-17 03:30:11
+-- 2020-01-20 06:14:48

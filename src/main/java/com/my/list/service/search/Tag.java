@@ -2,22 +2,43 @@ package com.my.list.service.search;
 
 public class Tag {
 
-    private final boolean strict;
-    private final String value;
-    private final Long id;
+    private boolean strict;
+    private String value;
+    private Long id;
 
-    Tag(Long id) {
+    public Tag() {}
+    public Tag(Long id) {
         this(id, null, true);
     }
-    Tag(String value) {
+    public Tag(String value) {
         this(null, value, true);
     }
-    Tag(String value, boolean strict) {
+    public Tag(String value, boolean strict) {
         this(null, value, strict);
     }
     private Tag(Long id, String value, boolean strict) {
         this.strict = strict;
         this.value = value;
+        this.id = id;
+    }
+
+    // ---- Setter & Getter ---- //
+    public boolean isStrict() {
+        return strict;
+    }
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+    public String getValue() {
+        return value;
+    }
+    public void setValue(String value) {
+        this.value = value;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
         this.id = id;
     }
 }

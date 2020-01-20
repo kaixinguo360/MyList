@@ -1,5 +1,7 @@
 package com.my.list.service.search;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.my.list.service.DataException;
 
 public enum Permission {
@@ -20,11 +22,12 @@ public enum Permission {
         this.value = value;
     }
 
-    @Override
+    @JsonValue
     public String toString() {
         return value;
     }
     
+    @JsonCreator
     public static Permission parse(String value) {
         for (Permission p : Permission.values()) {
             if (p.value.equalsIgnoreCase(value)) {

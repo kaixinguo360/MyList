@@ -1,33 +1,25 @@
 package com.my.list.type.video
 
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.my.list.domain.ExtraData
 
+@JsonTypeName(value = "video")
 class Video(
     var id: Long? = null,
-    var nodeId: Long? = null,
     var url: String? = null,
     var format: String? = null
 ): ExtraData {
     companion object { const val TYPE_NAME = "video" }
     override fun toString(): String {
-        return "Video[$id,$nodeId,$url,$format]"
+        return "Video[$id,$url,$format]"
     }
     override fun getExtraId(): Long? { return id; }
     override fun setExtraId(id: Long?) { this.id = id; }
-    override fun getParentId(): Long? { return nodeId; }
-    override fun setParentId(id: Long?) { this.nodeId = id; }
     override fun toMap(): Map<String, Any?> {
         val map = HashMap<String, Any?>()
         map["video_id"] = id
-        map["video_node_id"] = nodeId
         map["video_url"] = url
         map["video_format"] = format
         return map
-    }
-    override fun fromMap(map: Map<String, Any?>) {
-        id = map["video_id"] as Long?
-        nodeId = map["video_node_id"] as Long?
-        url = map["video_url"] as String?
-        format = map["video_format"] as String?
     }
 }

@@ -16,7 +16,11 @@ import java.io.IOException;
 @Component
 public class SimpleResponseReturnHandler implements HandlerMethodReturnValueHandler {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public SimpleResponseReturnHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {

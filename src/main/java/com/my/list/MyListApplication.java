@@ -1,5 +1,6 @@
 package com.my.list;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.list.controller.util.AuthorizationInterceptor;
 import com.my.list.controller.util.CurrentContextArgumentResolver;
 import com.my.list.controller.util.CurrentTokenArgumentResolver;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @SpringBootApplication
@@ -53,6 +55,17 @@ public class MyListApplication implements WebMvcConfigurer {
         typeConfig.addType(new Type(Music.TYPE_NAME, Music.class, musicMapper));
         typeConfig.addType(new Type(Video.TYPE_NAME, Video.class, videoMapper));
         return typeConfig;
+    }
+    
+    @Bean
+    public ObjectMapper objectMapper(TypeConfig typeConfig) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerSubtypes(typeConfig.getTypes().stream()
+            .filter(type ->type.hasExtraData)
+            .map(type -> type.extraDataClass)
+            .collect(Collectors.toList())
+        );
+        return objectMapper;
     }
     
     @Autowired private AuthorizationInterceptor authorizationInterceptor;

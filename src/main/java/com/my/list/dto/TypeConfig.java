@@ -4,6 +4,7 @@ import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
 import com.my.list.service.DataException;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,9 @@ public class TypeConfig {
         Type type = typeClasses.get(typeClass);
         if (type == null) throw new DataException("No such type, typeClass=" + typeClass);
         return type;
+    }
+    public Collection<Type> getTypes() {
+        return typeNames.values();
     }
 
     public Type getType(MainData mainData) {

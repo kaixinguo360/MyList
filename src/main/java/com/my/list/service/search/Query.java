@@ -75,4 +75,48 @@ public class Query {
     public List<Node> search(SearchService searchService) {
         return searchService.search(this);
     }
+
+    // ---- Setter & Getter ---- //
+    public List<Condition> getConditions() {
+        return conditions;
+    }
+    public void setConditions(List<Condition> conditions) {
+        this.conditions = conditions;
+    }
+    public List<Sort> getSorts() {
+        return sorts;
+    }
+    public void setSorts(List<Sort> sorts) {
+        this.sorts = sorts;
+    }
+    public Permission getPermission() {
+        return permission;
+    }
+    public Boolean getNsfw() {
+        return nsfw;
+    }
+    public Boolean getLike() {
+        return like;
+    }
+    public Boolean getHide() {
+        return hide;
+    }
+    public Set<Tag> getAndTags() {
+        return andTags;
+    }
+    public void setAndTags(Set<Tag> andTags) {
+        this.andTags = andTags;
+    }
+    public Set<Tag> getOrTags() {
+        return orTags;
+    }
+    public void setOrTags(Set<Tag> orTags) {
+        this.orTags = orTags;
+    }
+    public Set<Tag> getNotTags() {
+        return notTags;
+    }
+    public void setNotTags(Set<Tag> notTags) {
+        this.notTags = notTags;
+    }
 }
