@@ -26,9 +26,8 @@
     left join nodes parent on parent.id = p.part_parent_id
   </sql>
   <sql id="tagCheck">
-    parent.node_type = 'tag'
     <if test="userId!=null">
-      and (
+      (
       content.node_user = ${userId}
       or
       (content.node_user != ${userId} and content.node_permission in ('public', 'protect'))
@@ -36,6 +35,10 @@
     </if>
   </sql>
   <sql id="tagChoose">
+    (
+    <if test="tag.type!=null">
+      parent.node_type = '${tag.type}' and
+    </if>
     <choose>
       <when test="tag.id!=null">
         parent.id = '${tag.id}'
@@ -47,6 +50,7 @@
         parent.node_title like '%${tag.value}%'
       </when>
     </choose>
+    )
   </sql>
   
   <select id="search" resultMap="BaseResultMap">
@@ -78,7 +82,7 @@
           )
         </where>
         group by content.id
-        having count(parent.id) = ${query.andTags.size()}
+        having count(distinct parent.id) = ${query.andTags.size()}
         )
       </if>
       <!-- tags or -->

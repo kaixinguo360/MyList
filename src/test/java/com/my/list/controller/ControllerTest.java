@@ -7,6 +7,7 @@ import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
 import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
+import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.service.search.Permission;
@@ -33,6 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,10 +52,10 @@ public class ControllerTest {
     @Autowired private WebApplicationContext context;
     private MockMvc mvc;
     private String token;
+    private Node textNode, imageNode, musicNode, videoNode, listNode, tagNode;
 
     @Autowired private ProcedureMapper procedureMapper;
 
-    private static User user = new User();
     private static Text text = new Text();
     private static Image image = new Image();
     private static Music music = new Music();
@@ -61,6 +63,7 @@ public class ControllerTest {
 
     @BeforeEach
     void beforeAll() {
+        User user = new User();
         user.setName("TestUser");
         user.setPass("1234567");
         user.setEmail("test@example.com");
@@ -89,6 +92,7 @@ public class ControllerTest {
     public void test() throws Exception {
         tokenTest();
         nodeTest();
+        listTest();
         searchTest();
     }
     public void tokenTest() throws Exception {
@@ -113,16 +117,16 @@ public class ControllerTest {
     public void nodeTest() throws Exception {
 
         // node - post
-        Node textNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+        textNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsBytes(newNode(Text.TYPE_NAME, "Text Node", text)))
         ), Node.class);
-        Node imageNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+        imageNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsBytes(newNode(Image.TYPE_NAME, "Image Node", image)))
         ), Node.class);
-        Node musicNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+        musicNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsBytes(newNode(Music.TYPE_NAME, "Music Node", music)))
         ), Node.class);
-        Node videoNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+        videoNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsBytes(newNode(Video.TYPE_NAME, "Video Node", video)))
         ), Node.class);
 
@@ -186,14 +190,71 @@ public class ControllerTest {
             ), Node.class).getExtraData(Video.class).getFormat()
         );
     }
-    public void searchTest() throws Exception {
+    public void listTest() throws Exception {
+
+        // ---- node - list ---- //
+        Node newListNode = newNode("list", "Test List", null);
+        List<ListItem> newList = new ArrayList<>();
+        newListNode.setExtraList(newList);
+
+        newList.add(new ListItem(textNode, ListItem.ItemStatus.EXIST));
+        newList.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));
+        newList.add(new ListItem(musicNode, ListItem.ItemStatus.EXIST));
+        newList.add(new ListItem(videoNode, ListItem.ItemStatus.EXIST));
+
+        // post
+        listNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(newListNode)))
+            , Node.class);
+        showList("listNode", listNode.getExtraList());
+        assertEquals(4, listNode.getExtraList().size());
+
+        // put
+        listNode.getExtraList().remove(3);
+        assertEquals(3,
+            assertResult(mvc.perform(MockMvcRequestBuilders
+                .put("/api/node/")
+                .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(listNode))
+            ), Node.class).getExtraList().size()
+        );
+
         
+        // ---- node - tag ---- //
+        Node newTagNode = newNode("tag", "Test Tag", null);
+        List<ListItem> newTag = new ArrayList<>();
+        newTagNode.setExtraList(newTag);
+
+        newTag.add(new ListItem(textNode, ListItem.ItemStatus.EXIST));
+        newTag.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));
+        newTag.add(new ListItem(musicNode, ListItem.ItemStatus.EXIST));
+        newTag.add(new ListItem(videoNode, ListItem.ItemStatus.EXIST));
+
+        // post
+        tagNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(newTagNode)))
+            , Node.class);
+        showList("tagNode", tagNode.getExtraList());
+        assertEquals(4, tagNode.getExtraList().size());
+
+        // put
+        tagNode.getExtraList().remove(3);
+        assertEquals(3,
+            assertResult(mvc.perform(MockMvcRequestBuilders
+                .put("/api/node/")
+                .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(tagNode))
+            ), Node.class).getExtraList().size()
+        );
+    }
+    public void searchTest() throws Exception {
+
         // search - getAll
-        assertNodes("getAll", 4, assertList(
+        assertNodes("getAll", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .get("/api/search").header(Constants.AUTHORIZATION, token)
             )));
-        
+
         // search - query
         assertNodes("'Text Node'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
@@ -217,8 +278,8 @@ public class ControllerTest {
                     .addSort("node_ctime", Sort.Direction.ASC)
                 ))
             )));
-        
-        assertNodes("permission=PRIVATE", 4, assertList(
+
+        assertNodes("permission=PRIVATE", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new Query()
@@ -233,34 +294,42 @@ public class ControllerTest {
                 ))
             )));
 
-        assertNodes("orTag='Node'", 0, assertList(
+        assertNodes("orTag='Test Tag'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new Query()
-                    .addOrTag(new Tag("Node"))
+                    .addOrTag(new Tag("Test Tag"))
                 ))
             )));
-        assertNodes("andTag='Node'", 0, assertList(
+        assertNodes("andTag='%Tag%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new Query()
-                    .addAndTag(new Tag("Node"))
+                    .addAndTag(new Tag("Tag", false))
                 ))
             )));
-        assertNodes("notTag='Node'", 4, assertList(
+        assertNodes("notTag='%Node%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new Query()
-                    .addNotTag(new Tag("Node"))
+                    .addNotTag(new Tag("Tag", false))
                 ))
             )));
-        assertNodes("orTag=andTag=notTag='Node'", 0, assertList(
+        assertNodes("orTag='%Tag%', andTag='%Test%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new Query()
-                    .addAndTag(new Tag("Node"))
-                    .addOrTag(new Tag("Node"))
-                    .addNotTag(new Tag("Node"))
+                    .addOrTag(new Tag("Tag", false))
+                    .addAndTag(new Tag("Test", false))
+                ))
+            )));
+        assertNodes("orTag='%Tag%', andTag='%Test%', notTag='Test Tag'", 0, assertList(
+            mvc.perform(MockMvcRequestBuilders
+                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new Query()
+                    .addOrTag(new Tag("Tag", false))
+                    .addAndTag(new Tag("Test", false))
+                    .addNotTag(new Tag("Test Tag"))
                 ))
             )));
     }
@@ -272,6 +341,20 @@ public class ControllerTest {
         mainData.setTitle(title);
         if (extraData != null) node.setExtraData(extraData);
         return node;
+    }
+    private void showList(String msg, List<ListItem> list) {
+        System.out.println("==== " + msg + " ====");
+        AtomicInteger i = new AtomicInteger();
+        list.forEach(item -> {
+            String status;
+            switch (item.itemStatus) {
+                case EXIST:  status = "EXIST "; break;
+                case NEW:    status = "NEW   "; break;
+                case UPDATE: status = "UPDATE"; break;
+                default: status = null; break;
+            }
+            System.out.println("[" + i.getAndIncrement() + "] " + status + " " + item.node.getMainData());
+        });
     }
     private void assertNodes(String message, int expectedSize, List<Node> nodes) {
         System.out.println("==== " + message + " [" + nodes.size() + "/" + expectedSize + "] ====");

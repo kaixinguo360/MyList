@@ -5,6 +5,7 @@ public class Tag {
     private boolean strict;
     private String value;
     private Long id;
+    private String type;
 
     public Tag() {}
     public Tag(Long id) {
@@ -20,6 +21,7 @@ public class Tag {
         this.strict = strict;
         this.value = value;
         this.id = id;
+        this.type = "tag";
     }
 
     // ---- Setter & Getter ---- //
@@ -40,5 +42,11 @@ public class Tag {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
     }
 }

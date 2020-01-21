@@ -101,20 +101,26 @@ public class SearchServiceTest {
         list1.add(new ListItem(nodes1.get(0), ListItem.ItemStatus.EXIST));
         list1.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
         list1.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST)); // Duplicate data
         list1.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
         list1.add(new ListItem(nodes2.get(2), ListItem.ItemStatus.EXIST));
+        list1.add(new ListItem(nodes2.get(2), ListItem.ItemStatus.EXIST)); // Duplicate data
         nodeService1.update(tagNode1);
         
         list2.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
         list2.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
         list2.add(new ListItem(nodes1.get(3), ListItem.ItemStatus.EXIST));
+        list2.add(new ListItem(nodes1.get(3), ListItem.ItemStatus.EXIST)); // Duplicate data
         list2.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
+        list2.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // Duplicate data
         nodeService1.update(tagNode2);
         
         list3.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST));
         list3.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST));
+        list3.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST)); // Duplicate data
         list3.add(new ListItem(nodes2.get(0), ListItem.ItemStatus.EXIST));
         list3.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST));
+        list3.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // Duplicate data
         nodeService2.update(tagNode3);
     }
 
