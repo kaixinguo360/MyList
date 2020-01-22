@@ -20,13 +20,13 @@ class ExtraDataService {
         if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
 
         Type type = typeConfig.getType(extraData);
-        type.extraDataMapper.insert(extraData);
+        type.getExtraDataMapper().insert(extraData);
     }
     <T extends ExtraData> T get(Long extraDataId, Class<T> extraDataClass) {
         if (extraDataId == null) throw new DataException("Input extraDataId is null.");
 
         Type type = typeConfig.getType(extraDataClass);
-        ExtraData extraData = type.extraDataMapper.selectByPrimaryKey(extraDataId);
+        ExtraData extraData = type.getExtraDataMapper().selectByPrimaryKey(extraDataId);
         if (extraData == null) throw new DataException("Can't find extraData for node with id=" + extraDataId);
 
         @SuppressWarnings("unchecked") T t = (T) extraData;
@@ -37,16 +37,16 @@ class ExtraDataService {
         if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
         Type type = typeConfig.getType(extraData);
         
-        ExtraData old = type.extraDataMapper.selectByPrimaryKey(extraData.getExtraId());
+        ExtraData old = type.getExtraDataMapper().selectByPrimaryKey(extraData.getExtraId());
         if (old == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
         extraData.setExtraId(old.getExtraId());
         
-        type.extraDataMapper.updateByPrimaryKey(extraData);
+        type.getExtraDataMapper().updateByPrimaryKey(extraData);
     }
     void remove(Long extraDataId, Class<? extends ExtraData> extraDataClass) {
         if (extraDataId == null) throw new DataException("Input extraDataId id is null.");
 
         Type type = typeConfig.getType(extraDataClass);
-        type.extraDataMapper.deleteByPrimaryKey(extraDataId);
+        type.getExtraDataMapper().deleteByPrimaryKey(extraDataId);
     }
 }

@@ -5,16 +5,13 @@ import com.my.list.controller.util.AuthorizationInterceptor;
 import com.my.list.controller.util.CurrentContextArgumentResolver;
 import com.my.list.controller.util.CurrentTokenArgumentResolver;
 import com.my.list.controller.util.SimpleResponseReturnHandler;
+import com.my.list.dto.SimpleType;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
-import com.my.list.type.image.Image;
-import com.my.list.type.image.ImageMapper;
-import com.my.list.type.music.Music;
-import com.my.list.type.music.MusicMapper;
-import com.my.list.type.text.Text;
-import com.my.list.type.text.TextMapper;
-import com.my.list.type.video.Video;
-import com.my.list.type.video.VideoMapper;
+import com.my.list.type.image.ImageType;
+import com.my.list.type.music.MusicType;
+import com.my.list.type.text.TextType;
+import com.my.list.type.video.VideoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,19 +39,19 @@ public class MyListApplication implements WebMvcConfigurer {
     
     @Bean
     public TypeConfig typeConfig(
-        TextMapper textMapper,
-        ImageMapper imageMapper,
-        MusicMapper musicMapper,
-        VideoMapper videoMapper
+        TextType textType,
+        ImageType imageType,
+        MusicType musicType,
+        VideoType videoType
     ) {
         TypeConfig typeConfig = new TypeConfig();
-        typeConfig.addType(new Type("node"));
-        typeConfig.addType(new Type("list", true));
-        typeConfig.addType(new Type("tag", true));
-        typeConfig.addType(new Type(Text.TYPE_NAME, Text.class, textMapper));
-        typeConfig.addType(new Type(Image.TYPE_NAME, Image.class, imageMapper));
-        typeConfig.addType(new Type(Music.TYPE_NAME, Music.class, musicMapper));
-        typeConfig.addType(new Type(Video.TYPE_NAME, Video.class, videoMapper));
+        typeConfig.addType(new SimpleType("node"));
+        typeConfig.addType(new SimpleType("list", true));
+        typeConfig.addType(new SimpleType("tag", true));
+        typeConfig.addType(textType);
+        typeConfig.addType(imageType);
+        typeConfig.addType(musicType);
+        typeConfig.addType(videoType);
         return typeConfig;
     }
     
@@ -62,8 +59,8 @@ public class MyListApplication implements WebMvcConfigurer {
     public ObjectMapper objectMapper(TypeConfig typeConfig) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerSubtypes(typeConfig.getTypes().stream()
-            .filter(type ->type.hasExtraData)
-            .map(type -> type.extraDataClass)
+            .filter(Type::isHasExtraData)
+            .map(Type::getExtraDataClass)
             .collect(Collectors.toList())
         );
         return objectMapper;

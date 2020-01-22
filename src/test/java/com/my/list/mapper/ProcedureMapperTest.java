@@ -54,7 +54,7 @@ class ProcedureMapperTest {
     }
 
     @Test
-    void test() {
+    void procedureMapperTest() {
         // clean_all
         procedureMapper.clean_all();
 

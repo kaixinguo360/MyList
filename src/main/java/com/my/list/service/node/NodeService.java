@@ -38,15 +38,16 @@ public class NodeService {
         if (mainData == null) throw new DataException("Input mainData is null.");
         mainData.setUser(userId);
         Type type = typeConfig.getType(mainData);
+        type.process(node);
         
         mainDataService.add(mainData);
-        if (type.hasExtraData) {
+        if (type.isHasExtraData()) {
             ExtraData extraData = node.getExtraData();
             if (extraData == null) throw new DataException("Input extraData is null.");
             extraData.setExtraId(mainData.getId());
             extraDataService.add(extraData);
         }
-        if (type.hasExtraList) listDataService.save(mainData.getId(), node.getExtraList(), this);
+        if (type.isHasExtraList()) listDataService.save(mainData.getId(), node.getExtraList(), this);
     }
     public Node get(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
@@ -57,8 +58,8 @@ public class NodeService {
         Node node = new NodeDTO(mainData);
         Type type = typeConfig.getType(mainData);
         
-        if (type.hasExtraData) node.setExtraData(extraDataService.get(mainData.getId(), type.extraDataClass));
-        if (type.hasExtraList) node.setExtraList(listDataService.get(nodeId));
+        if (type.isHasExtraData()) node.setExtraData(extraDataService.get(mainData.getId(), type.getExtraDataClass()));
+        if (type.isHasExtraList()) node.setExtraList(listDataService.get(nodeId));
         return node;
     }
     public void update(Node node) {
@@ -67,15 +68,16 @@ public class NodeService {
         MainData mainData = node.getMainData();
         checkPermission(mainData, false);
         Type type = typeConfig.getType(mainData);
+        type.process(node);
         
         mainDataService.update(mainData);
-        if (type.hasExtraData) {
+        if (type.isHasExtraData()) {
             ExtraData extraData = node.getExtraData();
             if (extraData == null) throw new DataException("Input extraData is null.");
             extraData.setExtraId(mainData.getId());
             extraDataService.update(extraData);
         }
-        if (type.hasExtraList) listDataService.save(mainData.getId(), node.getExtraList(), this);
+        if (type.isHasExtraList()) listDataService.save(mainData.getId(), node.getExtraList(), this);
     }
     public void remove(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
@@ -84,7 +86,7 @@ public class NodeService {
         checkPermission(mainData, false);
         Type type = typeConfig.getType(mainData);
         
-        if (type.hasExtraList)
+        if (type.isHasExtraList())
             listDataService.remove(nodeId);
         else
             mainDataService.remove(nodeId);

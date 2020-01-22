@@ -14,8 +14,8 @@ public class TypeConfig {
     private Map<Class<? extends ExtraData>, Type> typeClasses = new HashMap<>();
 
     public void addType(Type type) {
-        typeNames.put(type.typeName, type);
-        typeClasses.put(type.extraDataClass, type);
+        typeNames.put(type.getTypeName(), type);
+        typeClasses.put(type.getExtraDataClass(), type);
     }
 
     public Type getType(String typeName) {

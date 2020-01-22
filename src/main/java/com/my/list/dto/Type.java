@@ -3,28 +3,21 @@ package com.my.list.dto;
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.ExtraDataMapper;
 
-public class Type {
-    
-    public final String typeName;
-    public final Class<? extends ExtraData> extraDataClass;
-    public final ExtraDataMapper extraDataMapper;
-    public final boolean hasExtraData;
-    public final boolean hasExtraList;
+import javax.validation.constraints.NotNull;
 
-    public Type(String typeName) {
-        this(typeName, null, null);
+public interface Type {
+    String getTypeName();
+    default Class<? extends ExtraData> getExtraDataClass() {
+        return null;
     }
-    public Type(String typeName, boolean hasExtraList) {
-        this(typeName, hasExtraList, null, null);
+    default ExtraDataMapper getExtraDataMapper() {
+        return null;
     }
-    public Type(String typeName, Class<? extends ExtraData> extraDataClass, ExtraDataMapper extraDataMapper) {
-        this(typeName, false, extraDataClass, extraDataMapper);
+    default boolean isHasExtraData() {
+        return false;
     }
-    public Type(String typeName, boolean hasExtraList, Class<? extends ExtraData> extraDataClass, ExtraDataMapper extraDataMapper) {
-        this.typeName = typeName;
-        this.extraDataClass = extraDataClass;
-        this.extraDataMapper = extraDataMapper;
-        this.hasExtraData = (extraDataClass != null);
-        this.hasExtraList = hasExtraList;
+    default boolean isHasExtraList() {
+        return false;
     }
+    default void process(@NotNull Node node) {}
 }

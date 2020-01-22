@@ -2,6 +2,7 @@ package com.my.list.dto;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
+import com.my.list.service.DataException;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class NodeDTO implements Node {
         return extraData;
     }
     public <T extends ExtraData> T getExtraData(Class<T> extraDataClass) {
+        if (extraData == null) throw new DataException("ExtraData is null.");
         @SuppressWarnings("unchecked") T t = (T) extraData;
         return t;
     }

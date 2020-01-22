@@ -89,7 +89,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void controllerTest() throws Exception {
         tokenTest();
         nodeTest();
         listTest();
