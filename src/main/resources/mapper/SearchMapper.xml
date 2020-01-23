@@ -57,20 +57,20 @@
     select distinct content.*
     from nodes content
     <!-- tags or -->
-    <if test="query.orTags!=null">
+    <if test="query.orTags!=null and query.orTags.size()!=0">
       left join parts p on content.id = p.part_content_id
       left join nodes parent on parent.id = p.part_parent_id
     </if>
     <where>
       <!-- dynamic conditions -->
-      <if test="query.conditions!=null">
+      <if test="query.conditions!=null and query.conditions.size()!=0">
         and
         <foreach collection="query.conditions" item="cond" separator="and">
           content.${cond.column} ${cond.oper} ${cond.value}
         </foreach>
       </if>
       <!-- tags and -->
-      <if test="query.andTags!=null">
+      <if test="query.andTags!=null and query.andTags.size()!=0">
         and content.id in (
         <include refid="selectMap"/>
         <where>
@@ -86,7 +86,7 @@
         )
       </if>
       <!-- tags or -->
-      <if test="query.orTags!=null">
+      <if test="query.orTags!=null and query.orTags.size()!=0">
         and
         <include refid="tagCheck"/>
         <if test="query.orTags!=null">
@@ -98,7 +98,7 @@
         </if>
       </if>
       <!-- tags not -->
-      <if test="query.notTags!=null">
+      <if test="query.notTags!=null and query.notTags.size()!=0">
         and content.id not in (
         <include refid="selectMap"/>
         <where>
@@ -178,7 +178,7 @@
         and content.node_hide = ${query.hide}
       </if>
     </where>
-    <if test="query.sorts!=null">
+    <if test="query.sorts!=null and query.sorts.size()!=0">
       order by
       <foreach collection="query.sorts" item="sort" separator=",">
         content.${sort.property} ${sort.direction}
