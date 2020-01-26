@@ -12,4 +12,5 @@ public interface NodeMapper extends CrudMapper<Node> {
     Node selectByPrimaryKeyWithUserId(Long userId, Long id);
     List<Node> selectAllByListIdWithUserId(Long userId, Long listId);
     List<Node> selectAllByListId(Long listId);
+    void clean();
 }

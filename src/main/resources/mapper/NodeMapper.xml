@@ -9,8 +9,6 @@
     <result column="node_mtime" jdbcType="TIMESTAMP" property="mtime"/>
     <result column="node_title" jdbcType="VARCHAR" property="title"/>
     <result column="node_excerpt" jdbcType="VARCHAR" property="excerpt"/>
-    <result column="node_link_forward" jdbcType="INTEGER" property="linkForward"/>
-    <result column="node_link_back" jdbcType="INTEGER" property="linkBack"/>
     <result column="node_link_delete" jdbcType="BIT" property="linkDelete"/>
     <result column="node_link_virtual" jdbcType="BIT" property="linkVirtual"/>
     <result column="node_permission" jdbcType="VARCHAR" property="permission"/>
@@ -27,13 +25,11 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.domain.Node" useGeneratedKeys="true">
     insert into nodes (node_user, node_type, node_ctime,
-                       node_mtime, node_title, node_excerpt, node_link_forward,
-                       node_link_back, node_link_delete, node_link_virtual, node_permission,
-                       node_nsfw, node_like, node_hide, node_source_url, node_comment)
+                       node_mtime, node_title, node_excerpt, node_link_delete, node_link_virtual,
+                       node_permission, node_nsfw, node_like, node_hide, node_source_url, node_comment)
     values (#{user,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP},
-            #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, #{linkForward,jdbcType=INTEGER},
-            #{linkBack,jdbcType=INTEGER}, #{linkDelete,jdbcType=BIT}, #{linkVirtual,jdbcType=BIT}, #{permission,jdbcType=VARCHAR},
-            #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{hide,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
+            #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, #{linkDelete,jdbcType=BIT}, #{linkVirtual,jdbcType=BIT},
+            #{permission,jdbcType=VARCHAR}, #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{hide,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.domain.Node">
     update nodes
@@ -43,8 +39,6 @@
         node_mtime        = #{mtime,jdbcType=TIMESTAMP},
         node_title        = #{title,jdbcType=VARCHAR},
         node_excerpt      = #{excerpt,jdbcType=VARCHAR},
-        node_link_forward = #{linkForward,jdbcType=INTEGER},
-        node_link_back    = #{linkBack,jdbcType=INTEGER},
         node_link_delete  = #{linkDelete,jdbcType=BIT},
         node_link_virtual = #{linkVirtual,jdbcType=BIT},
         node_permission   = #{permission,jdbcType=VARCHAR},
@@ -76,13 +70,11 @@
   </delete>
   <insert id="insertWithUserId" keyColumn="id" keyProperty="node.id" useGeneratedKeys="true">
     insert into nodes (node_user, node_type, node_ctime,
-                       node_mtime, node_title, node_excerpt, node_link_forward,
-                       node_link_back, node_link_delete, node_link_virtual, node_permission,
-                       node_nsfw, node_like, node_hide, node_source_url, node_comment)
+                       node_mtime, node_title, node_excerpt, node_link_delete, node_link_virtual,
+                       node_permission, node_nsfw, node_like, node_hide, node_source_url, node_comment)
     values (#{userId,jdbcType=BIGINT}, #{node.type,jdbcType=VARCHAR}, #{node.ctime,jdbcType=TIMESTAMP},
-            #{node.mtime,jdbcType=TIMESTAMP}, #{node.title,jdbcType=VARCHAR}, #{node.excerpt,jdbcType=VARCHAR}, #{linkForward,jdbcType=INTEGER},
-            #{linkBack,jdbcType=INTEGER}, #{linkDelete,jdbcType=BIT}, #{linkVirtual,jdbcType=BIT}, #{node.permission,jdbcType=VARCHAR},
-            #{node.nsfw,jdbcType=BIT}, #{node.like,jdbcType=BIT}, #{node.hide,jdbcType=BIT}, #{node.sourceUrl,jdbcType=VARCHAR}, #{node.comment,jdbcType=VARCHAR})
+            #{node.mtime,jdbcType=TIMESTAMP}, #{node.title,jdbcType=VARCHAR}, #{node.excerpt,jdbcType=VARCHAR}, #{linkDelete,jdbcType=BIT},
+            #{linkVirtual,jdbcType=BIT}, #{node.permission,jdbcType=VARCHAR}, #{node.nsfw,jdbcType=BIT}, #{node.like,jdbcType=BIT}, #{node.hide,jdbcType=BIT}, #{node.sourceUrl,jdbcType=VARCHAR}, #{node.comment,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKeyWithUserId">
     update nodes
@@ -92,8 +84,6 @@
         node_mtime        = #{node.mtime,jdbcType=TIMESTAMP},
         node_title        = #{node.title,jdbcType=VARCHAR},
         node_excerpt      = #{node.excerpt,jdbcType=VARCHAR},
-        node_link_forward = #{linkForward,jdbcType=INTEGER},
-        node_link_back    = #{linkBack,jdbcType=INTEGER},
         node_link_delete  = #{linkDelete,jdbcType=BIT},
         node_link_virtual = #{linkVirtual,jdbcType=BIT},
         node_permission   = #{node.permission,jdbcType=VARCHAR},
@@ -125,4 +115,19 @@
     select *
     from nodes
   </select>
+  <delete id="clean">
+    delete from nodes
+    where id in
+    (
+      select content.id from (select * from nodes) content
+                               left join parts p on content.id = p.part_content_id
+                               left join (select * from nodes) parent on parent.id = p.part_parent_id
+      where
+        content.node_link_delete = true
+        and
+        (parent.node_link_virtual = false or parent.node_link_virtual is null)
+      group by content.id
+      having count(parent.id) = 0
+    )
+  </delete>
 </mapper>

@@ -1,7 +1,7 @@
 package com.my.list.service.search;
 
+import com.my.list.TestUtil;
 import com.my.list.domain.MainData;
-import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 public class SearchServiceTest {
 
-    @Autowired private ProcedureMapper procedureMapper;
+    @Autowired private TestUtil testUtil;
     @Autowired private UserService userService;
 
     private String token1;
@@ -49,9 +49,9 @@ public class SearchServiceTest {
         user2.setStatus("activated");
 
         // clean_all & add_user
-        procedureMapper.clean_all();
-        procedureMapper.add_user(user1);
-        procedureMapper.add_user(user2);
+        testUtil.clean_all();
+        userService.add(user1);
+        userService.add(user2);
         
         // login
         token1 = userService.generateToken(user1.getName(), user1.getPass(), false);

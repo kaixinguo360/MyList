@@ -1,15 +1,16 @@
 package com.my.list.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.my.list.TestUtil;
 import com.my.list.controller.util.Constants;
 import com.my.list.controller.util.SimpleResponseEntity;
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
-import com.my.list.domain.ProcedureMapper;
 import com.my.list.domain.User;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
+import com.my.list.service.UserService;
 import com.my.list.service.search.Permission;
 import com.my.list.service.search.Query;
 import com.my.list.service.search.Sort;
@@ -54,7 +55,8 @@ public class ControllerTest {
     private String token;
     private Node textNode, imageNode, musicNode, videoNode, listNode, tagNode;
 
-    @Autowired private ProcedureMapper procedureMapper;
+    @Autowired private TestUtil testUtil;
+    @Autowired private UserService userService;
 
     private static Text text = new Text();
     private static Image image = new Image();
@@ -81,8 +83,8 @@ public class ControllerTest {
         video.setFormat("avi");
 
         // clean_all & add_user
-        procedureMapper.clean_all();
-        procedureMapper.add_user(user);
+        testUtil.clean_all();
+        userService.add(user);
         
         // setup MockMvc
         mvc = MockMvcBuilders.webAppContextSetup(context).build();

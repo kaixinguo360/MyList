@@ -6,7 +6,6 @@
     <result column="part_parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="part_content_id" jdbcType="BIGINT" property="contentId" />
     <result column="part_content_order" jdbcType="INTEGER" property="contentOrder" />
-    <result column="part_content_type" jdbcType="VARCHAR" property="contentType" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from parts
@@ -14,18 +13,17 @@
   </delete>
   <insert id="insert" parameterType="com.my.list.domain.Part">
     insert into parts (part_id, part_parent_id, part_content_id,
-                       part_content_order, part_content_type
+                       part_content_order
       )
     values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{contentId,jdbcType=LONGVARCHAR},
-            #{contentOrder,jdbcType=INTEGER}, #{contentType,jdbcType=VARCHAR}
+            #{contentOrder,jdbcType=INTEGER}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.domain.Part">
     update parts
     set part_parent_id = #{parentId,jdbcType=BIGINT},
         part_content_id = #{contentId,jdbcType=BIGINT},
-        part_content_order = #{contentOrder,jdbcType=INTEGER},
-        part_content_type = #{contentType,jdbcType=VARCHAR}
+        part_content_order = #{contentOrder,jdbcType=INTEGER}
     where part_id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -35,4 +33,18 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select * from parts
   </select>
+
+  <select id="selectByListId" resultMap="BaseResultMap">
+    select * from parts
+    where part_parent_id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="count" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(part_id) from parts
+    where part_parent_id = #{id,jdbcType=BIGINT}
+    group by part_parent_id
+  </select>
+  <delete id="clean" parameterType="java.lang.Long">
+    delete from parts
+    where part_parent_id = #{id,jdbcType=BIGINT}
+  </delete>
 </mapper>

@@ -2,33 +2,30 @@ package com.my.list.service.node;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
-import com.my.list.domain.User;
-import com.my.list.dto.Node;
-import com.my.list.dto.NodeDTO;
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
-import com.my.list.service.AuthException;
+import com.my.list.dto.*;
 import com.my.list.service.DataException;
+import com.my.list.service.PermissionChecker;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class NodeService {
     
-    private final Long userId;
+    private final PermissionChecker permissionChecker;
 
     private final TypeConfig typeConfig;
     private final MainDataService mainDataService;
     private final ExtraDataService extraDataService;
-    private final ListDataService listDataService;
+    private final ListService listService;
 
-    public NodeService(User user, TypeConfig typeConfig, MainDataService mainDataService, 
-                       ExtraDataService extraDataService, ListDataService listDataService) {
-        if (user == null) throw new DataException("User is null");
-        if (user.getId() == null) throw new DataException("Id of user is null");
-        this.userId = user.getId();
+    public NodeService(PermissionChecker permissionChecker, TypeConfig typeConfig, MainDataService mainDataService,
+                       ExtraDataService extraDataService, ListService listService) {
+        this.permissionChecker = permissionChecker;
         this.typeConfig = typeConfig;
         this.mainDataService = mainDataService;
         this.extraDataService = extraDataService;
-        this.listDataService = listDataService;
+        this.listService = listService;
     }
 
     public void add(Node node) {
@@ -36,7 +33,7 @@ public class NodeService {
         
         MainData mainData = node.getMainData();
         if (mainData == null) throw new DataException("Input mainData is null.");
-        mainData.setUser(userId);
+        mainData.setUser(permissionChecker.getUserId());
         Type type = typeConfig.getType(mainData);
         type.process(node);
         
@@ -47,26 +44,31 @@ public class NodeService {
             extraData.setExtraId(mainData.getId());
             extraDataService.add(extraData);
         }
-        if (type.isHasExtraList()) listDataService.save(mainData.getId(), node.getExtraList(), this);
+        if (type.isHasExtraList()) save(mainData.getId(), node.getExtraList());
     }
     public Node get(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
         
         MainData mainData = mainDataService.get(nodeId);
-        checkPermission(mainData, true);
+        permissionChecker.check(mainData, true);
         
         Node node = new NodeDTO(mainData);
         Type type = typeConfig.getType(mainData);
         
         if (type.isHasExtraData()) node.setExtraData(extraDataService.get(mainData.getId(), type.getExtraDataClass()));
-        if (type.isHasExtraList()) node.setExtraList(listDataService.get(nodeId));
+        if (type.isHasExtraList()) node.setExtraList(
+            listService.getList(nodeId)
+                .stream()
+                .map(n -> new ListItem(n, ListItem.ItemStatus.EXIST))
+                .collect(Collectors.toList())
+        );
         return node;
     }
     public void update(Node node) {
         if (node == null) throw new DataException("Input node is null.");
         
         MainData mainData = node.getMainData();
-        checkPermission(mainData, false);
+        permissionChecker.check(mainData, false);
         Type type = typeConfig.getType(mainData);
         type.process(node);
         
@@ -77,59 +79,59 @@ public class NodeService {
             extraData.setExtraId(mainData.getId());
             extraDataService.update(extraData);
         }
-        if (type.isHasExtraList()) listDataService.save(mainData.getId(), node.getExtraList(), this);
+        if (type.isHasExtraList()) save(mainData.getId(), node.getExtraList());
     }
     public void remove(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
         
         MainData mainData = mainDataService.get(nodeId);
-        checkPermission(mainData, false);
+        permissionChecker.check(mainData, false);
         Type type = typeConfig.getType(mainData);
         
         if (type.isHasExtraList())
-            listDataService.remove(nodeId);
+            listService.removeList(nodeId);
         else
             mainDataService.remove(nodeId);
     }
     
-    private void checkPermission(MainData mainData, boolean readOnly) {
-        String permission = mainData.getPermission();
-        if (permission == null) throw new AuthException("Permission is null");
-        boolean success;
-        switch (permission) {
-            case "public" :
-                success = true;
-                break;
-            case "protect" :
-                success = readOnly || userId.equals(mainData.getUser());
-                break;
-            case "private" :
-                success = userId.equals(mainData.getUser());
-                break;
-            default:
-                throw new AuthException("Unknown permission: " + permission);
-        }
-        if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermission() +
-            ", expectedUserId=" + mainData.getUser() + ", actualUserId=" + userId);
+    private void save(Long listId, List<ListItem> list) {
+        if (listId == null) throw new DataException("Input listId is null");
+        if (list == null) throw new DataException("Input list is null.");
+
+        List<Long> partIds = list.stream().map(item -> {Long partId = null;
+            switch (item.itemStatus) {
+                case NEW:
+                    Node newNode = item.node;
+                    add(newNode);
+                    return newNode.getMainData().getId();
+                case UPDATE:
+                    Node node = item.node;
+                    update(node);
+                    return node.getMainData().getId();
+                case EXIST:
+                default:
+                    return item.node.getMainData().getId();
+            }
+        }).collect(Collectors.toList());
+        listService.updateList(listId, partIds);
     }
-    
+
+    // ---- Factory ---- //
     @Service
     public static class NodeServiceFactory {
         
         private final TypeConfig typeConfig;
         private final MainDataService mainDataService;
         private final ExtraDataService extraDataService;
-        private final ListDataService listDataService;
 
-        public NodeServiceFactory(TypeConfig typeConfig, MainDataService mainDataService, ExtraDataService extraDataService, ListDataService listDataService) {
+        public NodeServiceFactory(TypeConfig typeConfig, MainDataService mainDataService, ExtraDataService extraDataService) {
             this.typeConfig = typeConfig;
             this.mainDataService = mainDataService;
             this.extraDataService = extraDataService;
-            this.listDataService = listDataService;
         }
         
-        public NodeService create(User user) {
-            return new NodeService(user, typeConfig, mainDataService, extraDataService, listDataService);
+        public NodeService create(PermissionChecker permissionChecker, ListService listService) {
+            return new NodeService(permissionChecker, typeConfig, mainDataService, extraDataService, listService);
         }
     }
     

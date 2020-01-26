@@ -19,5 +19,8 @@ public interface Type {
     default boolean isHasExtraList() {
         return false;
     }
+    default boolean isUniqueExtraList() {
+        return false;
+    }
     default void process(@NotNull Node node) {}
 }

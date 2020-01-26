@@ -1,31 +1,29 @@
 package com.my.list.service.search;
 
-import com.my.list.domain.User;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
-import com.my.list.service.DataException;
+import com.my.list.service.PermissionChecker;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SearchService {
-    
-    private final Long userId;
+
+    private final PermissionChecker permissionChecker;
     private final SearchMapper searchMapper;
 
-    public SearchService(User user, SearchMapper searchMapper) {
-        if (user == null) throw new DataException("User is null");
-        if (user.getId() == null) throw new DataException("Id of user is null");
-        this.userId = user.getId();
+    public SearchService(PermissionChecker permissionChecker, SearchMapper searchMapper) {
+        this.permissionChecker = permissionChecker;
         this.searchMapper = searchMapper;
     }
 
     public List<Node> search(Query query) {
-        return searchMapper.search(userId, query)
+        return searchMapper.search(permissionChecker.getUserId(), query)
             .stream().map(NodeDTO::new).collect(Collectors.toList());
     }
 
+    // ---- Factory ---- //
     @Service
     public static class SearchServiceFactory {
 
@@ -35,8 +33,8 @@ public class SearchService {
             this.searchService = searchService;
         }
 
-        public SearchService create(User user) {
-            return new SearchService(user, searchService);
+        public SearchService create(PermissionChecker permissionChecker) {
+            return new SearchService(permissionChecker, searchService);
         }
     }
 

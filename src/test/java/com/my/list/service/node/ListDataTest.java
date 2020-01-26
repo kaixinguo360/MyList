@@ -1,6 +1,10 @@
 package com.my.list.service.node;
 
-import com.my.list.domain.*;
+import com.my.list.TestUtil;
+import com.my.list.domain.ExtraData;
+import com.my.list.domain.MainData;
+import com.my.list.domain.NodeMapper;
+import com.my.list.domain.User;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
@@ -23,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 public class ListDataTest {
 
-    @Autowired private ProcedureMapper procedureMapper;
+    @Autowired private TestUtil testUtil;
     @Autowired private NodeMapper nodeMapper;
     @Autowired private UserService userService;
 
@@ -59,8 +63,8 @@ public class ListDataTest {
         video.setFormat("avi");
 
         // clean_all & add_user
-        procedureMapper.clean_all();
-        procedureMapper.add_user(user);
+        testUtil.clean_all();
+        userService.add(user);
         
         // login
         token = userService.generateToken(user.getName(), user.getPass(), false);

@@ -16,7 +16,7 @@
   <insert id="insert" parameterType="com.my.list.domain.User">
     insert into users (id, user_name, user_pass,
                        user_email, user_status)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, password(#{pass,jdbcType=VARCHAR}),
             #{email,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.domain.User">

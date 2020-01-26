@@ -10,8 +10,6 @@ class Node(
     override var mtime: Timestamp? = Timestamp(System.currentTimeMillis()),
     override var title: String? = null,
     override var excerpt: String? = null,
-    override var linkForward: Int? = null,
-    override var linkBack: Int? = null,
     override var linkDelete: Boolean? = null,
     override var linkVirtual: Boolean? = null,
     override var permission: String? = null,
@@ -22,19 +20,17 @@ class Node(
     override var comment: String? = null
 ): MainData {
     override fun toString(): String {
-        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$linkForward,$linkBack,$linkDelete,$linkVirtual,$permission,$nsfw,$like,$hide,$sourceUrl,$comment]"
+        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$linkDelete,$linkVirtual,$permission,$nsfw,$like,$hide,$sourceUrl,$comment]"
     }
     companion object { 
         fun fromSingleNode(s: MainData?): Node? {
             if (s == null) return null
             if (s is Node) return s
-            return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.linkForward, s.linkBack, s.linkDelete, s.linkVirtual, s.permission, s.nsfw, s.like, s.hide, s.sourceUrl, s.comment)
+            return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.linkDelete, s.linkVirtual, s.permission, s.nsfw, s.like, s.hide, s.sourceUrl, s.comment)
         }
         fun defaultNode(): Node {
             val node = Node()
             node.permission = "private"
-            node.linkForward = 0
-            node.linkBack = 0
             node.linkDelete = false
             node.linkVirtual = false
             node.nsfw = false
