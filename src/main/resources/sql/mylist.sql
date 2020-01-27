@@ -20,6 +20,7 @@ BEGIN
     DELETE FROM musics WHERE true;
     DELETE FROM videos WHERE true;
     DELETE FROM parts WHERE true;
+    DELETE FROM options WHERE true;
 
 END;;
 
@@ -113,6 +114,16 @@ CREATE TABLE `videos` (
                           `video_format` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
                           PRIMARY KEY (`id`),
                           CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `options`;
+CREATE TABLE `options` (
+                           `option_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                           `option_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+                           `option_value` longtext COLLATE utf8mb4_unicode_ci,
+                           PRIMARY KEY (`option_id`),
+                           UNIQUE KEY `option_name` (`option_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

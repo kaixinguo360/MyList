@@ -13,10 +13,10 @@
     from users
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.domain.User">
+  <insert id="insert" parameterType="com.my.list.domain.User" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into users (id, user_name, user_pass,
                        user_email, user_status)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, password(#{pass,jdbcType=VARCHAR}),
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
             #{email,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.domain.User">
@@ -28,24 +28,16 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, user_name, user_pass, user_email, user_status
-    from users
+    select * from users
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, user_name, user_pass, user_email, user_status
-    from users
+    select * from users
   </select>
   <select id="selectByNameAndPass" resultMap="BaseResultMap">
     SELECT *
     FROM users
     WHERE user_name = #{name}
       AND user_pass = #{pass}
-  </select>
-  <select id="selectByNameAndPassUnsafe" resultMap="BaseResultMap">
-    SELECT *
-    FROM users
-    WHERE user_name = #{name}
-      AND user_pass = PASSWORD(#{pass})
   </select>
 </mapper>

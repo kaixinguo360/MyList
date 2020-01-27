@@ -1,5 +1,6 @@
 package com.my.list.controller.util;
 
+import com.my.list.Constants;
 import com.my.list.service.AuthException;
 import com.my.list.service.UserContext;
 import com.my.list.service.UserService;
@@ -25,22 +26,35 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Class<?> bean = handlerMethod.getBeanType();
         Method method = handlerMethod.getMethod();
-        if (bean.getAnnotation(Authorization.class) == null && method.getAnnotation(Authorization.class) == null){
-            return true;
-        }
 
+        // Get annotation
+        Authorization annotation = method.getAnnotation(Authorization.class);
+        if (annotation == null) {
+            annotation = bean.getAnnotation(Authorization.class);
+            if (annotation == null) {
+                return true;
+            }
+        }
+        
+        // Get token & userContext
         String token = request.getHeader(Constants.AUTHORIZATION);
         if (token == null) {
             throw new AuthException("No valid token found.");
         }
 
-        UserContext userContext = userService.getUserContext(token);
-        if (userContext != null) {
-            request.setAttribute(Constants.CURRENT_TOKEN, token);
-            request.setAttribute(Constants.CURRENT_CONTEXT, userContext);
-            return true;
+        // Check permission
+        if (annotation.value()) {
+            userService.checkAdminToken(token);
         } else {
-            throw new AuthException("Unauthorized token, token=" + token);
+            UserContext userContext = userService.getUserContext(token);
+            if (userContext != null) {
+                request.setAttribute(Constants.CURRENT_TOKEN, token);
+                request.setAttribute(Constants.CURRENT_CONTEXT, userContext);
+            } else {
+                throw new AuthException("Unauthorized token, token=" + token);
+            }
         }
+        
+        return true;
     }
 }

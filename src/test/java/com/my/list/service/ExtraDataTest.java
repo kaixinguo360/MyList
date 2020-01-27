@@ -66,7 +66,7 @@ public class ExtraDataTest {
         userService.add(user);
         
         // login
-        token = userService.generateToken(user.getName(), user.getPass(), false);
+        token = userService.generateToken(user.getName(), user.getPass());
     }
 
     @Test

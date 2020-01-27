@@ -1,8 +1,8 @@
 package com.my.list.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.my.list.Constants;
 import com.my.list.TestUtil;
-import com.my.list.controller.util.Constants;
 import com.my.list.controller.util.SimpleResponseEntity;
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
@@ -58,6 +58,7 @@ public class ControllerTest {
     @Autowired private TestUtil testUtil;
     @Autowired private UserService userService;
 
+    private static User user = new User();
     private static Text text = new Text();
     private static Image image = new Image();
     private static Music music = new Music();
@@ -65,9 +66,8 @@ public class ControllerTest {
 
     @BeforeEach
     void beforeAll() {
-        User user = new User();
         user.setName("TestUser");
-        user.setPass("1234567");
+        user.setPass("*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5");
         user.setEmail("test@example.com");
         user.setStatus("activated");
 
@@ -84,7 +84,6 @@ public class ControllerTest {
 
         // clean_all & add_user
         testUtil.clean_all();
-        userService.add(user);
         
         // setup MockMvc
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
@@ -92,13 +91,83 @@ public class ControllerTest {
 
     @Test
     public void controllerTest() throws Exception {
+        adminTest();
         tokenTest();
         nodeTest();
         listTest();
         searchTest();
     }
-    public void tokenTest() throws Exception {
+    public void adminTest() throws Exception {
+        // get admin token
+        String adminToken = assertResult(
+            mvc.perform(MockMvcRequestBuilders
+                .get("/api/token/admin?pass=1234567")
+            ), String.class);
         
+        // user - post
+        User user1 = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/user").header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsBytes(newUser("User1", "12345")))
+        ), User.class);
+        User user2 = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/user").header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsBytes(user))
+        ), User.class);
+
+        // user - getAll
+        assertEquals(2,
+            assertResult(mvc.perform(MockMvcRequestBuilders
+                .get("/api/user")
+                .header(Constants.AUTHORIZATION, adminToken)
+            ), List.class).size()
+        );
+        // user - get
+        assertEquals(user1.getName(),
+            assertResult(mvc.perform(MockMvcRequestBuilders
+                .get("/api/user/" + user1.getId())
+                .header(Constants.AUTHORIZATION, adminToken)
+            ), User.class).getName()
+        );
+
+        // user - update
+        user1.setPass("1234567");
+        assertEquals(user1.getName(),
+            assertResult(mvc.perform(MockMvcRequestBuilders
+                .put("/api/user/")
+                .header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(user1))
+            ), User.class).getName()
+        );
+
+        // user - token
+        String token1 = assertResult(
+            mvc.perform(MockMvcRequestBuilders
+                .get("/api/token?name=User1&pass=1234567")
+            ), String.class);
+        mvc.perform(MockMvcRequestBuilders
+            .get("/api/user/" + user1.getId())
+            .header(Constants.AUTHORIZATION, token1)
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+
+        // user - delete
+        mvc.perform(MockMvcRequestBuilders
+            .delete("/api/user/" + user1.getId())
+            .header(Constants.AUTHORIZATION, adminToken)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(MockMvcRequestBuilders
+            .get("/api/token?name=User1&pass=1234567")
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+
+        // delete admin token
+        mvc.perform(MockMvcRequestBuilders
+            .delete("/api/token/admin")
+            .header(Constants.AUTHORIZATION, adminToken)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(MockMvcRequestBuilders
+            .get("/api/user")
+            .header(Constants.AUTHORIZATION, adminToken)
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+    public void tokenTest() throws Exception {
+
         // token - get
         token = assertResult(
             mvc.perform(MockMvcRequestBuilders
@@ -108,7 +177,7 @@ public class ControllerTest {
             mvc.perform(MockMvcRequestBuilders
                 .get("/api/token?name=TestUser&pass=*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5")
             ), String.class);
-        
+
         // token - delete
         assertSuccess(
             mvc.perform(MockMvcRequestBuilders
@@ -336,6 +405,14 @@ public class ControllerTest {
             )));
     }
 
+    private User newUser(String name, String pass) {
+        User user = new User();
+        user.setName(name);
+        user.setPass(pass);
+        user.setStatus("activated");
+        user.setEmail(name + "@example.com");
+        return user;
+    }
     private Node newNode(String type, String title, ExtraData extraData) {
         Node node = new NodeDTO(com.my.list.domain.Node.Companion.defaultNode());
         MainData mainData = node.getMainData();

@@ -67,7 +67,7 @@ public class ExtraListTest {
         userService.add(user);
         
         // login
-        token = userService.generateToken(user.getName(), user.getPass(), false);
+        token = userService.generateToken(user.getName(), user.getPass());
         
         // add_nodes
         //

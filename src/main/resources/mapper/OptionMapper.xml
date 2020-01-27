@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.domain.OptionMapper">
+  <insert id="insert">
+    insert into options (option_name, option_value)
+    values (#{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR})
+  </insert>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from options
+    where option_name = #{name,jdbcType=VARCHAR}
+  </delete>
+  <update id="update">
+    update options
+    set option_value  = #{value,jdbcType=VARCHAR}
+    where option_name = #{name,jdbcType=VARCHAR}
+  </update>
+  <select id="select" resultType="java.lang.String">
+    select option_value from options
+    where option_name = #{name,jdbcType=VARCHAR}
+  </select>
+</mapper>
