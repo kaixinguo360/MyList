@@ -43,8 +43,21 @@
     where part_parent_id = #{id,jdbcType=BIGINT}
     group by part_parent_id
   </select>
-  <delete id="clean" parameterType="java.lang.Long">
+  <delete id="deleteByListId" parameterType="java.lang.Long">
     delete from parts
     where part_parent_id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByListIdAndPartIds">
+    delete from parts
+    <where>
+      part_parent_id = #{listId,jdbcType=BIGINT}
+      and
+      part_content_id in
+      (
+      <foreach collection="partIds" item="partId" separator=",">
+        #{partId,jdbcType=BIGINT}
+      </foreach>
+      )
+    </where>
   </delete>
 </mapper>

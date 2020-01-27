@@ -5,27 +5,32 @@ import com.my.list.domain.ExtraDataMapper;
 
 public class SimpleType implements Type {
     
-    private final String typeName;
-    private final Class<? extends ExtraData> extraDataClass;
-    private final ExtraDataMapper extraDataMapper;
-    private final boolean hasExtraData;
-    private final boolean hasExtraList;
+    private String typeName;
+    private Class<? extends ExtraData> extraDataClass = null;
+    private ExtraDataMapper extraDataMapper = null;
+    private boolean hasExtraData = false;
+    private boolean hasExtraList = false;
+    private boolean extraListUnique = false;
+    private boolean extraListRequired = true;
 
-    public SimpleType(String typeName) {
-        this(typeName, null, null);
+    public static Type nodeType(String typeName) {
+        SimpleType simpleType = new SimpleType();
+        simpleType.typeName = typeName;
+        return simpleType;
     }
-    public SimpleType(String typeName, boolean hasExtraList) {
-        this(typeName, hasExtraList, null, null);
+    public static Type postType(String typeName) {
+        SimpleType simpleType = new SimpleType();
+        simpleType.typeName = typeName;
+        simpleType.hasExtraList = true;
+        return simpleType;
     }
-    public SimpleType(String typeName, Class<? extends ExtraData> extraDataClass, ExtraDataMapper extraDataMapper) {
-        this(typeName, false, extraDataClass, extraDataMapper);
-    }
-    public SimpleType(String typeName, boolean hasExtraList, Class<? extends ExtraData> extraDataClass, ExtraDataMapper extraDataMapper) {
-        this.typeName = typeName;
-        this.extraDataClass = extraDataClass;
-        this.extraDataMapper = extraDataMapper;
-        this.hasExtraData = (extraDataClass != null);
-        this.hasExtraList = hasExtraList;
+    public static Type tagType(String typeName) {
+        SimpleType simpleType = new SimpleType();
+        simpleType.typeName = typeName;
+        simpleType.hasExtraList = true;
+        simpleType.extraListUnique = true;
+        simpleType.extraListRequired = false;
+        return simpleType;
     }
 
     // ---- Getter & Setter ---- //
@@ -44,5 +49,11 @@ public class SimpleType implements Type {
     }
     public boolean isHasExtraList() {
         return hasExtraList;
+    }
+    public boolean isExtraListUnique() {
+        return extraListUnique;
+    }
+    public boolean isExtraListRequired() {
+        return extraListRequired;
     }
 }

@@ -1,4 +1,4 @@
-package com.my.list.service.search;
+package com.my.list.service.filter;
 
 class Condition {
 

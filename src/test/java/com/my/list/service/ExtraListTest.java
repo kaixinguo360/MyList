@@ -1,4 +1,4 @@
-package com.my.list.service.node;
+package com.my.list.service;
 
 import com.my.list.TestUtil;
 import com.my.list.domain.ExtraData;
@@ -8,7 +8,7 @@ import com.my.list.domain.User;
 import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
-import com.my.list.service.UserService;
+import com.my.list.service.data.NodeService;
 import com.my.list.type.image.Image;
 import com.my.list.type.music.Music;
 import com.my.list.type.text.Text;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
-public class ListDataTest {
+public class ExtraListTest {
 
     @Autowired private TestUtil testUtil;
     @Autowired private NodeMapper nodeMapper;
@@ -105,7 +105,7 @@ public class ListDataTest {
         //    [=]    imageNode  0 -> 1  attachment
         //    [+]    musicNode  0 -> 1  alone
         //    [ ]    videoNode  0       alone
-        Node listNode = newNode("list", "List Node", null);
+        Node listNode = newNode("post", "List Node", null);
         List<ListItem> list = new ArrayList<>();
         list.add(new ListItem(textNode, ListItem.ItemStatus.EXIST));
         list.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));

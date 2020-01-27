@@ -1,4 +1,4 @@
-package com.my.list.service.search;
+package com.my.list.service.filter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

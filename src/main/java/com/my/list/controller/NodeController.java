@@ -4,7 +4,7 @@ import com.my.list.controller.util.Authorization;
 import com.my.list.controller.util.CurrentContext;
 import com.my.list.controller.util.SimpleController;
 import com.my.list.dto.Node;
-import com.my.list.service.node.NodeService;
+import com.my.list.service.data.NodeService;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/node")

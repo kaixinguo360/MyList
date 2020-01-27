@@ -1,4 +1,4 @@
-package com.my.list.service.node;
+package com.my.list.service;
 
 import com.my.list.TestUtil;
 import com.my.list.domain.ExtraData;
@@ -7,7 +7,7 @@ import com.my.list.domain.NodeMapper;
 import com.my.list.domain.User;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
-import com.my.list.service.UserService;
+import com.my.list.service.data.NodeService;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageMapper;
 import com.my.list.type.music.Music;

@@ -1,4 +1,4 @@
-package com.my.list.service.node;
+package com.my.list.service.data;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
@@ -17,15 +17,15 @@ public class NodeService {
     private final TypeConfig typeConfig;
     private final MainDataService mainDataService;
     private final ExtraDataService extraDataService;
-    private final ListService listService;
+    private final PartService partService;
 
     public NodeService(PermissionChecker permissionChecker, TypeConfig typeConfig, MainDataService mainDataService,
-                       ExtraDataService extraDataService, ListService listService) {
+                       ExtraDataService extraDataService, PartService partService) {
         this.permissionChecker = permissionChecker;
         this.typeConfig = typeConfig;
         this.mainDataService = mainDataService;
         this.extraDataService = extraDataService;
-        this.listService = listService;
+        this.partService = partService;
     }
 
     public void add(Node node) {
@@ -44,20 +44,27 @@ public class NodeService {
             extraData.setExtraId(mainData.getId());
             extraDataService.add(extraData);
         }
-        if (type.isHasExtraList()) save(mainData.getId(), node.getExtraList());
+        if (type.isHasExtraList()) {
+            List<ListItem> extraList = node.getExtraList();
+            if (extraList != null) {
+                save(mainData.getId(), extraList);
+            } else {
+                if (type.isExtraListRequired()) throw new DataException("Input extraList is null.");
+            }
+        }
     }
     public Node get(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
         
         MainData mainData = mainDataService.get(nodeId);
-        permissionChecker.check(mainData, true);
+        permissionChecker.check(mainData, false);
         
         Node node = new NodeDTO(mainData);
         Type type = typeConfig.getType(mainData);
         
         if (type.isHasExtraData()) node.setExtraData(extraDataService.get(mainData.getId(), type.getExtraDataClass()));
-        if (type.isHasExtraList()) node.setExtraList(
-            listService.getList(nodeId)
+        if (type.isHasExtraList() && type.isExtraListRequired()) node.setExtraList(
+            partService.getParts(nodeId)
                 .stream()
                 .map(n -> new ListItem(n, ListItem.ItemStatus.EXIST))
                 .collect(Collectors.toList())
@@ -68,7 +75,7 @@ public class NodeService {
         if (node == null) throw new DataException("Input node is null.");
         
         MainData mainData = node.getMainData();
-        permissionChecker.check(mainData, false);
+        permissionChecker.check(mainData, true);
         Type type = typeConfig.getType(mainData);
         type.process(node);
         
@@ -79,26 +86,31 @@ public class NodeService {
             extraData.setExtraId(mainData.getId());
             extraDataService.update(extraData);
         }
-        if (type.isHasExtraList()) save(mainData.getId(), node.getExtraList());
+        if (type.isHasExtraList()) {
+            List<ListItem> extraList = node.getExtraList();
+            if (extraList != null) {
+                save(mainData.getId(), node.getExtraList());
+            } else {
+                if (type.isExtraListRequired()) throw new DataException("Input extraList is null.");
+            }
+        }
     }
     public void remove(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
         
         MainData mainData = mainDataService.get(nodeId);
-        permissionChecker.check(mainData, false);
+        permissionChecker.check(mainData, true);
         Type type = typeConfig.getType(mainData);
         
-        if (type.isHasExtraList())
-            listService.removeList(nodeId);
-        else
-            mainDataService.remove(nodeId);
+        if (type.isHasExtraList()) partService.removeAllParts(nodeId);
+        mainDataService.remove(nodeId);
     }
     
-    private void save(Long listId, List<ListItem> list) {
+    private void save(Long listId, List<ListItem> extraList) {
         if (listId == null) throw new DataException("Input listId is null");
-        if (list == null) throw new DataException("Input list is null.");
+        if (extraList == null) throw new DataException("Input extraList is null.");
 
-        List<Long> partIds = list.stream().map(item -> {Long partId = null;
+        List<Long> partIds = extraList.stream().map(item -> {Long partId = null;
             switch (item.itemStatus) {
                 case NEW:
                     Node newNode = item.node;
@@ -113,7 +125,7 @@ public class NodeService {
                     return item.node.getMainData().getId();
             }
         }).collect(Collectors.toList());
-        listService.updateList(listId, partIds);
+        partService.updateParts(listId, partIds);
     }
 
     // ---- Factory ---- //
@@ -130,8 +142,8 @@ public class NodeService {
             this.extraDataService = extraDataService;
         }
         
-        public NodeService create(PermissionChecker permissionChecker, ListService listService) {
-            return new NodeService(permissionChecker, typeConfig, mainDataService, extraDataService, listService);
+        public NodeService create(PermissionChecker permissionChecker, PartService partService) {
+            return new NodeService(permissionChecker, typeConfig, mainDataService, extraDataService, partService);
         }
     }
     

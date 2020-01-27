@@ -11,10 +11,10 @@ import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.service.UserService;
-import com.my.list.service.search.Permission;
-import com.my.list.service.search.Query;
-import com.my.list.service.search.Sort;
-import com.my.list.service.search.Tag;
+import com.my.list.service.filter.Filter;
+import com.my.list.service.filter.Permission;
+import com.my.list.service.filter.Sort;
+import com.my.list.service.filter.Tag;
 import com.my.list.type.image.Image;
 import com.my.list.type.music.Music;
 import com.my.list.type.text.Text;
@@ -261,21 +261,21 @@ public class ControllerTest {
         assertNodes("'Text Node'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addCondition("node_title", "=", "'Text Node'")
                 ))
             )));
         assertNodes("'%Text%'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                 ))
             )));
         assertNodes("'%Text%', ctime asc", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                     .addSort("node_ctime", Sort.Direction.ASC)
                 ))
@@ -284,14 +284,14 @@ public class ControllerTest {
         assertNodes("permission=PRIVATE", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .setPermission(Permission.PRIVATE)
                 ))
             )));
         assertNodes("permission=PUBLIC", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .setPermission(Permission.PUBLIC)
                 ))
             )));
@@ -299,28 +299,28 @@ public class ControllerTest {
         assertNodes("orTag='Test Tag'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addOrTag(new Tag("Test Tag"))
                 ))
             )));
         assertNodes("andTag='%Tag%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addAndTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("notTag='%Node%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addNotTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("orTag='%Tag%', andTag='%Test%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))
                 ))
@@ -328,7 +328,7 @@ public class ControllerTest {
         assertNodes("orTag='%Tag%', andTag='%Test%', notTag='Test Tag'", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Query()
+                .content(objectMapper.writeValueAsBytes(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))
                     .addNotTag(new Tag("Test Tag"))

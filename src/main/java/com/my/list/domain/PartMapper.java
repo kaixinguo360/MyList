@@ -8,5 +8,6 @@ import java.util.List;
 public interface PartMapper extends CrudMapper<Part> {
     List<Part> selectByListId(Long id);
     Integer count(Long id);
-    void clean(Long id);
+    void deleteByListId(Long id);
+    void deleteByListIdAndPartIds(Long listId, List<Long> partIds);
 }

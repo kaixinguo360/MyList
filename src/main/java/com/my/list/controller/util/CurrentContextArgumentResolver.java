@@ -2,8 +2,8 @@ package com.my.list.controller.util;
 
 import com.my.list.service.AuthException;
 import com.my.list.service.UserContext;
-import com.my.list.service.node.NodeService;
-import com.my.list.service.search.SearchService;
+import com.my.list.service.data.ListService;
+import com.my.list.service.data.NodeService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class CurrentContextArgumentResolver implements HandlerMethodArgumentReso
             && (
             parameter.getParameterType().isAssignableFrom(UserContext.class) ||
                 parameter.getParameterType().isAssignableFrom(NodeService.class) ||
-                parameter.getParameterType().isAssignableFrom(SearchService.class)
+                parameter.getParameterType().isAssignableFrom(ListService.class)
             );
     }
 
@@ -37,8 +37,8 @@ public class CurrentContextArgumentResolver implements HandlerMethodArgumentReso
             Class<?> clazz = parameter.getParameterType();
             if (clazz.isAssignableFrom(NodeService.class))
                 return userContext.nodeService;
-            if (clazz.isAssignableFrom(SearchService.class))
-                return userContext.searchService;
+            if (clazz.isAssignableFrom(ListService.class))
+                return userContext.listService;
             if (clazz.isAssignableFrom(UserContext.class))
                 return userContext;
             else

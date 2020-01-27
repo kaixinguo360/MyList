@@ -16,7 +16,7 @@ public class PermissionChecker {
     public Long getUserId() {
         return userId;
     }
-    public void check(MainData mainData, boolean readOnly) {
+    public void check(MainData mainData, boolean write) {
         if (mainData == null) throw new DataException("Input mainData is null.");
         String permission = mainData.getPermission();
         if (permission == null) throw new AuthException("Permission is null");
@@ -26,7 +26,7 @@ public class PermissionChecker {
                 success = true;
                 break;
             case "protect" :
-                success = readOnly || userId.equals(mainData.getUser());
+                success = !write || userId.equals(mainData.getUser());
                 break;
             case "private" :
                 success = userId.equals(mainData.getUser());

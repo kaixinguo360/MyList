@@ -1,4 +1,4 @@
-package com.my.list.service.node;
+package com.my.list.service.data;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.dto.Type;

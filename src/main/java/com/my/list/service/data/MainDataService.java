@@ -1,4 +1,4 @@
-package com.my.list.service.node;
+package com.my.list.service.data;
 
 import com.my.list.domain.MainData;
 import com.my.list.domain.Node;

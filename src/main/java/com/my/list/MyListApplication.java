@@ -45,9 +45,10 @@ public class MyListApplication implements WebMvcConfigurer {
         VideoType videoType
     ) {
         TypeConfig typeConfig = new TypeConfig();
-        typeConfig.addType(new SimpleType("node"));
-        typeConfig.addType(new SimpleType("list", true));
-        typeConfig.addType(new SimpleType("tag", true));
+        typeConfig.addType(SimpleType.nodeType("node"));
+        typeConfig.addType(SimpleType.postType("post"));
+        typeConfig.addType(SimpleType.tagType("list"));
+        typeConfig.addType(SimpleType.tagType("tag"));
         typeConfig.addType(textType);
         typeConfig.addType(imageType);
         typeConfig.addType(musicType);

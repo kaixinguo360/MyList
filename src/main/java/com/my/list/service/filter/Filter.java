@@ -1,34 +1,35 @@
-package com.my.list.service.search;
+package com.my.list.service.filter;
 
 import com.my.list.dto.Node;
+import com.my.list.service.data.ListService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Query {
+public class Filter {
     
     List<Condition> conditions = null;
-    public Query addCondition(Condition condition) {
+    public Filter addCondition(Condition condition) {
         if (conditions == null) conditions = new ArrayList<>();
         conditions.add(condition);
         return this;
     }
-    public Query addCondition(String column, String oper, Object value) {
+    public Filter addCondition(String column, String oper, Object value) {
         return addCondition(new Condition(column, oper, value));
     }
 
     List<Sort> sorts = null;
-    public Query addSort(Sort sort) {
+    public Filter addSort(Sort sort) {
         if (sorts == null) sorts = new ArrayList<>();
         sorts.add(sort);
         return this;
     }
-    public Query addSort(String property, Sort.Direction direction) {
+    public Filter addSort(String property, Sort.Direction direction) {
         return addSort(new Sort(property, direction));
     }
-    public Query addSort(String property) {
+    public Filter addSort(String property) {
         return addSort(property, Sort.Direction.ASC);
     }
 
@@ -36,19 +37,19 @@ public class Query {
     Boolean nsfw = null;
     Boolean like = null;
     Boolean hide = null;
-    public Query setPermission(Permission permission) {
+    public Filter setPermission(Permission permission) {
         this.permission = permission;
         return this;
     }
-    public Query setNsfw(Boolean nsfw) {
+    public Filter setNsfw(Boolean nsfw) {
         this.nsfw = nsfw;
         return this;
     }
-    public Query setLike(Boolean like) {
+    public Filter setLike(Boolean like) {
         this.like = like;
         return this;
     }
-    public Query setHide(Boolean hide) {
+    public Filter setHide(Boolean hide) {
         this.hide = hide;
         return this;
     }
@@ -56,24 +57,24 @@ public class Query {
     Set<Tag> andTags = null;
     Set<Tag> orTags = null;
     Set<Tag> notTags = null;
-    public Query addAndTag(Tag tag) {
+    public Filter addAndTag(Tag tag) {
         if (andTags == null) andTags = new HashSet<>();
         andTags.add(tag);
         return this;
     }
-    public Query addOrTag(Tag tag) {
+    public Filter addOrTag(Tag tag) {
         if (orTags == null) orTags = new HashSet<>();
         orTags.add(tag);
         return this;
     }
-    public Query addNotTag(Tag tag) {
+    public Filter addNotTag(Tag tag) {
         if (notTags == null) notTags = new HashSet<>();
         notTags.add(tag);
         return this;
     }
     
-    public List<Node> search(SearchService searchService) {
-        return searchService.search(this);
+    public List<Node> getAll(ListService listService) {
+        return listService.getAll(this);
     }
 
     // ---- Setter & Getter ---- //

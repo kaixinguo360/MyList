@@ -4,8 +4,8 @@ import com.my.list.controller.util.Authorization;
 import com.my.list.controller.util.CurrentContext;
 import com.my.list.controller.util.SimpleController;
 import com.my.list.dto.Node;
-import com.my.list.service.search.Query;
-import com.my.list.service.search.SearchService;
+import com.my.list.service.data.ListService;
+import com.my.list.service.filter.Filter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,16 +20,16 @@ public class SearchController {
 
     @PostMapping
     public List<Node> search(
-        @RequestBody Query query,
-        @CurrentContext SearchService searchService
+        @RequestBody Filter filter,
+        @CurrentContext ListService listService
     ) {
-        return searchService.search(query);
+        return listService.getAll(filter);
     }
 
     @GetMapping
     public List<Node> getAll(
-        @CurrentContext SearchService searchService
+        @CurrentContext ListService listService
     ) {
-        return searchService.search(new Query());
+        return listService.getAll(new Filter());
     }
 }
