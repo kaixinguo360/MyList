@@ -8,6 +8,8 @@ import com.my.list.controller.util.SimpleResponseReturnHandler;
 import com.my.list.dto.SimpleType;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
+import com.my.list.type.ListType;
+import com.my.list.type.TagType;
 import com.my.list.type.image.ImageType;
 import com.my.list.type.music.MusicType;
 import com.my.list.type.text.TextType;
@@ -39,6 +41,8 @@ public class MyListApplication implements WebMvcConfigurer {
     
     @Bean
     public TypeConfig typeConfig(
+        ListType listType,
+        TagType tagType,
         TextType textType,
         ImageType imageType,
         MusicType musicType,
@@ -46,9 +50,8 @@ public class MyListApplication implements WebMvcConfigurer {
     ) {
         TypeConfig typeConfig = new TypeConfig();
         typeConfig.addType(SimpleType.nodeType("node"));
-        typeConfig.addType(SimpleType.postType("post"));
-        typeConfig.addType(SimpleType.tagType("list"));
-        typeConfig.addType(SimpleType.tagType("tag"));
+        typeConfig.addType(tagType);
+        typeConfig.addType(listType);
         typeConfig.addType(textType);
         typeConfig.addType(imageType);
         typeConfig.addType(musicType);

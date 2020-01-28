@@ -35,6 +35,6 @@ public class PermissionChecker {
                 throw new AuthException("Unknown permission: " + permission);
         }
         if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermission() +
-            ", expectedUserId=" + mainData.getUser() + ", actualUserId=" + userId);
+            ", expectedUserId=" + userId + ", actualUserId=" + mainData.getUser());
     }
 }

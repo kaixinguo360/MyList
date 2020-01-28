@@ -75,6 +75,7 @@ public class NodeService {
         if (node == null) throw new DataException("Input node is null.");
         
         MainData mainData = node.getMainData();
+        mainData.setUser(permissionChecker.getUserId());
         permissionChecker.check(mainData, true);
         Type type = typeConfig.getType(mainData);
         type.process(node);

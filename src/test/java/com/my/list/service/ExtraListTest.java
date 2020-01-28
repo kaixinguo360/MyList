@@ -105,7 +105,7 @@ public class ExtraListTest {
         //    [=]    imageNode  0 -> 1  attachment
         //    [+]    musicNode  0 -> 1  alone
         //    [ ]    videoNode  0       alone
-        Node listNode = newNode("post", "List Node", null);
+        Node listNode = newNode("list", "List Node", null);
         List<ListItem> list = new ArrayList<>();
         list.add(new ListItem(textNode, ListItem.ItemStatus.EXIST));
         list.add(new ListItem(imageNode, ListItem.ItemStatus.EXIST));
