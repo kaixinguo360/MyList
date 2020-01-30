@@ -4,7 +4,7 @@ import com.my.list.domain.ExtraData;
 import com.my.list.domain.ExtraDataMapper;
 import com.my.list.dto.Node;
 import com.my.list.dto.Type;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 import org.springframework.stereotype.Component;
 
 @Component

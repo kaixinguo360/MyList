@@ -3,7 +3,7 @@ package com.my.list.service.data;
 import com.my.list.domain.ExtraData;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 import org.springframework.stereotype.Service;
 
 @Service

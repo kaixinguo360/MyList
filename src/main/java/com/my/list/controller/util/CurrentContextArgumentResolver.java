@@ -1,7 +1,7 @@
 package com.my.list.controller.util;
 
 import com.my.list.Constants;
-import com.my.list.service.AuthException;
+import com.my.list.exception.UnauthorizedException;
 import com.my.list.service.UserContext;
 import com.my.list.service.data.ListService;
 import com.my.list.service.data.NodeService;
@@ -45,7 +45,7 @@ public class CurrentContextArgumentResolver implements HandlerMethodArgumentReso
             else
                 throw new RuntimeException("Unknown parameter type, ParameterType=" + clazz);
         } else {
-            throw new AuthException("No valid token found, CURRENT_CONTEXT=null");
+            throw new UnauthorizedException("No valid token found, CURRENT_CONTEXT=null");
         }
     }
 }

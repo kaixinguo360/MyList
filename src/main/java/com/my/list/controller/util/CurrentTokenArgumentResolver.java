@@ -1,7 +1,7 @@
 package com.my.list.controller.util;
 
 import com.my.list.Constants;
-import com.my.list.service.AuthException;
+import com.my.list.exception.UnauthorizedException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class CurrentTokenArgumentResolver implements HandlerMethodArgumentResolv
         if (token != null) {
             return token;
         } else {
-            throw new AuthException("No valid token found, CURRENT_TOKEN=null");
+            throw new UnauthorizedException("No valid token found, CURRENT_TOKEN=null");
         }
     }
 }

@@ -2,6 +2,10 @@ package com.my.list.service;
 
 import com.my.list.domain.MainData;
 import com.my.list.domain.User;
+import com.my.list.exception.DataException;
+import com.my.list.exception.ForbiddenException;
+
+import java.util.Objects;
 
 public class PermissionChecker {
     
@@ -19,7 +23,7 @@ public class PermissionChecker {
     public void check(MainData mainData, boolean write) {
         if (mainData == null) throw new DataException("Input mainData is null.");
         String permission = mainData.getPermission();
-        if (permission == null) throw new AuthException("Permission is null");
+        if (permission == null) throw new ForbiddenException("Permission is null");
         boolean success;
         switch (permission) {
             case "public" :
@@ -32,9 +36,22 @@ public class PermissionChecker {
                 success = userId.equals(mainData.getUser());
                 break;
             default:
-                throw new AuthException("Unknown permission: " + permission);
+                throw new ForbiddenException("Unknown permission: " + permission);
         }
-        if (!success) throw new AuthException("Permission denied, permission=" + mainData.getPermission() +
+        if (!success) throw new ForbiddenException("Permission denied, permission=" + mainData.getPermission() +
             ", expectedUserId=" + userId + ", actualUserId=" + mainData.getUser());
+    }
+    public void checkUpdate(MainData original, MainData updated) {
+        this.check(original, true);
+        if (!Objects.equals(userId, original.getUser())) {
+
+            if (!Objects.equals(updated.getUser(), original.getUser()))
+                throw new DataException("Can't change owner for shared node, nodeId=" + original.getId() + ", from="
+                    + original.getPermission() + ", to=" + updated.getPermission() + ".");
+            
+            if (!Objects.equals(updated.getPermission(), original.getPermission()))
+                throw new DataException("Can't change permission for shared node, nodeId=" + original.getId() + ", from="
+                    + original.getPermission() + ", to=" + updated.getPermission() + ".");
+        }
     }
 }

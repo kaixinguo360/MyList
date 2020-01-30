@@ -1,7 +1,7 @@
 package com.my.list.controller.util;
 
 import com.my.list.Constants;
-import com.my.list.service.AuthException;
+import com.my.list.exception.UnauthorizedException;
 import com.my.list.service.UserContext;
 import com.my.list.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         // Get token & userContext
         String token = request.getHeader(Constants.AUTHORIZATION);
         if (token == null) {
-            throw new AuthException("No valid token found.");
+            throw new UnauthorizedException("No valid token found.");
         }
 
         // Check permission
@@ -51,7 +51,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 request.setAttribute(Constants.CURRENT_TOKEN, token);
                 request.setAttribute(Constants.CURRENT_CONTEXT, userContext);
             } else {
-                throw new AuthException("Unauthorized token, token=" + token);
+                throw new UnauthorizedException("Unauthorized token, token=" + token);
             }
         }
         

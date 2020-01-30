@@ -3,7 +3,7 @@ package com.my.list.service.data;
 import com.my.list.domain.MainData;
 import com.my.list.domain.Node;
 import com.my.list.domain.NodeMapper;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 import org.springframework.stereotype.Service;
 
 @Service

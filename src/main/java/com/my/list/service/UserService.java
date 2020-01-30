@@ -4,6 +4,9 @@ import com.my.list.Constants;
 import com.my.list.domain.OptionMapper;
 import com.my.list.domain.User;
 import com.my.list.domain.UserMapper;
+import com.my.list.exception.DataException;
+import com.my.list.exception.ForbiddenException;
+import com.my.list.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -62,7 +65,7 @@ public class UserService {
         if (pass == null) throw new DataException("Input password is null");
         // check password
         User user = getByNameAndPass(name, pass);
-        if (user == null) throw new AuthException("Wrong user name or password, name=" + name + ", pass=" + pass);
+        if (user == null) throw new ForbiddenException("Wrong user name or password, name=" + name + ", pass=" + pass);
         // create token and user context
         String token = UUID.randomUUID().toString();
         if (!userContexts.containsKey(user.getId())) userContexts.put(user.getId(), userContextFactory.create(user));
@@ -73,7 +76,7 @@ public class UserService {
     }
     public void invalidateToken(String token) {
         if (token == null) throw new DataException("Input token is null");
-        if (!tokens.containsKey(token)) throw new AuthException("No such token, token=" + token);
+        if (!tokens.containsKey(token)) throw new UnauthorizedException("No such token, token=" + token);
         UserContext userContext = tokens.remove(token);
         if (!tokens.containsValue(userContext)) userContexts.remove(userContext.user.getId());
     }
@@ -83,7 +86,7 @@ public class UserService {
     }
     public UserContext getUserContext(String token) {
         if (token == null) throw new DataException("Input token is null");
-        if (!tokens.containsKey(token)) throw new AuthException("No such token, token=" + token);
+        if (!tokens.containsKey(token)) throw new UnauthorizedException("No such token, token=" + token);
         return tokens.get(token);
     }
     
@@ -97,7 +100,7 @@ public class UserService {
             savedPass = Constants.DEFAULT_ADMIN_PASS;
             optionMapper.insert("admin_pass", savedPass);
         }
-        if (!pass.equals(savedPass)) throw new AuthException("Wrong admin password, pass=" + pass);
+        if (!pass.equals(savedPass)) throw new ForbiddenException("Wrong admin password, pass=" + pass);
         // create token
         String token = UUID.randomUUID().toString();
         // add to tokens list, and return token
@@ -106,12 +109,12 @@ public class UserService {
     }
     public void invalidateAdminToken(String token) {
         if (token == null) throw new DataException("Input admin token is null");
-        if (!adminTokens.contains(token)) throw new AuthException("No such token, token=" + token);
+        if (!adminTokens.contains(token)) throw new UnauthorizedException("No such token, token=" + token);
         adminTokens.remove(token);
     }
     public void checkAdminToken(String token) {
         if (token == null) throw new DataException("Input admin token is null");
-        if (!adminTokens.contains(token)) throw new AuthException("No such admin token, token=" + token);
+        if (!adminTokens.contains(token)) throw new UnauthorizedException("No such admin token, token=" + token);
     }
     
 

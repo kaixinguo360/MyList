@@ -2,7 +2,7 @@ package com.my.list.dto;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 
 import java.util.Collection;
 import java.util.HashMap;

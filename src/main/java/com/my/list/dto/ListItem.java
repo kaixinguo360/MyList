@@ -2,7 +2,7 @@ package com.my.list.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 
 public class ListItem {
 

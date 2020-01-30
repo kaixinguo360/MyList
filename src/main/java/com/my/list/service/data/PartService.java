@@ -7,7 +7,7 @@ import com.my.list.domain.PartMapper;
 import com.my.list.dto.NodeDTO;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 import com.my.list.service.PermissionChecker;
 import org.springframework.stereotype.Service;
 

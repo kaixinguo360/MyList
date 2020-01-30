@@ -1,7 +1,6 @@
 package com.my.list.controller.util;
 
-import com.my.list.service.AuthException;
-import com.my.list.service.DataException;
+import com.my.list.exception.SimpleException;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +26,9 @@ public class SimpleResponseEntity {
         this.success = false;
         this.error = e.getClass().getSimpleName();
         this.message = e.getMessage();
-        if (e instanceof DataException) this.status = HttpStatus.BAD_REQUEST;
-        if (e instanceof AuthException) this.status = HttpStatus.UNAUTHORIZED;
-        if (this.status == null) this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.status = (e instanceof SimpleException) ?
+            ((SimpleException) e).getStatus() :
+            HttpStatus.INTERNAL_SERVER_ERROR;
     }
     SimpleResponseEntity(HttpServletRequest request) {
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");

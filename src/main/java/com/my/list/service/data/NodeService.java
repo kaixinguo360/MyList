@@ -3,7 +3,7 @@ package com.my.list.service.data;
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
 import com.my.list.dto.*;
-import com.my.list.service.DataException;
+import com.my.list.exception.DataException;
 import com.my.list.service.PermissionChecker;
 import org.springframework.stereotype.Service;
 
@@ -75,8 +75,12 @@ public class NodeService {
         if (node == null) throw new DataException("Input node is null.");
         
         MainData mainData = node.getMainData();
-        mainData.setUser(permissionChecker.getUserId());
-        permissionChecker.check(mainData, true);
+        if (mainData == null) throw new DataException("Input mainData is null.");
+        if (mainData.getUser() == null) throw new DataException("UserId of input mainData is not set.");
+        
+        MainData old = mainDataService.get(mainData.getId());
+        permissionChecker.checkUpdate(old, mainData);
+        
         Type type = typeConfig.getType(mainData);
         type.process(node);
         
