@@ -18,18 +18,16 @@ import java.util.List;
 @SimpleController
 public class SearchController {
 
-    @PostMapping
-    public List<Node> search(
-        @RequestBody Filter filter,
-        @CurrentContext ListService listService
-    ) {
+    @GetMapping public List<Node> getAll(@CurrentContext ListService listService) {
+        return listService.getAll(new Filter());
+    }
+    @PostMapping public List<Node> getAll(@RequestBody Filter filter, @CurrentContext ListService listService) {
         return listService.getAll(filter);
     }
 
-    @GetMapping
-    public List<Node> getAll(
-        @CurrentContext ListService listService
-    ) {
-        return listService.getAll(new Filter());
+    @PostMapping("tag") public List<Node> getTags(@RequestBody Filter filter, @CurrentContext ListService listService) {
+        return listService.getAll(
+            filter.addCondition("node_type", "=", "'tag'")
+        );
     }
 }

@@ -5,6 +5,7 @@ import com.my.list.exception.UnauthorizedException;
 import com.my.list.service.UserContext;
 import com.my.list.service.data.ListService;
 import com.my.list.service.data.NodeService;
+import com.my.list.service.data.PartService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,8 @@ public class CurrentContextArgumentResolver implements HandlerMethodArgumentReso
             && (
             parameter.getParameterType().isAssignableFrom(UserContext.class) ||
                 parameter.getParameterType().isAssignableFrom(NodeService.class) ||
-                parameter.getParameterType().isAssignableFrom(ListService.class)
+                parameter.getParameterType().isAssignableFrom(ListService.class) ||
+                parameter.getParameterType().isAssignableFrom(PartService.class)
             );
     }
 
@@ -36,12 +38,14 @@ public class CurrentContextArgumentResolver implements HandlerMethodArgumentReso
         if (object != null) {
             UserContext userContext = (UserContext) object;
             Class<?> clazz = parameter.getParameterType();
+            if (clazz.isAssignableFrom(UserContext.class))
+                return userContext;
             if (clazz.isAssignableFrom(NodeService.class))
                 return userContext.nodeService;
             if (clazz.isAssignableFrom(ListService.class))
                 return userContext.listService;
-            if (clazz.isAssignableFrom(UserContext.class))
-                return userContext;
+            if (clazz.isAssignableFrom(PartService.class))
+                return userContext.partService;
             else
                 throw new RuntimeException("Unknown parameter type, ParameterType=" + clazz);
         } else {

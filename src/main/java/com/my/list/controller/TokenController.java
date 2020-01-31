@@ -11,12 +11,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RequestMapping("/api/token")
 @SimpleController
 public class TokenController {
+    
+    static class OutputWarp {
+        private String token;
+        private User user;
+
+        public String getToken() {
+            return token;
+        }
+        public User getUser() {
+            return user;
+        }
+    }
     
     private final UserService userService;
 
@@ -25,18 +34,18 @@ public class TokenController {
     }
 
     @GetMapping
-    public Map<String, Object> generateToken(
+    public OutputWarp generateToken(
         String name,
         String pass
     ) {
         String token = userService.generateToken(name, pass);
         User user = userService.getUserContext(token).user;
         user.setPass(null);
-        
-        Map<String, Object> map = new HashMap<>();
-        map.put("token", token);
-        map.put("user", user);
-        return map;
+
+        OutputWarp output = new OutputWarp();
+        output.token = token;
+        output.user = user;
+        return output;
     }
 
     @GetMapping("admin")

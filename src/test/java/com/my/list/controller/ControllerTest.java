@@ -1,5 +1,6 @@
 package com.my.list.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.list.Constants;
 import com.my.list.TestUtil;
@@ -35,9 +36,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -106,10 +109,10 @@ public class ControllerTest {
         
         // user - post
         User user1 = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/user").header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(newUser("User1", "12345")))
+            .content(toJson(newUser("User1", "12345")))
         ), User.class);
         User user2 = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/user").header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(user))
+            .content(toJson(user))
         ), User.class);
 
         // user - getAll
@@ -133,7 +136,7 @@ public class ControllerTest {
             assertResult(mvc.perform(MockMvcRequestBuilders
                 .put("/api/user/")
                 .header(Constants.AUTHORIZATION, adminToken).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(user1))
+                .content(toJson(user1))
             ), User.class).getName()
         );
 
@@ -141,7 +144,7 @@ public class ControllerTest {
         String token1 = assertResult(
             mvc.perform(MockMvcRequestBuilders
                 .get("/api/token?name=User1&pass=1234567")
-            ), String.class);
+            ), TokenController.OutputWarp.class).getToken();
         mvc.perform(MockMvcRequestBuilders
             .get("/api/user/" + user1.getId())
             .header(Constants.AUTHORIZATION, token1)
@@ -172,11 +175,11 @@ public class ControllerTest {
         token = assertResult(
             mvc.perform(MockMvcRequestBuilders
                 .get("/api/token?name=TestUser&pass=*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5")
-            ), String.class);
+            ), TokenController.OutputWarp.class).getToken();
         String tmpToken = assertResult(
             mvc.perform(MockMvcRequestBuilders
                 .get("/api/token?name=TestUser&pass=*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5")
-            ), String.class);
+            ), TokenController.OutputWarp.class).getToken();
 
         // token - delete
         assertSuccess(
@@ -188,77 +191,77 @@ public class ControllerTest {
     public void nodeTest() throws Exception {
 
         // node - post
-        textNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(newNode(Text.TYPE_NAME, "Text Node", text)))
-        ), Node.class);
-        imageNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(newNode(Image.TYPE_NAME, "Image Node", image)))
-        ), Node.class);
-        musicNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(newNode(Music.TYPE_NAME, "Music Node", music)))
-        ), Node.class);
-        videoNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(newNode(Video.TYPE_NAME, "Video Node", video)))
-        ), Node.class);
+        textNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(newNode(Text.TYPE_NAME, "Text Node", text)))
+        ));
+        imageNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(newNode(Image.TYPE_NAME, "Image Node", image)))
+        ));
+        musicNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(newNode(Music.TYPE_NAME, "Music Node", music)))
+        ));
+        videoNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(newNode(Video.TYPE_NAME, "Video Node", video)))
+        ));
 
         // node - get
         assertEquals(textNode.getMainData().getTitle(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .get("/api/node/" + textNode.getMainData().getId())
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            ), Node.class).getMainData().getTitle()
+            )).getMainData().getTitle()
         );
         assertEquals(imageNode.getMainData().getTitle(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .get("/api/node/" + imageNode.getMainData().getId())
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            ), Node.class).getMainData().getTitle()
+            )).getMainData().getTitle()
         );
         assertEquals(musicNode.getMainData().getTitle(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .get("/api/node/" + musicNode.getMainData().getId())
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            ), Node.class).getMainData().getTitle()
+            )).getMainData().getTitle()
         );
         assertEquals(videoNode.getMainData().getTitle(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .get("/api/node/" + videoNode.getMainData().getId())
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            ), Node.class).getMainData().getTitle()
+            )).getMainData().getTitle()
         );
 
         // node - update
         textNode.getExtraData(Text.class).setContent("New Text Content");
         assertEquals(textNode.getExtraData(Text.class).getContent(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(textNode))
-            ), Node.class).getExtraData(Text.class).getContent()
+                .content(toJson(textNode))
+            )).getExtraData(Text.class).getContent()
         );
         imageNode.getExtraData(Image.class).setDescription("New Image Description");
         assertEquals(imageNode.getExtraData(Image.class).getDescription(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(imageNode))
-            ), Node.class).getExtraData(Image.class).getDescription()
+                .content(toJson(imageNode))
+            )).getExtraData(Image.class).getDescription()
         );
         musicNode.getExtraData(Music.class).setFormat("newMusicFormat");
         assertEquals(musicNode.getExtraData(Music.class).getFormat(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(musicNode))
-            ), Node.class).getExtraData(Music.class).getFormat()
+                .content(toJson(musicNode))
+            )).getExtraData(Music.class).getFormat()
         );
         videoNode.getExtraData(Video.class).setFormat("newVideoFormat");
         assertEquals(videoNode.getExtraData(Video.class).getFormat(),
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(videoNode))
-            ), Node.class).getExtraData(Video.class).getFormat()
+                .content(toJson(videoNode))
+            )).getExtraData(Video.class).getFormat()
         );
     }
     public void listTest() throws Exception {
@@ -274,20 +277,20 @@ public class ControllerTest {
         newList.add(new ListItem(videoNode, ListItem.ItemStatus.EXIST));
 
         // post
-        listNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(newListNode)))
-            , Node.class);
+        listNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(newListNode)))
+        );
         showList("listNode", listNode.getExtraList());
         assertEquals(4, listNode.getExtraList().size());
 
         // put
         listNode.getExtraList().remove(3);
         assertEquals(3,
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(listNode))
-            ), Node.class).getExtraList().size()
+                .content(toJson(listNode))
+            )).getExtraList().size()
         );
 
         
@@ -302,20 +305,20 @@ public class ControllerTest {
         newTag.add(new ListItem(videoNode, ListItem.ItemStatus.EXIST));
 
         // post
-        tagNode = assertResult(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(newTagNode)))
-            , Node.class);
+        tagNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(newTagNode)))
+        );
         showList("tagNode", tagNode.getExtraList());
         assertEquals(4, tagNode.getExtraList().size());
 
         // put
         tagNode.getExtraList().remove(3);
         assertEquals(3,
-            assertResult(mvc.perform(MockMvcRequestBuilders
+            assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(tagNode))
-            ), Node.class).getExtraList().size()
+                .content(toJson(tagNode))
+            )).getExtraList().size()
         );
     }
     public void searchTest() throws Exception {
@@ -330,21 +333,21 @@ public class ControllerTest {
         assertNodes("'Text Node'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addCondition("node_title", "=", "'Text Node'")
                 ))
             )));
         assertNodes("'%Text%'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                 ))
             )));
         assertNodes("'%Text%', ctime asc", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                     .addSort("node_ctime", Sort.Direction.ASC)
                 ))
@@ -353,14 +356,14 @@ public class ControllerTest {
         assertNodes("permission=PRIVATE", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .setPermission(Permission.PRIVATE)
                 ))
             )));
         assertNodes("permission=PUBLIC", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .setPermission(Permission.PUBLIC)
                 ))
             )));
@@ -368,28 +371,28 @@ public class ControllerTest {
         assertNodes("orTag='Test Tag'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addOrTag(new Tag("Test Tag"))
                 ))
             )));
         assertNodes("andTag='%Tag%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addAndTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("notTag='%Node%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addNotTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("orTag='%Tag%', andTag='%Test%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))
                 ))
@@ -397,7 +400,7 @@ public class ControllerTest {
         assertNodes("orTag='%Tag%', andTag='%Test%', notTag='Test Tag'", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new Filter()
+                .content(toJson(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))
                     .addNotTag(new Tag("Test Tag"))
@@ -421,6 +424,30 @@ public class ControllerTest {
         if (extraData != null) node.setExtraData(extraData);
         return node;
     }
+
+    private byte[] toJson(Node node) throws JsonProcessingException {
+        NodeController.NodeOutputWrap output = new NodeController.NodeOutputWrap();
+        output.node = node;
+        return objectMapper.writeValueAsBytes(output);
+    }
+    private byte[] toJson(Object object) throws JsonProcessingException {
+        return objectMapper.writeValueAsBytes(object);
+    }
+    
+    private void assertNodes(String message, int expectedSize, List<Node> nodes) {
+        System.out.println("==== " + message + " [" + nodes.size() + "/" + expectedSize + "] ====");
+        AtomicInteger i = new AtomicInteger();
+        nodes.forEach(node -> System.out.println("[" + i.getAndIncrement() + "] "
+            + node.getMainData().getUser() + " "
+            + node.getMainData().getPermission() + " "
+            + node.getMainData()));
+        assertEquals(expectedSize, nodes.size());
+    }
+    private List<Node> assertList(ResultActions resultActions) throws Exception {
+        @SuppressWarnings("unchecked")
+        List<LinkedHashMap<?, ?>> list = (List<LinkedHashMap<?, ?>>) assertResult(resultActions, List.class);
+        return list.stream().map(map -> objectMapper.convertValue(map, Node.class)).collect(Collectors.toList());
+    }
     private void showList(String msg, List<ListItem> list) {
         System.out.println("==== " + msg + " ====");
         AtomicInteger i = new AtomicInteger();
@@ -435,23 +462,25 @@ public class ControllerTest {
             System.out.println("[" + i.getAndIncrement() + "] " + status + " " + item.node.getMainData());
         });
     }
-    private void assertNodes(String message, int expectedSize, List<Node> nodes) {
-        System.out.println("==== " + message + " [" + nodes.size() + "/" + expectedSize + "] ====");
-        AtomicInteger i = new AtomicInteger();
-        nodes.forEach(node -> System.out.println("[" + i.getAndIncrement() + "] "
-            + node.getMainData().getUser() + " "
-            + node.getMainData().getPermission() + " "
-            + node.getMainData()));
-        assertEquals(expectedSize, nodes.size());
+    
+    @NotNull private Node assertNode(ResultActions resultActions) throws Exception {
+        Object object = objectMapper.readValue(resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.result").hasJsonPath())
+                .andReturn().getResponse().getContentAsString()
+            , SimpleResponseEntity.class
+        ).getResult();
+        if (object instanceof Map) {
+            @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) object;
+            return objectMapper.convertValue(map.get("node"), Node.class);
+        }
+        throw new AssertionError();
     }
     private void assertSuccess(ResultActions resultActions) throws Exception {
         assertResult(resultActions, Object.class);
     }
-    private List<Node> assertList(ResultActions resultActions) throws Exception {
-        @SuppressWarnings("unchecked")
-        List<LinkedHashMap<?, ?>> list = (List<LinkedHashMap<?, ?>>) assertResult(resultActions, List.class);
-        return list.stream().map(map -> objectMapper.convertValue(map, Node.class)).collect(Collectors.toList());
-    }
+    
     private <T> T assertResult(ResultActions resultActions, Class<T> clazz) throws Exception {
         Object object = objectMapper.readValue(resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk())

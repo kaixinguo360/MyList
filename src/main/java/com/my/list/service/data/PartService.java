@@ -70,7 +70,12 @@ public class PartService {
         partMapper.deleteByListId(listId);
         nodeMapper.clean();
     }
-    
+
+    public void updateParts(List<Long> listIds, List<Long> partIds) {
+        for (Long listId : listIds) {
+            updateParts(listId, partIds);
+        }
+    }
     public void updateParts(Long listId, List<Long> partIds) {
         checkPermission(listId, true);
         partMapper.deleteByListId(listId);

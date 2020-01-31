@@ -11,11 +11,13 @@ public class UserContext {
     public final User user;
     public final NodeService nodeService;
     public final ListService listService;
+    public final PartService partService;
 
-    public UserContext(User user, NodeService nodeService, ListService listService) {
+    public UserContext(User user, NodeService nodeService, ListService listService, PartService partService) {
         this.user = user;
         this.nodeService = nodeService;
         this.listService = listService;
+        this.partService = partService;
     }
 
     @Service
@@ -37,7 +39,7 @@ public class UserContext {
             PartService partService = partServiceFactory.create(permissionChecker);
             NodeService nodeService = nodeServiceFactory.create(permissionChecker, partService);
             ListService listService = listServiceFactory.create(permissionChecker);
-            return new UserContext(user, nodeService, listService);
+            return new UserContext(user, nodeService, listService, partService);
         }
         
     }
