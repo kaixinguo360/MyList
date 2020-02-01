@@ -8,7 +8,6 @@ import com.my.list.service.data.NodeService;
 import com.my.list.service.data.PartService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequestMapping("/api/node")
@@ -53,11 +52,11 @@ public class NodeController {
     ) {
         nodeService.add(input.node);
         Long id = input.node.getMainData().getId();
-        if (input.tags != null) partService.addParts(input.tags, Collections.singletonList(id));
+        if (input.tags != null) partService.setParents(id, input.tags);
         
         NodeOutputWrap output = new NodeOutputWrap();
         output.node = input.node;
-        output.tags = partService.getParts(id);
+        output.tags = partService.getParents(id);
         return output;
     }
 
@@ -69,7 +68,7 @@ public class NodeController {
     ) {
         NodeOutputWrap output = new NodeOutputWrap();
         output.node = nodeService.get(id);
-        output.tags = partService.getParts(id);
+        output.tags = partService.getParents(id);
         return output;
     }
 
@@ -81,11 +80,11 @@ public class NodeController {
     ) {
         nodeService.update(input.node);
         Long id = input.node.getMainData().getId();
-        if (input.tags != null) partService.updateParts(input.tags, Collections.singletonList(id));
+        if (input.tags != null) partService.setParents(id, input.tags);
 
         NodeOutputWrap output = new NodeOutputWrap();
         output.node = input.node;
-        output.tags = partService.getParts(id);
+        output.tags = partService.getParents(id);
         return output;
     }
 

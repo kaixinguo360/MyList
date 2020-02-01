@@ -1,63 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.my.list.domain.PartMapper">
-  <resultMap id="BaseResultMap" type="com.my.list.domain.Part">
-    <id column="part_id" jdbcType="BIGINT" property="id" />
-    <result column="part_parent_id" jdbcType="BIGINT" property="parentId" />
-    <result column="part_content_id" jdbcType="BIGINT" property="contentId" />
-    <result column="part_content_order" jdbcType="INTEGER" property="contentOrder" />
-  </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from parts
-    where part_id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.my.list.domain.Part">
-    insert into parts (part_id, part_parent_id, part_content_id,
-                       part_content_order
-      )
-    values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{contentId,jdbcType=LONGVARCHAR},
-            #{contentOrder,jdbcType=INTEGER}
-      )
-  </insert>
-  <update id="updateByPrimaryKey" parameterType="com.my.list.domain.Part">
-    update parts
-    set part_parent_id = #{parentId,jdbcType=BIGINT},
-        part_content_id = #{contentId,jdbcType=BIGINT},
-        part_content_order = #{contentOrder,jdbcType=INTEGER}
-    where part_id = #{id,jdbcType=BIGINT}
-  </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select * from parts
-    where part_id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select * from parts
-  </select>
 
-  <select id="selectByListId" resultMap="BaseResultMap">
-    select * from parts
-    where part_parent_id = #{id,jdbcType=BIGINT}
+  <resultMap id="Node" type="com.my.list.domain.Node">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="node_user" jdbcType="BIGINT" property="user"/>
+    <result column="node_type" jdbcType="VARCHAR" property="type"/>
+    <result column="node_ctime" jdbcType="TIMESTAMP" property="ctime"/>
+    <result column="node_mtime" jdbcType="TIMESTAMP" property="mtime"/>
+    <result column="node_title" jdbcType="VARCHAR" property="title"/>
+    <result column="node_excerpt" jdbcType="VARCHAR" property="excerpt"/>
+    <result column="node_link_delete" jdbcType="BIT" property="linkDelete"/>
+    <result column="node_link_virtual" jdbcType="BIT" property="linkVirtual"/>
+    <result column="node_permission" jdbcType="VARCHAR" property="permission"/>
+    <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
+    <result column="node_like" jdbcType="BIT" property="like"/>
+    <result column="node_hide" jdbcType="BIT" property="hide"/>
+    <result column="node_source_url" jdbcType="VARCHAR" property="sourceUrl"/>
+    <result column="node_comment" jdbcType="VARCHAR" property="comment"/>
+  </resultMap>
+
+  <!-- * * * * * * * * * * -->
+
+  <delete id="insertChildren">
+    insert into parts
+    (part_parent_id, part_content_id, part_content_order)
+    values
+    <foreach collection ="childIds" item="contentId" index= "index" separator =",">
+      (#{parentId,jdbcType=BIGINT}, #{contentId,jdbcType=LONGVARCHAR}, #{index,jdbcType=INTEGER})
+    </foreach>
+  </delete>
+  <delete id="deleteChildren">
+    delete from parts
+    where part_parent_id = #{parentId,jdbcType=BIGINT}
+      and part_content_id in
+      (<foreach collection="partIds" item="partId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
+  </delete>
+  <delete id="deleteAllChildren">
+    delete from parts
+    where part_parent_id = #{parentId,jdbcType=BIGINT}
+  </delete>
+  <select id="selectAllChildren" resultMap="Node">
+    SELECT content.*
+    FROM nodes content, parts
+    WHERE part_content_id = content.id
+      AND part_parent_id = #{parentId}
+    ORDER BY part_content_order
   </select>
-  <select id="count" parameterType="java.lang.Long" resultType="java.lang.Integer">
+  <select id="countChildren" parameterType="java.lang.Long" resultType="java.lang.Integer">
     select count(part_id) from parts
-    where part_parent_id = #{id,jdbcType=BIGINT}
+    where part_parent_id = #{parentId,jdbcType=BIGINT}
     group by part_parent_id
   </select>
-  <delete id="deleteByListId" parameterType="java.lang.Long">
-    delete from parts
-    where part_parent_id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByListIdAndPartIds">
-    delete from parts
-    <where>
-      part_parent_id = #{listId,jdbcType=BIGINT}
-      and
-      part_content_id in
-      (
-      <foreach collection="partIds" item="partId" separator=",">
-        #{partId,jdbcType=BIGINT}
-      </foreach>
+
+  <delete id="deleteAllParent">
+    delete parts
+    from parts, nodes parent
+    where part_parent_id = parent.id
+      and part_content_id = #{childIds,jdbcType=BIGINT}
+    <!-- EDITABLE -->
+      and (
+        parent.node_user = ${userId}
+        or
+        (parent.node_user != ${userId} and parent.node_permission = 'public')
       )
-    </where>
   </delete>
+  <select id="selectAllParent" resultMap="Node">
+    select parent.*
+    from parts, nodes parent
+    where part_parent_id = parent.id
+      and part_content_id = #{childId}
+    <!-- AVAILABLE -->
+      and (
+        parent.node_user = ${userId}
+        or
+        (parent.node_user != ${userId} and parent.node_permission in ('public', 'protect'))
+      )
+  </select>
+  <select id="countParent" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(part_id)
+    from parts, nodes parent
+    where part_parent_id = parent.id
+      and part_content_id = #{childId,jdbcType=BIGINT}
+    <!-- AVAILABLE -->
+      and (
+        parent.node_user = ${userId}
+        or
+        (parent.node_user != ${userId} and parent.node_permission in ('public', 'protect'))
+      )
+    group by part_content_id
+  </select>
+  
+  <delete id="clean">
+    delete from nodes
+    where id in
+          (
+            select content.id from (select * from nodes) content
+                                     left join parts p on content.id = p.part_content_id
+                                     left join (select * from nodes) parent on parent.id = p.part_parent_id
+            where
+              content.node_link_delete = true
+              and
+              (parent.node_link_virtual = false or parent.node_link_virtual is null)
+            group by content.id
+            having count(parent.id) = 0
+          )
+  </delete>
+
 </mapper>

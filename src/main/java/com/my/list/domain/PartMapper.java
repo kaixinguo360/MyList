@@ -5,9 +5,17 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface PartMapper extends CrudMapper<Part> {
-    List<Part> selectByListId(Long id);
-    Integer count(Long id);
-    void deleteByListId(Long id);
-    void deleteByListIdAndPartIds(Long listId, List<Long> partIds);
+public interface PartMapper {
+    
+    void insertChildren(Long parentId, List<Long> childIds);
+    void deleteChildren(Long parentId, List<Long> childIds);
+    void deleteAllChildren(Long parentId);
+    List<Node> selectAllChildren(Long parentId);
+    Integer countChildren(Long parentId);
+    
+    void deleteAllParent(Long userId, Long childIds);
+    List<Node> selectAllParent(Long userId, Long childId);
+    Integer countParent(Long userId, Long childId);
+
+    void clean();
 }

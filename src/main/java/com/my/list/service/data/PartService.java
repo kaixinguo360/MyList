@@ -2,7 +2,6 @@ package com.my.list.service.data;
 
 import com.my.list.domain.Node;
 import com.my.list.domain.NodeMapper;
-import com.my.list.domain.Part;
 import com.my.list.domain.PartMapper;
 import com.my.list.dto.NodeDTO;
 import com.my.list.dto.Type;
@@ -11,6 +10,7 @@ import com.my.list.exception.DataException;
 import com.my.list.service.PermissionChecker;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,67 +30,75 @@ public class PartService {
         this.partMapper = partMapper;
     }
 
-    public void addParts(List<Long> listIds, List<Long> partIds) {
-        for (Long listId : listIds) {
-            addParts(listId, partIds);
+    public void addChildren(List<Long> parentId, List<Long> childIds) {
+        for (Long listId : parentId) {
+            addChildren(listId, childIds);
         }
     }
-    public void addParts(Long listId, List<Long> partIds) {
-        Node listNode = checkPermission(listId, true);
+    public void addChildren(Long parentId, List<Long> childIds) {
+        Node listNode = checkListPermission(parentId, true);
         Type type = typeConfig.getType(listNode);
         
         if (type.isExtraListUnique()) {
-            Set<Long> ids = partMapper.selectByListId(listId)
-                .stream().map(Part::getContentId).collect(Collectors.toSet());
-            partIds = (ids.size() == 0) ?
-                partIds : partIds.stream().filter(partId -> !ids.contains(partId)).collect(Collectors.toList());
+            Set<Long> ids = partMapper.selectAllChildren(parentId)
+                .stream().map(Node::getId).collect(Collectors.toSet());
+            childIds = (ids.size() == 0) ?
+                childIds : childIds.stream().filter(partId -> !ids.contains(partId)).collect(Collectors.toList());
         }
-        for (Long partId : partIds) {
-            Part part = new Part();
-            part.setParentId(listId);
-            part.setContentId(partId);
-            Integer count = partMapper.count(listId);
-            part.setContentOrder((count == null) ? 0 : count);
-            partMapper.insert(part);
+        if (childIds.size() != 0) {
+            partMapper.insertChildren(parentId, childIds);
         }
     }
 
-    public void removeParts(List<Long> listIds, List<Long> partIds) {
-        for (Long listId : listIds) {
-            removeParts(listId, partIds);
+    public void removeChildren(List<Long> parentId, List<Long> childIds) {
+        for (Long listId : parentId) {
+            removeChildren(listId, childIds);
         }
     }
-    public void removeParts(Long listId, List<Long> partIds) {
-        checkPermission(listId, true);
-        partMapper.deleteByListIdAndPartIds(listId, partIds);
-        nodeMapper.clean();
+    public void removeChildren(Long parentId, List<Long> childIds) {
+        checkListPermission(parentId, true);
+        partMapper.deleteChildren(parentId, childIds);
+        partMapper.clean();
     }
-    public void removeAllParts(Long listId) {
-        checkPermission(listId, true);
-        partMapper.deleteByListId(listId);
-        nodeMapper.clean();
+    public void removeAllChildren(Long parentId) {
+        checkListPermission(parentId, true);
+        partMapper.deleteAllChildren(parentId);
+        partMapper.clean();
     }
 
-    public void updateParts(List<Long> listIds, List<Long> partIds) {
-        for (Long listId : listIds) {
-            updateParts(listId, partIds);
-        }
+    public void setChildren(Long parentId, List<Long> childIds) {
+        checkListPermission(parentId, true);
+        partMapper.deleteAllChildren(parentId);
+        addChildren(parentId, childIds);
+        partMapper.clean();
     }
-    public void updateParts(Long listId, List<Long> partIds) {
-        checkPermission(listId, true);
-        partMapper.deleteByListId(listId);
-        addParts(listId, partIds);
-        nodeMapper.clean();
+    public void setParents(Long childId, List<Long> parentIds) {
+        checkNodePermission(childId, true);
+        partMapper.deleteAllParent(permissionChecker.getUserId(), childId);
+        addChildren(parentIds, Collections.singletonList(childId));
+        partMapper.clean();
     }
-    public List<com.my.list.dto.Node> getParts(Long listId) {
-        checkPermission(listId, false);
-        return nodeMapper.selectAllByListId(listId)
+
+    public List<com.my.list.dto.Node> getChildren(Long parentId) {
+        checkListPermission(parentId, false);
+        return partMapper.selectAllChildren(parentId)
+            .stream().map(NodeDTO::new).collect(Collectors.toList());
+    }
+    public List<com.my.list.dto.Node> getParents(Long childId) {
+        checkNodePermission(childId, false);
+        return partMapper.selectAllParent(permissionChecker.getUserId(), childId)
             .stream().map(NodeDTO::new).collect(Collectors.toList());
     }
     
-    private Node checkPermission(Long listId, boolean write) {
+    private Node checkListPermission(Long listId, boolean write) {
         Node listNode = nodeMapper.selectByPrimaryKey(listId);
         if (listNode == null) throw new DataException("No such list with listId=" + listId);
+        permissionChecker.check(listNode, write);
+        return listNode;
+    }
+    private Node checkNodePermission(Long nodeId, boolean write) {
+        Node listNode = nodeMapper.selectByPrimaryKey(nodeId);
+        if (listNode == null) throw new DataException("No such node with nodeId=" + nodeId);
         permissionChecker.check(listNode, write);
         return listNode;
     }

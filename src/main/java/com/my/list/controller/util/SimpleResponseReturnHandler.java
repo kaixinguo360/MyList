@@ -36,7 +36,7 @@ public class SimpleResponseReturnHandler implements HandlerMethodReturnValueHand
         mavContainer.setRequestHandled(true);
 
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         
         response.getWriter().write(
             objectMapper.writeValueAsString(

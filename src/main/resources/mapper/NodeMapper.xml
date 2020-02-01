@@ -54,13 +54,6 @@
     from nodes
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectAllByListId" resultMap="BaseResultMap">
-    SELECT n.*
-    FROM nodes n, parts
-    WHERE part_content_id = n.id
-      AND part_parent_id = #{listId}
-    ORDER BY part_content_order
-  </select>
   
   <delete id="deleteByPrimaryKeyWithUserId">
     delete
@@ -101,33 +94,9 @@
     where id = #{id,jdbcType=BIGINT}
       and node_user = #{userId,jdbcType=BIGINT}
   </select>
-  <select id="selectAllByListIdWithUserId" resultMap="BaseResultMap">
-    SELECT n.*
-    FROM nodes n, parts, nodes parent
-    WHERE part_content_id = n.id
-      AND part_parent_id = parent.id
-      AND parent.id = #{listId,jdbcType=BIGINT}
-      AND parent.node_user = #{userId,jdbcType=BIGINT}
-    ORDER BY part_content_order
-  </select>
   
   <select id="selectAll" resultMap="BaseResultMap">
     select *
     from nodes
   </select>
-  <delete id="clean">
-    delete from nodes
-    where id in
-    (
-      select content.id from (select * from nodes) content
-                               left join parts p on content.id = p.part_content_id
-                               left join (select * from nodes) parent on parent.id = p.part_parent_id
-      where
-        content.node_link_delete = true
-        and
-        (parent.node_link_virtual = false or parent.node_link_virtual is null)
-      group by content.id
-      having count(parent.id) = 0
-    )
-  </delete>
 </mapper>

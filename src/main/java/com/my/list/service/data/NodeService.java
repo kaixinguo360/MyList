@@ -64,7 +64,7 @@ public class NodeService {
         
         if (type.isHasExtraData()) node.setExtraData(extraDataService.get(mainData.getId(), type.getExtraDataClass()));
         if (type.isHasExtraList() && type.isExtraListRequired()) node.setExtraList(
-            partService.getParts(nodeId)
+            partService.getChildren(nodeId)
                 .stream()
                 .map(n -> new ListItem(n, ListItem.ItemStatus.EXIST))
                 .collect(Collectors.toList())
@@ -107,7 +107,7 @@ public class NodeService {
         permissionChecker.check(mainData, true);
         Type type = typeConfig.getType(mainData);
         
-        if (type.isHasExtraList()) partService.removeAllParts(nodeId);
+        if (type.isHasExtraList()) partService.removeAllChildren(nodeId);
         mainDataService.remove(nodeId);
     }
     
@@ -130,7 +130,7 @@ public class NodeService {
                     return item.node.getMainData().getId();
             }
         }).collect(Collectors.toList());
-        partService.updateParts(listId, partIds);
+        partService.setChildren(listId, partIds);
     }
 
     // ---- Factory ---- //
