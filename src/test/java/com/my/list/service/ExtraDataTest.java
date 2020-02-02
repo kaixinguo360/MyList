@@ -89,7 +89,7 @@ public class ExtraDataTest {
         // updateNode
         mainData.setComment("This is comment.");
         node.getExtraData(Text.class).setContent("This is text content.");
-        nodeService.update(node);
+        nodeService.update(node, false);
         result = nodeService.get(mainData.getId());
         assertEquals(mainData.getComment(), result.getMainData().getComment());
         assertEquals(node.getExtraData(Text.class).getContent(), result.getExtraData(Text.class).getContent());
@@ -120,7 +120,7 @@ public class ExtraDataTest {
         // updateNode
         mainData.setComment("This is comment.");
         node.getExtraData(Image.class).setDescription("This is image description.");
-        nodeService.update(node);
+        nodeService.update(node, false);
         result = nodeService.get(mainData.getId());
         assertEquals(mainData.getComment(), result.getMainData().getComment());
         assertEquals(node.getExtraData(Image.class).getDescription(), result.getExtraData(Image.class).getDescription());
@@ -151,7 +151,7 @@ public class ExtraDataTest {
         // updateNode
         mainData.setComment("This is comment.");
         node.getExtraData(Music.class).setFormat("mp3");
-        nodeService.update(node);
+        nodeService.update(node, false);
         result = nodeService.get(mainData.getId());
         assertEquals(mainData.getComment(), result.getMainData().getComment());
         assertEquals(node.getExtraData(Music.class).getFormat(), result.getExtraData(Music.class).getFormat());
@@ -182,7 +182,7 @@ public class ExtraDataTest {
         // updateNode
         mainData.setComment("This is comment.");
         node.getExtraData(Video.class).setFormat("avi");
-        nodeService.update(node);
+        nodeService.update(node, false);
         result = nodeService.get(mainData.getId());
         assertEquals(mainData.getComment(), result.getMainData().getComment());
         assertEquals(node.getExtraData(Video.class).getFormat(), result.getExtraData(Video.class).getFormat());

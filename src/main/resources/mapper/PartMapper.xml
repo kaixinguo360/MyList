@@ -22,19 +22,19 @@
 
   <!-- * * * * * * * * * * -->
 
-  <delete id="insertChildren">
+  <insert id="insertChildren">
     insert into parts
     (part_parent_id, part_content_id, part_content_order)
     values
-    <foreach collection ="childIds" item="contentId" index= "index" separator =",">
-      (#{parentId,jdbcType=BIGINT}, #{contentId,jdbcType=LONGVARCHAR}, #{index,jdbcType=INTEGER})
+    <foreach collection ="childIds" item="childId" index= "index" separator =",">
+      (#{parentId,jdbcType=BIGINT}, #{childId,jdbcType=LONGVARCHAR}, #{index,jdbcType=INTEGER})
     </foreach>
-  </delete>
+  </insert>
   <delete id="deleteChildren">
     delete from parts
     where part_parent_id = #{parentId,jdbcType=BIGINT}
       and part_content_id in
-      (<foreach collection="partIds" item="partId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
+      (<foreach collection="childIds" item="childId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
   </delete>
   <delete id="deleteAllChildren">
     delete from parts
@@ -53,11 +53,32 @@
     group by part_parent_id
   </select>
 
+  <insert id="insertParents">
+    insert into parts
+    (part_parent_id, part_content_id, part_content_order)
+    values
+    <foreach collection ="parentIds" item="parentId" separator =",">
+      (#{parentId,jdbcType=BIGINT}, #{childId,jdbcType=LONGVARCHAR}, 0)
+    </foreach>
+  </insert>
+  <delete id="deleteParents">
+    delete parts
+    from parts, nodes parent
+    where part_parent_id = parent.id
+      and part_content_id = #{childId,jdbcType=BIGINT}
+      and part_parent_id in (<foreach collection="parentIds" item="parentId" separator=",">#{parentId,jdbcType=BIGINT}</foreach>)
+    <!-- EDITABLE -->
+      and (
+        parent.node_user = ${userId}
+      or
+        (parent.node_user != ${userId} and parent.node_permission = 'public')
+      )
+  </delete>
   <delete id="deleteAllParent">
     delete parts
     from parts, nodes parent
     where part_parent_id = parent.id
-      and part_content_id = #{childIds,jdbcType=BIGINT}
+      and part_content_id = #{childId,jdbcType=BIGINT}
     <!-- EDITABLE -->
       and (
         parent.node_user = ${userId}

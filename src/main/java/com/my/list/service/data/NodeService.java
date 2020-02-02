@@ -71,7 +71,7 @@ public class NodeService {
         );
         return node;
     }
-    public void update(Node node) {
+    public void update(Node node, boolean isSimple) {
         if (node == null) throw new DataException("Input node is null.");
         
         MainData mainData = node.getMainData();
@@ -81,22 +81,27 @@ public class NodeService {
         MainData old = mainDataService.get(mainData.getId());
         permissionChecker.checkUpdate(old, mainData);
         
-        Type type = typeConfig.getType(mainData);
-        type.process(node);
-        
-        mainDataService.update(mainData);
-        if (type.isHasExtraData()) {
-            ExtraData extraData = node.getExtraData();
-            if (extraData == null) throw new DataException("Input extraData is null.");
-            extraData.setExtraId(mainData.getId());
-            extraDataService.update(extraData);
-        }
-        if (type.isHasExtraList()) {
-            List<ListItem> extraList = node.getExtraList();
-            if (extraList != null) {
-                save(mainData.getId(), node.getExtraList());
-            } else {
-                if (type.isExtraListRequired()) throw new DataException("Input extraList is null.");
+        if (isSimple) {
+            mainDataService.update(mainData, true);
+        } else {
+            Type type = typeConfig.getType(mainData);
+            type.process(node);
+            
+            mainDataService.update(mainData, false);
+            
+            if (type.isHasExtraData()) {
+                ExtraData extraData = node.getExtraData();
+                if (extraData == null) throw new DataException("Input extraData is null.");
+                extraData.setExtraId(mainData.getId());
+                extraDataService.update(extraData);
+            }
+            if (type.isHasExtraList()) {
+                List<ListItem> extraList = node.getExtraList();
+                if (extraList != null) {
+                    save(mainData.getId(), node.getExtraList());
+                } else {
+                    if (type.isExtraListRequired()) throw new DataException("Input extraList is null.");
+                }
             }
         }
     }
@@ -123,7 +128,7 @@ public class NodeService {
                     return newNode.getMainData().getId();
                 case UPDATE:
                     Node node = item.node;
-                    update(node);
+                    update(node, false);
                     return node.getMainData().getId();
                 case EXIST:
                 default:

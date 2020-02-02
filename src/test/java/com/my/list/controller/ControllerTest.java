@@ -326,27 +326,27 @@ public class ControllerTest {
         // search - getAll
         assertNodes("getAll", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .get("/api/search").header(Constants.AUTHORIZATION, token)
+                .get("/api/node/search").header(Constants.AUTHORIZATION, token)
             )));
 
         // search - query
         assertNodes("'Text Node'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addCondition("node_title", "=", "'Text Node'")
                 ))
             )));
         assertNodes("'%Text%'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                 ))
             )));
         assertNodes("'%Text%', ctime asc", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addCondition("node_title", "like", "'%Text%'")
                     .addSort("node_ctime", Sort.Direction.ASC)
@@ -355,14 +355,14 @@ public class ControllerTest {
 
         assertNodes("permission=PRIVATE", 6, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .setPermission(Permission.PRIVATE)
                 ))
             )));
         assertNodes("permission=PUBLIC", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .setPermission(Permission.PUBLIC)
                 ))
@@ -370,28 +370,28 @@ public class ControllerTest {
 
         assertNodes("orTag='Test Tag'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addOrTag(new Tag("Test Tag"))
                 ))
             )));
         assertNodes("andTag='%Tag%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addAndTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("notTag='%Node%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addNotTag(new Tag("Tag", false))
                 ))
             )));
         assertNodes("orTag='%Tag%', andTag='%Test%'", 3, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))
@@ -399,7 +399,7 @@ public class ControllerTest {
             )));
         assertNodes("orTag='%Tag%', andTag='%Test%', notTag='Test Tag'", 0, assertList(
             mvc.perform(MockMvcRequestBuilders
-                .post("/api/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
+                .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
                     .addOrTag(new Tag("Tag", false))
                     .addAndTag(new Tag("Test", false))

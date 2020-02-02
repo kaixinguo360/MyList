@@ -144,7 +144,7 @@ public class ExtraListTest {
         updatedImageNode.getMainData().setTitle("Updated Image Node");
         list.set(3, new ListItem(updatedImageNode, ListItem.ItemStatus.UPDATE));
         showList("Updated list", list);
-        nodeService.update(result);
+        nodeService.update(result, false);
         
         Node result1 = nodeService.get(listNode.getMainData().getId());
         list = result1.getExtraList();

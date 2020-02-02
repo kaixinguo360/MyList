@@ -2,10 +2,13 @@ package com.my.list.domain;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
-public interface NodeMapper extends CrudMapper<Node> {
-    int updateByPrimaryKeyWithUserId(Long userId, Node node);
-    int deleteByPrimaryKeyWithUserId(Long userId, Long id);
-    int insertWithUserId(Long userId, Node node);
-    Node selectByPrimaryKeyWithUserId(Long userId, Long id);
+public interface NodeMapper {
+    int delete(Long id);
+    int insert(Node node);
+    Node select(Long id);
+    List<Node> selectAll();
+    int update(Node node, boolean isSimple);
 }

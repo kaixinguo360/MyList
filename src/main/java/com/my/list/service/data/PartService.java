@@ -30,14 +30,15 @@ public class PartService {
         this.partMapper = partMapper;
     }
 
-    public void addChildren(List<Long> parentId, List<Long> childIds) {
-        for (Long listId : parentId) {
-            addChildren(listId, childIds);
+    // ---- Add ---- //
+    public void addChildren(List<Long> parentIds, List<Long> childIds) {
+        for (Long parentId : parentIds) {
+            addChildren(parentId, childIds);
         }
     }
     public void addChildren(Long parentId, List<Long> childIds) {
-        Node listNode = checkListPermission(parentId, true);
-        Type type = typeConfig.getType(listNode);
+        Node parentNode = checkListPermission(parentId, true);
+        Type type = typeConfig.getType(parentNode);
         
         if (type.isExtraListUnique()) {
             Set<Long> ids = partMapper.selectAllChildren(parentId)
@@ -49,10 +50,28 @@ public class PartService {
             partMapper.insertChildren(parentId, childIds);
         }
     }
+    public void addParents(List<Long> childIds, List<Long> parentIds) {
+        for (Long childId : childIds) {
+            addParents(childId, parentIds);
+        }
+    }
+    public void addParents(Long childId, List<Long> parentIds) {
+        checkNodePermission(childId, true);
+        
+        Set<Long> ids = partMapper.selectAllParent(permissionChecker.getUserId(), childId)
+                .stream().map(Node::getId).collect(Collectors.toSet());
+        parentIds = (ids.size() == 0) ?
+                parentIds : parentIds.stream().filter(partId -> !ids.contains(partId)).collect(Collectors.toList());
+        
+        if (parentIds.size() != 0) {
+            partMapper.insertParents(childId, parentIds);
+        }
+    }
 
-    public void removeChildren(List<Long> parentId, List<Long> childIds) {
-        for (Long listId : parentId) {
-            removeChildren(listId, childIds);
+    // ---- Remove ---- //
+    public void removeChildren(List<Long> parentIds, List<Long> childIds) {
+        for (Long parentId : parentIds) {
+            removeChildren(parentId, childIds);
         }
     }
     public void removeChildren(Long parentId, List<Long> childIds) {
@@ -65,7 +84,23 @@ public class PartService {
         partMapper.deleteAllChildren(parentId);
         partMapper.clean();
     }
+    public void removeParents(List<Long> childIds, List<Long> parentIds) {
+        for (Long childId : childIds) {
+            removeParents(childId, parentIds);
+        }
+    }
+    public void removeParents(Long childId, List<Long> parentIds) {
+        checkNodePermission(childId, true);
+        partMapper.deleteParents(permissionChecker.getUserId(), childId, parentIds);
+        partMapper.clean();
+    }
+    public void removeAllParents(Long childId) {
+        checkNodePermission(childId, true);
+        partMapper.deleteAllParent(permissionChecker.getUserId(), childId);
+        partMapper.clean();
+    }
 
+    // ---- Set ---- //
     public void setChildren(Long parentId, List<Long> childIds) {
         checkListPermission(parentId, true);
         partMapper.deleteAllChildren(parentId);
@@ -79,6 +114,7 @@ public class PartService {
         partMapper.clean();
     }
 
+    // ---- Get ---- //
     public List<com.my.list.dto.Node> getChildren(Long parentId) {
         checkListPermission(parentId, false);
         return partMapper.selectAllChildren(parentId)
@@ -89,15 +125,16 @@ public class PartService {
         return partMapper.selectAllParent(permissionChecker.getUserId(), childId)
             .stream().map(NodeDTO::new).collect(Collectors.toList());
     }
-    
+
+    // ---- Check ---- //
     private Node checkListPermission(Long listId, boolean write) {
-        Node listNode = nodeMapper.selectByPrimaryKey(listId);
+        Node listNode = nodeMapper.select(listId);
         if (listNode == null) throw new DataException("No such list with listId=" + listId);
         permissionChecker.check(listNode, write);
         return listNode;
     }
     private Node checkNodePermission(Long nodeId, boolean write) {
-        Node listNode = nodeMapper.selectByPrimaryKey(nodeId);
+        Node listNode = nodeMapper.select(nodeId);
         if (listNode == null) throw new DataException("No such node with nodeId=" + nodeId);
         permissionChecker.check(listNode, write);
         return listNode;

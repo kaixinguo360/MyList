@@ -107,7 +107,7 @@ public class ListServiceTest {
         list1.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // 2 protect
         list1.add(new ListItem(nodes2.get(2), ListItem.ItemStatus.EXIST)); // 2 public (tag3)
         list1.add(new ListItem(nodes2.get(2), ListItem.ItemStatus.EXIST)); // -- (Duplicate data)
-        nodeService1.update(tagNode1); // (node1[3]) self private
+        nodeService1.update(tagNode1, false); // (node1[3]) self private
         
         list2.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST)); // self protect
         list2.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST)); // self public
@@ -115,7 +115,7 @@ public class ListServiceTest {
         list2.add(new ListItem(nodes1.get(3), ListItem.ItemStatus.EXIST)); // -- (Duplicate data)
         list2.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // 2 protect
         list2.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // -- (Duplicate data)
-        nodeService1.update(tagNode2); // (node1[4]) self private
+        nodeService1.update(tagNode2, false); // (node1[4]) self private
         
         list3.add(new ListItem(nodes1.get(1), ListItem.ItemStatus.EXIST)); // self protect
         list3.add(new ListItem(nodes1.get(2), ListItem.ItemStatus.EXIST)); // self public
@@ -123,7 +123,7 @@ public class ListServiceTest {
         list3.add(new ListItem(nodes2.get(0), ListItem.ItemStatus.EXIST)); // 2 private
         list3.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // 2 protect
         list3.add(new ListItem(nodes2.get(1), ListItem.ItemStatus.EXIST)); // -- (Duplicate data)
-        nodeService2.update(tagNode3); // (node2[2]) 2 public
+        nodeService2.update(tagNode3, false); // (node2[2]) 2 public
     }
 
     @Test

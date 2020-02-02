@@ -26,20 +26,20 @@ class MainDataService {
     MainData get(Long mainDataId) {
         if (mainDataId == null) throw new DataException("Input mainDataId is null.");
 
-        MainData mainData = nodeMapper.selectByPrimaryKey(mainDataId);
+        MainData mainData = nodeMapper.select(mainDataId);
         if (mainData == null) throw new DataException("Can't find mainData for node with id=" + mainDataId);
 
         return mainData;
     }
-    void update(MainData mainData) {
+    void update(MainData mainData, boolean isSimple) {
         if (mainData == null) throw new DataException("Input mainData is null.");
         if (mainData.getId() == null) throw new DataException("Id of input mainData is not set.");
         
-        nodeMapper.updateByPrimaryKey(Node.Companion.fromSingleNode(mainData));
+        nodeMapper.update(Node.Companion.fromSingleNode(mainData), isSimple);
     }
     void remove(Long mainDataId) {
         if (mainDataId == null) throw new DataException("Input mainDataId is null.");
         
-        nodeMapper.deleteByPrimaryKey(mainDataId);
+        nodeMapper.delete(mainDataId);
     }
 }

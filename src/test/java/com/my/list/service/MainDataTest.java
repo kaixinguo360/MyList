@@ -55,7 +55,7 @@ public class MainDataTest {
 
         // updateNode
         mainData.setComment("This is comment.");
-        nodeService.update(node);
+        nodeService.update(node, false);
         assertEquals(mainData.getComment(), nodeService.get(mainData.getId()).getMainData().getComment());
 
         // removeNode
