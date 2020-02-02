@@ -4,8 +4,10 @@ import com.my.list.controller.util.Authorization;
 import com.my.list.controller.util.CurrentContext;
 import com.my.list.controller.util.SimpleController;
 import com.my.list.dto.Node;
+import com.my.list.service.data.ListService;
 import com.my.list.service.data.NodeService;
 import com.my.list.service.data.PartService;
+import com.my.list.service.filter.Filter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -94,5 +96,12 @@ public class NodeController {
         @CurrentContext NodeService nodeService
     ) {
         nodeService.remove(id);
+    }
+
+    @GetMapping("search") public List<Node> getAll(@CurrentContext ListService listService) {
+        return listService.getAll(new Filter());
+    }
+    @PostMapping("search") public List<Node> getAll(@RequestBody Filter filter, @CurrentContext ListService listService) {
+        return listService.getAll(filter);
     }
 }
