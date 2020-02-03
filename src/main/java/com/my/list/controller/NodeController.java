@@ -47,7 +47,7 @@ public class NodeController {
     public NodeOutputWrap put(
         @RequestBody NodeInputWrap input,
         @RequestParam(required = false, value = "simple") Boolean isSimple,
-        @RequestParam(required = false, value = "tag") String tag,
+        @RequestParam(required = false, value = "tag") String tagAction,
         @CurrentContext NodeService nodeService,
         @CurrentContext PartService partService
     ) {
@@ -67,8 +67,8 @@ public class NodeController {
         }
         
         if (input.tags != null) {
-            tag = (tag == null) ? "set" : tag;
-            switch (tag) {
+            tagAction = (tagAction == null) ? "set" : tagAction;
+            switch (tagAction) {
                 case "add": partService.addParents(id, input.tags); break;
                 case "remove": partService.removeParents(id, input.tags); break;
                 case "set": default: partService.setParents(id, input.tags); break;
@@ -111,12 +111,24 @@ public class NodeController {
     public List<NodeOutputWrap> put(
         @RequestBody List<NodeInputWrap> inputs,
         @RequestParam(required = false, value = "simple") Boolean isSimple,
-        @RequestParam(required = false, value = "tag") String tag,
+        @RequestParam(required = false, value = "tag") String tagAction,
         @CurrentContext NodeService nodeService,
         @CurrentContext PartService partService
     ) {
         return inputs.stream()
-            .map(input -> put(input, isSimple, tag, nodeService, partService))
+            .map(input -> put(input, isSimple, tagAction, nodeService, partService))
+            .collect(Collectors.toList());
+    }
+    @PutMapping("tag")
+    public List<NodeOutputWrap> tag(
+        @RequestBody List<Long> nodeIds,
+        @RequestParam(required = false, value = "id") List<Long> tagIds,
+        @RequestParam(required = false, value = "action") String tagAction,
+        @CurrentContext NodeService nodeService,
+        @CurrentContext PartService partService
+    ) {
+        return nodeIds.stream()
+            .map(nodeId -> put(new NodeInputWrap(nodeId, tagIds), true, tagAction, nodeService, partService))
             .collect(Collectors.toList());
     }
 
@@ -136,7 +148,13 @@ public class NodeController {
         Long id;
         Node node;
         List<Long> tags;
-    
+
+        public NodeInputWrap() {}
+        public NodeInputWrap(Long id, List<Long> tags) {
+            this.id = id;
+            this.tags = tags;
+        }
+
         public Long getId() {
             return id;
         }
