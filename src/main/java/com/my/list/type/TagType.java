@@ -23,6 +23,6 @@ public class TagType implements Type {
     }
 
     public void process(Node node) {
-        node.getMainData().setLinkVirtual(true);
+        node.getMainData().setCollection(true);
     }
 }

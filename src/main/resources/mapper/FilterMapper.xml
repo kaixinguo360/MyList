@@ -9,8 +9,8 @@
     <result column="node_mtime" jdbcType="TIMESTAMP" property="mtime"/>
     <result column="node_title" jdbcType="VARCHAR" property="title"/>
     <result column="node_excerpt" jdbcType="VARCHAR" property="excerpt"/>
-    <result column="node_link_delete" jdbcType="BIT" property="linkDelete"/>
-    <result column="node_link_virtual" jdbcType="BIT" property="linkVirtual"/>
+    <result column="node_part" jdbcType="BIT" property="part"/>
+    <result column="node_collection" jdbcType="BIT" property="collection"/>
     <result column="node_permission" jdbcType="VARCHAR" property="permission"/>
     <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
     <result column="node_like" jdbcType="BIT" property="like"/>

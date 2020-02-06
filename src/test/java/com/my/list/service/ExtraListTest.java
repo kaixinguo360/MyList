@@ -81,8 +81,8 @@ public class ExtraListTest {
         imageNode = newNode(Image.TYPE_NAME, "Image Node", image);
         musicNode = newNode(Music.TYPE_NAME, "Music Node", music);
         videoNode = newNode(Video.TYPE_NAME, "Video Node", video);
-        textNode.getMainData().setLinkDelete(true);
-        imageNode.getMainData().setLinkDelete(true);
+        textNode.getMainData().setPart(true);
+        imageNode.getMainData().setPart(true);
         NodeService nodeService = userService.getUserContext(token).nodeService;
         nodeService.add(textNode);
         nodeService.add(imageNode);

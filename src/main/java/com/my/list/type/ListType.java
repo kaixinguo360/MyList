@@ -30,6 +30,7 @@ public class ListType implements Type {
     }
 
     public void process(Node node) {
+        node.getMainData().setCollection(true);
         List<ListItem> list = node.getExtraList();
         if (list.size() != 0) {
             try {

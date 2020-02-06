@@ -12,8 +12,8 @@ interface MainData {
     var mtime: Timestamp?
     var title: String?
     var excerpt: String?
-    var linkDelete: Boolean?
-    var linkVirtual: Boolean?
+    var part: Boolean?
+    var collection: Boolean?
     var permission: String?
     var nsfw: Boolean?
     var like: Boolean?

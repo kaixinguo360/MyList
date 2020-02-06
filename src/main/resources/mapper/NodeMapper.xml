@@ -9,8 +9,8 @@
     <result column="node_mtime" jdbcType="TIMESTAMP" property="mtime"/>
     <result column="node_title" jdbcType="VARCHAR" property="title"/>
     <result column="node_excerpt" jdbcType="VARCHAR" property="excerpt"/>
-    <result column="node_link_delete" jdbcType="BIT" property="linkDelete"/>
-    <result column="node_link_virtual" jdbcType="BIT" property="linkVirtual"/>
+    <result column="node_part" jdbcType="BIT" property="part"/>
+    <result column="node_collection" jdbcType="BIT" property="collection"/>
     <result column="node_permission" jdbcType="VARCHAR" property="permission"/>
     <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
     <result column="node_like" jdbcType="BIT" property="like"/>
@@ -25,10 +25,10 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.domain.Node" useGeneratedKeys="true">
     insert into nodes (node_user, node_type, node_ctime,
-                       node_mtime, node_title, node_excerpt, node_link_delete, node_link_virtual,
+                       node_mtime, node_title, node_excerpt, node_part, node_collection,
                        node_permission, node_nsfw, node_like, node_hide, node_source_url, node_comment)
     values (#{user,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP},
-            #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, #{linkDelete,jdbcType=BIT}, #{linkVirtual,jdbcType=BIT},
+            #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, #{part,jdbcType=BIT}, #{collection,jdbcType=BIT},
             #{permission,jdbcType=VARCHAR}, #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{hide,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
   </insert>
   <update id="update">
@@ -37,8 +37,8 @@
         node_type         = #{node.type,jdbcType=VARCHAR},
         node_ctime        = #{node.ctime,jdbcType=TIMESTAMP},
         node_mtime        = #{node.mtime,jdbcType=TIMESTAMP},
-        node_link_delete  = #{node.linkDelete,jdbcType=BIT},
-        node_link_virtual = #{node.linkVirtual,jdbcType=BIT},
+        node_part  = #{node.part,jdbcType=BIT},
+        node_collection = #{node.collection,jdbcType=BIT},
         node_permission   = #{node.permission,jdbcType=VARCHAR},
         node_nsfw         = #{node.nsfw,jdbcType=BIT},
         node_like         = #{node.like,jdbcType=BIT},
