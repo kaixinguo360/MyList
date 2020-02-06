@@ -121,7 +121,7 @@ public class NodeService {
         if (extraList == null) throw new DataException("Input extraList is null.");
 
         List<Long> partIds = extraList.stream().map(item -> {Long partId = null;
-            switch (item.itemStatus) {
+            switch (item.status) {
                 case NEW:
                     Node newNode = item.node;
                     add(newNode);

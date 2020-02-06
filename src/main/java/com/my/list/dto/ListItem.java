@@ -7,12 +7,12 @@ import com.my.list.exception.DataException;
 public class ListItem {
 
     public Node node;
-    public ItemStatus itemStatus;
+    public ItemStatus status;
 
     public ListItem() {}
-    public ListItem(Node node, ItemStatus itemStatus) {
+    public ListItem(Node node, ItemStatus status) {
         this.node = node;
-        this.itemStatus = itemStatus;
+        this.status = status;
     }
 
     // ---- Setter & Getter ---- //
@@ -22,17 +22,17 @@ public class ListItem {
     public void setNode(Node node) {
         this.node = node;
     }
-    public ItemStatus getItemStatus() {
-        return itemStatus;
+    public ItemStatus getStatus() {
+        return status;
     }
-    public void setItemStatus(ItemStatus itemStatus) {
-        this.itemStatus = itemStatus;
+    public void setStatus(ItemStatus status) {
+        this.status = status;
     }
 
     public enum ItemStatus {
         NEW("new"),         // has all data
         UPDATE("update"),   // has all data
-        EXIST("");          // only has main data
+        EXIST("exist");          // only has main data
 
         private String value;
 

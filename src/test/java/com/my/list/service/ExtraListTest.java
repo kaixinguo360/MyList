@@ -181,7 +181,7 @@ public class ExtraListTest {
         AtomicInteger i = new AtomicInteger();
         list.forEach(item -> {
             String status;
-            switch (item.itemStatus) {
+            switch (item.status) {
                 case EXIST:  status = "EXIST "; break;
                 case NEW:    status = "NEW   "; break;
                 case UPDATE: status = "UPDATE"; break;

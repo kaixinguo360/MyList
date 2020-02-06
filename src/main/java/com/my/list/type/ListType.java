@@ -43,7 +43,7 @@ public class ListType implements Type {
                 Map<String, String> excerpt = new HashMap<>();
                 excerpt.put("type", firstNode.getMainData().getType());
                 excerpt.put("excerpt", firstNode.getMainData().getExcerpt());
-                excerpt.put("count", "" + firstNode.getExtraList().size());
+                excerpt.put("count", "" + list.size());
                 
                 node.getMainData().setExcerpt(objectMapper.writeValueAsString(excerpt));
                 
