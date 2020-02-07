@@ -15,7 +15,8 @@
     <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
     <result column="node_like" jdbcType="BIT" property="like"/>
     <result column="node_hide" jdbcType="BIT" property="hide"/>
-    <result column="node_source_url" jdbcType="VARCHAR" property="sourceUrl"/>
+    <result column="node_source" jdbcType="VARCHAR" property="source"/>
+    <result column="node_description" jdbcType="VARCHAR" property="description"/>
     <result column="node_comment" jdbcType="VARCHAR" property="comment"/>
   </resultMap>
   <delete id="delete" parameterType="java.lang.Long">
@@ -24,12 +25,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.my.list.domain.Node" useGeneratedKeys="true">
-    insert into nodes (node_user, node_type, node_ctime,
-                       node_mtime, node_title, node_excerpt, node_part, node_collection,
-                       node_permission, node_nsfw, node_like, node_hide, node_source_url, node_comment)
-    values (#{user,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP},
-            #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{excerpt,jdbcType=VARCHAR}, #{part,jdbcType=BIT}, #{collection,jdbcType=BIT},
-            #{permission,jdbcType=VARCHAR}, #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{hide,jdbcType=BIT}, #{sourceUrl,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
+    insert into nodes (node_user, node_type, node_ctime, node_mtime, node_title,
+                       node_excerpt, node_part, node_collection, node_permission,
+                       node_nsfw, node_like, node_hide, node_source, node_description, node_comment)
+    values (#{user,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP}, #{mtime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR},
+            #{excerpt,jdbcType=VARCHAR}, #{part,jdbcType=BIT}, #{collection,jdbcType=BIT}, #{permission,jdbcType=VARCHAR},
+            #{nsfw,jdbcType=BIT}, #{like,jdbcType=BIT}, #{hide,jdbcType=BIT}, #{source,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
   </insert>
   <update id="update">
     update nodes
@@ -37,16 +38,17 @@
         node_type         = #{node.type,jdbcType=VARCHAR},
         node_ctime        = #{node.ctime,jdbcType=TIMESTAMP},
         node_mtime        = #{node.mtime,jdbcType=TIMESTAMP},
-        node_part  = #{node.part,jdbcType=BIT},
-        node_collection = #{node.collection,jdbcType=BIT},
+        node_part         = #{node.part,jdbcType=BIT},
+        node_collection   = #{node.collection,jdbcType=BIT},
         node_permission   = #{node.permission,jdbcType=VARCHAR},
         node_nsfw         = #{node.nsfw,jdbcType=BIT},
         node_like         = #{node.like,jdbcType=BIT},
         node_hide         = #{node.hide,jdbcType=BIT},
-        node_source_url   = #{node.sourceUrl,jdbcType=VARCHAR}
+        node_source       = #{node.source,jdbcType=VARCHAR}
       <if test="!isSimple">,
         node_title        = #{node.title,jdbcType=VARCHAR},
         node_excerpt      = #{node.excerpt,jdbcType=VARCHAR},
+        node_description  = #{node.description,jdbcType=VARCHAR},
         node_comment      = #{node.comment,jdbcType=VARCHAR}
       </if>
     where id = #{node.id,jdbcType=BIGINT}

@@ -30,7 +30,10 @@ DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
                           `id` bigint(20) unsigned NOT NULL,
                           `image_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          `image_description` text COLLATE utf8mb4_unicode_ci,
+                          `image_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `image_author` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `image_gallery` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                          `image_source` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                           PRIMARY KEY (`id`),
                           CONSTRAINT `images_ibfk_3` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -61,7 +64,8 @@ CREATE TABLE `nodes` (
                          `node_nsfw` tinyint(1) NOT NULL DEFAULT '0',
                          `node_like` tinyint(1) NOT NULL DEFAULT '0',
                          `node_hide` tinyint(1) NOT NULL DEFAULT '0',
-                         `node_source_url` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                         `node_source` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                         `node_description` text COLLATE utf8mb4_unicode_ci,
                          `node_comment` text COLLATE utf8mb4_unicode_ci,
                          PRIMARY KEY (`id`),
                          KEY `node_ctime` (`node_ctime`),

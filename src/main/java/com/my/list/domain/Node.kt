@@ -16,17 +16,18 @@ class Node(
     override var nsfw: Boolean? = null,
     override var like: Boolean? = null,
     override var hide: Boolean? = null,
-    override var sourceUrl: String? = null,
+    override var source: String? = null,
+    override var description: String? = null,
     override var comment: String? = null
 ): MainData {
     override fun toString(): String {
-        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$part,$collection,$permission,$nsfw,$like,$hide,$sourceUrl,$comment]"
+        return "Node[$id,$user,$type,$ctime,$mtime,$title,$excerpt,$part,$collection,$permission,$nsfw,$like,$hide,$source,$description,$comment]"
     }
     companion object { 
         fun fromSingleNode(s: MainData?): Node? {
             if (s == null) return null
             if (s is Node) return s
-            return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.part, s.collection, s.permission, s.nsfw, s.like, s.hide, s.sourceUrl, s.comment)
+            return Node(s.id, s.user, s.type, s.ctime, s.mtime, s.title, s.excerpt, s.part, s.collection, s.permission, s.nsfw, s.like, s.hide, s.source, s.description, s.comment)
         }
         fun defaultNode(): Node {
             val node = Node()

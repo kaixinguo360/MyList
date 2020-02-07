@@ -77,7 +77,7 @@ public class ControllerTest {
         text.setContent("Test Content");
 
         image.setUrl("http://exmaple/image.png");
-        image.setDescription("Test Image Description");
+        image.setGallery("Test Image Description");
 
         music.setUrl("http://exmaple/music.mp3");
         music.setFormat("mp3");
@@ -239,13 +239,13 @@ public class ControllerTest {
                 .content(toJson(textNode))
             )).getExtraData(Text.class).getContent()
         );
-        imageNode.getExtraData(Image.class).setDescription("New Image Description");
-        assertEquals(imageNode.getExtraData(Image.class).getDescription(),
+        imageNode.getExtraData(Image.class).setGallery("New Image Description");
+        assertEquals(imageNode.getExtraData(Image.class).getGallery(),
             assertNode(mvc.perform(MockMvcRequestBuilders
                 .put("/api/node/")
                 .header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(imageNode))
-            )).getExtraData(Image.class).getDescription()
+            )).getExtraData(Image.class).getGallery()
         );
         musicNode.getExtraData(Music.class).setFormat("newMusicFormat");
         assertEquals(musicNode.getExtraData(Music.class).getFormat(),

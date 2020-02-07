@@ -7,7 +7,7 @@ import java.util.Map;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    property = "type")
+    property = "nodeType")
 @JsonIgnoreProperties({"extraId", "id"})
 public interface ExtraData {
     Long getExtraId();

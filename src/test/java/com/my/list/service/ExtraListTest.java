@@ -54,7 +54,7 @@ public class ExtraListTest {
         text.setContent("Test Content");
 
         image.setUrl("http://exmaple/image.png");
-        image.setDescription("Test Image Description");
+        image.setGallery("Test Image Description");
 
         music.setUrl("http://exmaple/music.mp3");
         music.setFormat("mp3");

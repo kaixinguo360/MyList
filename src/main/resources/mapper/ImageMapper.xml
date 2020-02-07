@@ -4,23 +4,41 @@
   <resultMap id="BaseResultMap" type="com.my.list.type.image.Image">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="image_url" jdbcType="VARCHAR" property="url" />
-    <result column="image_description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="image_type" jdbcType="LONGVARCHAR" property="type" />
+    <result column="image_author" jdbcType="LONGVARCHAR" property="author" />
+    <result column="image_gallery" jdbcType="LONGVARCHAR" property="gallery" />
+    <result column="image_source" jdbcType="VARCHAR" property="source" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from images
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.my.list.type.image.Image" keyColumn="image_id" keyProperty="id" useGeneratedKeys="true">
-    insert into images (id, image_url, 
-      image_description)
-    values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
-      #{description,jdbcType=LONGVARCHAR})
+    insert into images (
+      id, 
+      image_url,
+      image_type,
+      image_author,
+      image_gallery,
+      image_source
+    )
+    values (
+             #{id,jdbcType=BIGINT},
+             #{url,jdbcType=VARCHAR},
+             #{type,jdbcType=VARCHAR},
+             #{author,jdbcType=LONGVARCHAR},
+             #{gallery,jdbcType=LONGVARCHAR},
+             #{source,jdbcType=LONGVARCHAR}
+           )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.type.image.Image">
     update images
     set
       image_url = #{url,jdbcType=VARCHAR},
-      image_description = #{description,jdbcType=LONGVARCHAR}
+      image_type = #{type,jdbcType=LONGVARCHAR},
+      image_author = #{author,jdbcType=LONGVARCHAR},
+      image_gallery = #{gallery,jdbcType=LONGVARCHAR},
+      image_source = #{source,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

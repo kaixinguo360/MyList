@@ -18,6 +18,7 @@ interface MainData {
     var nsfw: Boolean?
     var like: Boolean?
     var hide: Boolean?
-    var sourceUrl: String?
+    var source: String?
+    var description: String?
     var comment: String?
 }

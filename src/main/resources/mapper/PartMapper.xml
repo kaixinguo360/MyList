@@ -16,7 +16,8 @@
     <result column="node_nsfw" jdbcType="BIT" property="nsfw"/>
     <result column="node_like" jdbcType="BIT" property="like"/>
     <result column="node_hide" jdbcType="BIT" property="hide"/>
-    <result column="node_source_url" jdbcType="VARCHAR" property="sourceUrl"/>
+    <result column="node_source" jdbcType="VARCHAR" property="source"/>
+    <result column="node_description" jdbcType="VARCHAR" property="description"/>
     <result column="node_comment" jdbcType="VARCHAR" property="comment"/>
   </resultMap>
 

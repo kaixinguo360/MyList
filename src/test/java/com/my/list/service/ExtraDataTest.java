@@ -53,7 +53,7 @@ public class ExtraDataTest {
         text.setContent("Test Content");
 
         image.setUrl("http://exmaple/image.png");
-        image.setDescription("Test Image Description");
+        image.setGallery("Test Image Description");
 
         music.setUrl("http://exmaple/music.mp3");
         music.setFormat("mp3");
@@ -119,11 +119,11 @@ public class ExtraDataTest {
 
         // updateNode
         mainData.setComment("This is comment.");
-        node.getExtraData(Image.class).setDescription("This is image description.");
+        node.getExtraData(Image.class).setGallery("This is image description.");
         nodeService.update(node, false);
         result = nodeService.get(mainData.getId());
         assertEquals(mainData.getComment(), result.getMainData().getComment());
-        assertEquals(node.getExtraData(Image.class).getDescription(), result.getExtraData(Image.class).getDescription());
+        assertEquals(node.getExtraData(Image.class).getGallery(), result.getExtraData(Image.class).getGallery());
 
         // removeNode
         nodeService.remove(mainData.getId());
