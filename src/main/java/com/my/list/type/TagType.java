@@ -1,6 +1,5 @@
 package com.my.list.type;
 
-import com.my.list.dto.Node;
 import com.my.list.dto.Type;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +19,5 @@ public class TagType implements Type {
     }
     public boolean isExtraListRequired() {
         return false;
-    }
-
-    public void process(Node node) {
-        node.getMainData().setCollection(true);
     }
 }

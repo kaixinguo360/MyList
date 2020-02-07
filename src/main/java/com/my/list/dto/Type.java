@@ -25,5 +25,5 @@ public interface Type {
     default boolean isExtraListRequired() {
         return true;
     }
-    default void process(@NotNull Node node) {}
+    default void valid(@NotNull Node node) {}
 }

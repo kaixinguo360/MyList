@@ -35,7 +35,7 @@ public class NodeService {
         if (mainData == null) throw new DataException("Input mainData is null.");
         mainData.setUser(permissionChecker.getUserId());
         Type type = typeConfig.getType(mainData);
-        type.process(node);
+        type.valid(node);
         
         mainDataService.add(mainData);
         if (type.isHasExtraData()) {
@@ -85,7 +85,7 @@ public class NodeService {
             mainDataService.update(mainData, true);
         } else {
             Type type = typeConfig.getType(mainData);
-            type.process(node);
+            type.valid(node);
             
             mainDataService.update(mainData, false);
             

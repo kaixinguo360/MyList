@@ -2,7 +2,6 @@ package com.my.list.type.image;
 
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.ExtraDataMapper;
-import com.my.list.dto.Node;
 import com.my.list.dto.Type;
 import org.springframework.stereotype.Component;
 
@@ -29,11 +28,5 @@ public class ImageType implements Type {
     }
     public boolean isHasExtraList() {
         return false;
-    }
-
-    public void process(Node node) {
-        node.getMainData().setExcerpt(
-            node.getExtraData(Image.class).getUrl()
-        );
     }
 }
