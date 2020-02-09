@@ -1,0 +1,64 @@
+.hook-box {
+  position: fixed;
+  right: 0;
+  z-index: 100000;
+  
+  border: 1px solid #dfe1e5;
+  border-radius: 20px;
+  background: white;
+  
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+  
+  margin: 24px;
+  padding: 10px;
+  
+  display: flex;
+}
+
+.hook-box-open {
+   top: 0;
+ }
+
+.hook-box-close {
+  top: -68px;
+}
+
+
+.hook-images {
+  flex: 1 0;
+  overflow: hidden;
+}
+
+.hook-image {
+  display: inline-block;
+  width: 36px;
+  margin: 0 2px;
+  height: 36px;
+  background-position: center;
+  background-size: cover;
+  background-color: #eeeeee;
+}
+
+.hook-images-open {
+  height: fit-content;
+}
+
+.hook-images-close {
+  height: 36px;
+}
+
+
+.hook-buttons {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.hook-button {
+  margin: 5px 0;
+}
+
+.hook-button-hidden {
+  margin: 10px 0;
+}
