@@ -18,6 +18,4 @@ public interface PartMapper {
     void deleteAllParent(Long userId, Long childId);
     List<Node> selectAllParent(Long userId, Long childId);
     Integer countParent(Long userId, Long childId);
-
-    void clean();
 }

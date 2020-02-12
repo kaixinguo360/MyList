@@ -77,12 +77,12 @@ public class PartService {
     public void removeChildren(Long parentId, List<Long> childIds) {
         checkListPermission(parentId, true);
         partMapper.deleteChildren(parentId, childIds);
-        partMapper.clean();
+        clean();
     }
     public void removeAllChildren(Long parentId) {
         checkListPermission(parentId, true);
         partMapper.deleteAllChildren(parentId);
-        partMapper.clean();
+        clean();
     }
     public void removeParents(List<Long> childIds, List<Long> parentIds) {
         for (Long childId : childIds) {
@@ -92,12 +92,12 @@ public class PartService {
     public void removeParents(Long childId, List<Long> parentIds) {
         checkNodePermission(childId, true);
         partMapper.deleteParents(permissionChecker.getUserId(), childId, parentIds);
-        partMapper.clean();
+        clean();
     }
     public void removeAllParents(Long childId) {
         checkNodePermission(childId, true);
         partMapper.deleteAllParent(permissionChecker.getUserId(), childId);
-        partMapper.clean();
+        clean();
     }
 
     // ---- Set ---- //
@@ -105,13 +105,13 @@ public class PartService {
         checkListPermission(parentId, true);
         partMapper.deleteAllChildren(parentId);
         addChildren(parentId, childIds);
-        partMapper.clean();
+        clean();
     }
     public void setParents(Long childId, List<Long> parentIds) {
         checkNodePermission(childId, true);
         partMapper.deleteAllParent(permissionChecker.getUserId(), childId);
         addChildren(parentIds, Collections.singletonList(childId));
-        partMapper.clean();
+        clean();
     }
 
     // ---- Get ---- //
@@ -138,6 +138,14 @@ public class PartService {
         if (listNode == null) throw new DataException("No such node with nodeId=" + nodeId);
         permissionChecker.check(listNode, write);
         return listNode;
+    }
+    
+    // ---- Clean ---- //
+    private void clean() {
+        List<Long> ids = nodeMapper.selectAllHangingIds();
+        if (ids.size() > 0) {
+            nodeMapper.deleteAll(ids);
+        }
     }
 
     // ---- Factory ---- //

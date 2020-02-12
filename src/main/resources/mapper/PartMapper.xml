@@ -70,9 +70,9 @@
       and part_parent_id in (<foreach collection="parentIds" item="parentId" separator=",">#{parentId,jdbcType=BIGINT}</foreach>)
     <!-- EDITABLE -->
       and (
-        parent.node_user = ${userId}
+        parent.node_user = #{userId}
       or
-        (parent.node_user != ${userId} and parent.node_permission = 'public')
+        (parent.node_user != #{userId} and parent.node_permission = 'public')
       )
   </delete>
   <delete id="deleteAllParent">
@@ -82,9 +82,9 @@
       and part_content_id = #{childId,jdbcType=BIGINT}
     <!-- EDITABLE -->
       and (
-        parent.node_user = ${userId}
+        parent.node_user = #{userId}
         or
-        (parent.node_user != ${userId} and parent.node_permission = 'public')
+        (parent.node_user != #{userId} and parent.node_permission = 'public')
       )
   </delete>
   <select id="selectAllParent" resultMap="Node">
@@ -94,9 +94,9 @@
       and part_content_id = #{childId}
     <!-- AVAILABLE -->
       and (
-        parent.node_user = ${userId}
+        parent.node_user = #{userId}
         or
-        (parent.node_user != ${userId} and parent.node_permission in ('public', 'protect'))
+        (parent.node_user != #{userId} and parent.node_permission in ('public', 'protect'))
       )
   </select>
   <select id="countParent" parameterType="java.lang.Long" resultType="java.lang.Integer">
@@ -106,27 +106,11 @@
       and part_content_id = #{childId,jdbcType=BIGINT}
     <!-- AVAILABLE -->
       and (
-        parent.node_user = ${userId}
+        parent.node_user = #{userId}
         or
-        (parent.node_user != ${userId} and parent.node_permission in ('public', 'protect'))
+        (parent.node_user != #{userId} and parent.node_permission in ('public', 'protect'))
       )
     group by part_content_id
   </select>
-  
-  <delete id="clean">
-    delete from nodes
-    where id in
-          (
-            select content.id from (select * from nodes) content
-                                     left join parts p on content.id = p.part_content_id
-                                     left join (select * from nodes) parent on parent.id = p.part_parent_id
-            where
-              content.node_part = true
-              and
-              (parent.node_collection = true or parent.node_collection is null)
-            group by content.id
-            having count(parent.id) = 0
-          )
-  </delete>
 
 </mapper>

@@ -6,9 +6,15 @@ import java.util.List;
 
 @Mapper
 public interface NodeMapper {
-    int delete(Long id);
-    int insert(Node node);
+
+    void insert(Node node);
+
+    void update(Node node, boolean isSimple);
+
+    void delete(Long id);
+    void deleteAll(List<Long> ids);
+
     Node select(Long id);
     List<Node> selectAll();
-    int update(Node node, boolean isSimple);
+    List<Long> selectAllHangingIds();
 }
