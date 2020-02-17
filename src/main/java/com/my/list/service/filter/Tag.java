@@ -9,19 +9,19 @@ public class Tag {
 
     public Tag() {}
     public Tag(Long id) {
-        this(id, null, true);
+        this(id, null, true, null);
     }
     public Tag(String value) {
-        this(null, value, true);
+        this(null, value, true, "tag");
     }
     public Tag(String value, boolean strict) {
-        this(null, value, strict);
+        this(null, value, strict, "tag");
     }
-    private Tag(Long id, String value, boolean strict) {
+    private Tag(Long id, String value, boolean strict, String type) {
         this.strict = strict;
         this.value = value;
         this.id = id;
-        this.type = "tag";
+        this.type = type;
     }
 
     // ---- Setter & Getter ---- //

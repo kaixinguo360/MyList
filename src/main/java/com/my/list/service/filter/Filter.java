@@ -1,5 +1,6 @@
 package com.my.list.service.filter;
 
+import com.my.list.domain.MainData;
 import com.my.list.dto.Node;
 import com.my.list.service.data.ListService;
 
@@ -10,6 +11,48 @@ import java.util.Set;
 
 public class Filter {
     
+    public boolean filter(Node node) {
+        MainData mainData = node.getMainData();
+        return (
+            (this.part == null || this.part == mainData.getPart()) 
+                && (this.collection == null || this.collection == mainData.getCollection())
+                && (this.nsfw == null || this.nsfw == mainData.getNsfw())
+                && (this.like == null || this.like == mainData.getLike())
+                && (this.hide == null || this.hide == mainData.getHide())
+                && (this.types == null || this.types.contains(mainData.getType()))
+        );
+    }
+
+    Boolean cascade = null;
+    Boolean part = null;
+    Boolean collection = null;
+    public Boolean getCascade() {
+        return cascade;
+    }
+    public void setCascade(Boolean cascade) {
+        this.cascade = cascade;
+    }
+    public Boolean getPart() {
+        return part;
+    }
+    public void setPart(Boolean part) {
+        this.part = part;
+    }
+    public Boolean getCollection() {
+        return collection;
+    }
+    public void setCollection(Boolean collection) {
+        this.collection = collection;
+    }
+    
+    List<String> types = null;
+    public List<String> getTypes() {
+        return types;
+    }
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
     List<Condition> conditions = null;
     public Filter addCondition(Condition condition) {
         if (conditions == null) conditions = new ArrayList<>();

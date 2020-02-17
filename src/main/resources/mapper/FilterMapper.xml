@@ -61,6 +61,7 @@
       left join nodes parent on parent.id = p.part_parent_id
     </if>
     <where>
+      
       <!-- dynamic conditions -->
       <if test="filter.conditions!=null and filter.conditions.size()!=0">
         and
@@ -68,6 +69,25 @@
           content.${cond.column} ${cond.oper} ${cond.value}
         </foreach>
       </if>
+
+      <!-- types -->
+      <if test="filter.types!=null">
+        and
+        <if test="filter.types.size()==0">false</if>
+        <if test="filter.types.size()!=0">
+          content.node_type in
+          <foreach collection="filter.types" item="type" open="(" close=")" separator=",">#{type}</foreach>
+        </if>
+      </if>
+
+      <!-- part & collection -->
+      <if test="filter.part!=null">
+        and content.node_part = ${filter.part}
+      </if>
+      <if test="filter.collection!=null">
+        and content.node_collection = ${filter.collection}
+      </if>
+      
       <!-- tags and -->
       <if test="filter.andTags!=null and filter.andTags.size()!=0">
         and content.id in (
@@ -84,6 +104,7 @@
         having count(distinct parent.id) = ${filter.andTags.size()}
         )
       </if>
+      
       <!-- tags or -->
       <if test="filter.orTags!=null and filter.orTags.size()!=0">
         and
@@ -96,6 +117,7 @@
           )
         </if>
       </if>
+      
       <!-- tags not -->
       <if test="filter.notTags!=null and filter.notTags.size()!=0">
         and content.id not in (
@@ -110,6 +132,7 @@
         </where>
         )
       </if>
+      
       <!-- permission -->
       <if test="userId!=null">
         <if test="filter.permission!=null">
@@ -166,6 +189,7 @@
           and content.node_user = ${userId}
         </if>
       </if>
+      
       <!-- nsfw & like & hide -->
       <if test="filter.nsfw!=null">
         and content.node_nsfw = ${filter.nsfw}

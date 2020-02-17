@@ -1,5 +1,6 @@
 package com.my.list.type;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.list.domain.MainData;
 import com.my.list.dto.ListItem;
@@ -10,7 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class ListConfig {
@@ -38,20 +41,24 @@ public class ListConfig {
 
     private String generateExcerpt(Node node) {
         List<ListItem> list = node.getExtraList();
+        Map<String, Object> excerpt = new HashMap<>();
         if (list.size() == 0) {
             String text = node.getMainData().getTitle();
             if (StringUtils.isEmpty(text)) text = node.getMainData().getDescription();
             text = MyStringUtils.limit(text, 36);
-            return "{\"type\":\"node\",\"excerpt\":\"" + text + "\",\"count\":0}";
+            excerpt.put("type", "node");
+            excerpt.put("excerpt", text);
+            excerpt.put("count", 0);
         } else {
             MainData first = list.get(0).getNode().getMainData();
-            return "{\"type\":\""
-                + first.getType() +
-                "\",\"excerpt\":\""
-                + first.getExcerpt() +
-                "\",\"count\":"
-                + list.size() +
-                "}";
+            excerpt.put("type", first.getType());
+            excerpt.put("excerpt", first.getExcerpt());
+            excerpt.put("count", list.size());
+        }
+        try {
+            return objectMapper.writeValueAsString(excerpt);
+        } catch (JsonProcessingException e) {
+            return "{\"type\":\"node\",\"excerpt\":\"Error\",\"count\":0}";
         }
     }
     
