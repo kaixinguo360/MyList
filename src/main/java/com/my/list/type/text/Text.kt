@@ -8,7 +8,6 @@ class Text(
     var id: Long? = null,
     var content: String? = null
 ): ExtraData {
-    companion object { const val TYPE_NAME = "text" }
     override fun toString(): String {
         return "Text[$id,$content]"
     }

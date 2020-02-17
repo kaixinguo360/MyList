@@ -1,21 +1,35 @@
 package com.my.list.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.list.domain.ExtraData;
 import com.my.list.domain.MainData;
 import com.my.list.exception.DataException;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Component
 public class TypeConfig {
 
     private Map<String, Type> typeNames = new HashMap<>();
     private Map<Class<? extends ExtraData>, Type> typeClasses = new HashMap<>();
+    private ObjectMapper objectMapper;
+
+    public TypeConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public void addType(Type type) {
         typeNames.put(type.getTypeName(), type);
         typeClasses.put(type.getExtraDataClass(), type);
+        objectMapper.registerSubtypes(getTypes().stream()
+            .filter(Type::getHasExtraData)
+            .map(Type::getExtraDataClass)
+            .collect(Collectors.toList())
+        );
     }
 
     public Type getType(String typeName) {

@@ -9,7 +9,6 @@ class Music(
     var url: String? = null,
     var format: String? = null
 ): ExtraData {
-    companion object { const val TYPE_NAME = "music" }
     override fun toString(): String {
         return "Music[$id,$url,$format]"
     }

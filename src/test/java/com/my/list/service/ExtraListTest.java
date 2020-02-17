@@ -10,9 +10,13 @@ import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.service.data.NodeService;
 import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageConfig;
 import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicConfig;
 import com.my.list.type.text.Text;
+import com.my.list.type.text.TextConfig;
 import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +81,10 @@ public class ExtraListTest {
         //    [+]    imageNode  0       attachment
         //    [ ]    musicNode  0       alone
         //    [ ]    videoNode  0       alone
-        textNode = newNode(Text.TYPE_NAME, "Text Node", text);
-        imageNode = newNode(Image.TYPE_NAME, "Image Node", image);
-        musicNode = newNode(Music.TYPE_NAME, "Music Node", music);
-        videoNode = newNode(Video.TYPE_NAME, "Video Node", video);
+        textNode = newNode(TextConfig.TYPE_NAME, "Text Node", text);
+        imageNode = newNode(ImageConfig.TYPE_NAME, "Image Node", image);
+        musicNode = newNode(MusicConfig.TYPE_NAME, "Music Node", music);
+        videoNode = newNode(VideoConfig.TYPE_NAME, "Video Node", video);
         textNode.getMainData().setPart(true);
         imageNode.getMainData().setPart(true);
         NodeService nodeService = userService.getUserContext(token).nodeService;

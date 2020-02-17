@@ -12,7 +12,6 @@ class Image(
     var gallery: String? = null,
     var source: String? = null
 ): ExtraData {
-    companion object { const val TYPE_NAME = "image" }
     override fun toString(): String {
         return "Image[$id,$url,$type,$author,$gallery,$source]"
     }

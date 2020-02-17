@@ -17,9 +17,13 @@ import com.my.list.service.filter.Permission;
 import com.my.list.service.filter.Sort;
 import com.my.list.service.filter.Tag;
 import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageConfig;
 import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicConfig;
 import com.my.list.type.text.Text;
+import com.my.list.type.text.TextConfig;
 import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -192,16 +196,16 @@ public class ControllerTest {
 
         // node - post
         textNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(newNode(Text.TYPE_NAME, "Text Node", text)))
+            .content(toJson(newNode(TextConfig.TYPE_NAME, "Text Node", text)))
         ));
         imageNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(newNode(Image.TYPE_NAME, "Image Node", image)))
+            .content(toJson(newNode(ImageConfig.TYPE_NAME, "Image Node", image)))
         ));
         musicNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(newNode(Music.TYPE_NAME, "Music Node", music)))
+            .content(toJson(newNode(MusicConfig.TYPE_NAME, "Music Node", music)))
         ));
         videoNode = assertNode(mvc.perform(MockMvcRequestBuilders.post("/api/node").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(newNode(Video.TYPE_NAME, "Video Node", video)))
+            .content(toJson(newNode(VideoConfig.TYPE_NAME, "Video Node", video)))
         ));
 
         // node - get

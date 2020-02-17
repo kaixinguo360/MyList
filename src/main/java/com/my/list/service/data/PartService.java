@@ -40,7 +40,7 @@ public class PartService {
         Node parentNode = checkListPermission(parentId, true);
         Type type = typeConfig.getType(parentNode);
         
-        if (type.isExtraListUnique()) {
+        if (type.getExtraListUnique()) {
             Set<Long> ids = partMapper.selectAllChildren(parentId)
                 .stream().map(Node::getId).collect(Collectors.toSet());
             childIds = (ids.size() == 0) ?

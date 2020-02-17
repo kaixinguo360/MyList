@@ -9,12 +9,16 @@ import com.my.list.dto.Node;
 import com.my.list.dto.NodeDTO;
 import com.my.list.service.data.NodeService;
 import com.my.list.type.image.Image;
+import com.my.list.type.image.ImageConfig;
 import com.my.list.type.image.ImageMapper;
 import com.my.list.type.music.Music;
+import com.my.list.type.music.MusicConfig;
 import com.my.list.type.music.MusicMapper;
 import com.my.list.type.text.Text;
+import com.my.list.type.text.TextConfig;
 import com.my.list.type.text.TextMapper;
 import com.my.list.type.video.Video;
+import com.my.list.type.video.VideoConfig;
 import com.my.list.type.video.VideoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +78,7 @@ public class ExtraDataTest {
         NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // addNode
-        Node node = newNode(Text.TYPE_NAME, "Text Node", text);
+        Node node = newNode(TextConfig.TYPE_NAME, "Text Node", text);
         MainData mainData = node.getMainData();
         nodeService.add(node);
         assertEquals(1, nodeMapper.selectAll().size());
@@ -105,7 +109,7 @@ public class ExtraDataTest {
         NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // addNode
-        Node node = newNode(Image.TYPE_NAME, "Image Node", image);
+        Node node = newNode(ImageConfig.TYPE_NAME, "Image Node", image);
         MainData mainData = node.getMainData();
         nodeService.add(node);
         assertEquals(1, nodeMapper.selectAll().size());
@@ -136,7 +140,7 @@ public class ExtraDataTest {
         NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // addNode
-        Node node = newNode(Music.TYPE_NAME, "Music Node", music);
+        Node node = newNode(MusicConfig.TYPE_NAME, "Music Node", music);
         MainData mainData = node.getMainData();
         nodeService.add(node);
         assertEquals(1, nodeMapper.selectAll().size());
@@ -167,7 +171,7 @@ public class ExtraDataTest {
         NodeService nodeService = userService.getUserContext(token).nodeService;
         
         // addNode
-        Node node = newNode(Video.TYPE_NAME, "Video Node", video);
+        Node node = newNode(VideoConfig.TYPE_NAME, "Video Node", video);
         MainData mainData = node.getMainData();
         nodeService.add(node);
         assertEquals(1, nodeMapper.selectAll().size());
