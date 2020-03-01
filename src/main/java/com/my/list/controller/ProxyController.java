@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.ResourceAccessException;
@@ -41,20 +42,33 @@ public class ProxyController {
 
     @ResponseBody
     @RequestMapping(value = "/static/{url64}")
-    public ResponseEntity<byte[]> proxyStaticAssets(HttpServletRequest request, @PathVariable String url64) {
-        
+    public ResponseEntity<byte[]> proxyStaticAssets(
+        HttpServletRequest request,
+        @PathVariable String url64,
+        @RequestBody(required = false) byte[] body
+    ) {
+
         String urlStr = decodeBase64Url(url64);
+        
+        // Get url
         URL url = null;
         try { url = new URL(urlStr); } catch (MalformedURLException ignored) {}
 
+        // Get method
+        HttpMethod method = HttpMethod.resolve(request.getMethod());
+        method = method == null ? HttpMethod.GET : method;
+        
+        // Get headers
         HttpHeaders headers = getHeaders(request, url == null ? request.getRemoteHost() : url.getHost());
-        HttpEntity<String> requestEntity = new HttpEntity<>("", headers);
 
+        // Exchange request
         try {
-            return restTemplate.exchange(urlStr, HttpMethod.GET, requestEntity, byte[].class);
+            HttpEntity<byte[]> exchangeRequest = new HttpEntity<>(body, headers);
+            return restTemplate.exchange(urlStr, method, exchangeRequest, byte[].class);
         } catch (RestClientResponseException e) {
             HttpStatus status = HttpStatus.resolve(e.getRawStatusCode());
-            return new ResponseEntity<>(e.getResponseBodyAsByteArray(), status == null ? HttpStatus.INTERNAL_SERVER_ERROR : status);
+            status = status == null ? HttpStatus.INTERNAL_SERVER_ERROR : status;
+            return new ResponseEntity<>(e.getResponseBodyAsByteArray(), status);
         } catch (ResourceAccessException e) {
             return new ResponseEntity<>(e.getMessage().getBytes(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException e) {
@@ -66,20 +80,22 @@ public class ProxyController {
     @RequestMapping(value = "/page/{url64}")
     public ResponseEntity<byte[]> proxyPage(HttpServletRequest request, @PathVariable String url64) {
 
+        URL url; Document doc;
         String urlStr = decodeBase64Url(url64);
-        URL url;
-        Document doc;
 
+        // Get document
         try {
             url = new URL(urlStr);
             Connection connect = Jsoup.connect(urlStr);
             HttpHeaders headers = getHeaders(request, url.getHost());
+            headers.set("Accept-Encoding", "gzip, deflate");
             Connection data = connect.headers(headers.toSingleValueMap());
             doc = data.get();
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage().getBytes(), HttpStatus.BAD_REQUEST);
         }
 
+        // Set referrer policy
         Elements referrers = doc.select("meta[name=referrer]");
         if (referrers.size() > 0) {
             for (Element referrer : referrers) {
@@ -89,6 +105,7 @@ public class ProxyController {
             doc.head().append("<meta name=\"referrer\" content=\"never\">");
         }
 
+        // Replace with absolute url
         Elements scripts = doc.select("script[src]");
         for (Element script : scripts) {
             String src = script.absUrl("src");
@@ -96,22 +113,17 @@ public class ProxyController {
                 script.attr("src", src);
             }
         }
-
-        Elements links = doc.select("link[href]");
-        for (Element link : links) {
-            String href = link.absUrl("href");
-            link.attr("href", href);
+        for (Element link : doc.select("link[href]")) {
+            link.attr("href", link.absUrl("href"));
+        }
+        for (Element a : doc.select("a[href]")) {
+            a.attr("href", "/proxy/page/" + encodeBase64Url(a.absUrl("href")));
         }
 
-        Elements as = doc.select("a[href]");
-        for (Element s : as) {
-            String href = s.absUrl("href");
-            s.attr("href", "/proxy/page/" + encodeBase64Url(href));
-        }
-
+        // Add hook script
         addHook(doc, url);
 
-        return new ResponseEntity<>(doc.toString().getBytes(), HttpStatus.OK);
+        return new ResponseEntity<>(doc.toString().getBytes(doc.charset()), HttpStatus.OK);
     }
 
 
