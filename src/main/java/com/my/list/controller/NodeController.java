@@ -8,6 +8,7 @@ import com.my.list.service.data.ListService;
 import com.my.list.service.data.NodeService;
 import com.my.list.service.data.PartService;
 import com.my.list.service.filter.Filter;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class NodeController {
     // ------------ Single Node ------------ //
 
     @PostMapping
+    @Transactional
     public NodeOutputWrap post(
         @RequestBody NodeInputWrap input,
         @CurrentContext NodeService nodeService,
@@ -44,6 +46,7 @@ public class NodeController {
     }
 
     @PutMapping
+    @Transactional
     public NodeOutputWrap put(
         @RequestBody NodeInputWrap input,
         @RequestParam(required = false, value = "simple") Boolean isSimple,
@@ -79,6 +82,7 @@ public class NodeController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public void delete(
         @PathVariable Long id,
         @CurrentContext NodeService nodeService
@@ -90,6 +94,7 @@ public class NodeController {
     // ------------ Batch Node ------------ //
 
     @PostMapping("batch")
+    @Transactional
     public List<NodeOutputWrap> post(
         @RequestBody List<NodeInputWrap> inputs,
         @CurrentContext NodeService nodeService,
@@ -100,14 +105,19 @@ public class NodeController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping("search") public List<Node> getAll(@CurrentContext ListService listService) {
+    @GetMapping("search")
+    public List<Node> getAll(@CurrentContext ListService listService) {
         return listService.getAll(new Filter());
     }
-    @PostMapping("search") public List<Node> getAll(@RequestBody Filter filter, @CurrentContext ListService listService) {
+    
+    @PostMapping("search")
+    @Transactional
+    public List<Node> getAll(@RequestBody Filter filter, @CurrentContext ListService listService) {
         return listService.getAll(filter);
     }
 
     @PutMapping("batch")
+    @Transactional
     public List<NodeOutputWrap> put(
         @RequestBody List<NodeInputWrap> inputs,
         @RequestParam(required = false, value = "simple") Boolean isSimple,
@@ -119,7 +129,9 @@ public class NodeController {
             .map(input -> put(input, isSimple, tagAction, nodeService, partService))
             .collect(Collectors.toList());
     }
+    
     @PutMapping("tag")
+    @Transactional
     public List<NodeOutputWrap> tag(
         @RequestBody List<Long> nodeIds,
         @RequestParam(required = false, value = "id") List<Long> tagIds,
@@ -133,6 +145,7 @@ public class NodeController {
     }
 
     @DeleteMapping("batch")
+    @Transactional
     public void delete(
         @RequestBody List<Long> ids,
         @CurrentContext NodeService nodeService

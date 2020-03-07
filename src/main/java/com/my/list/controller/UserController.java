@@ -4,6 +4,7 @@ import com.my.list.controller.util.Authorization;
 import com.my.list.controller.util.SimpleController;
 import com.my.list.domain.User;
 import com.my.list.service.UserService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserController {
     }
 
     @PostMapping
+    @Transactional
     public User post(@RequestBody User user) {
         userService.add(user);
         return user;
@@ -36,12 +38,14 @@ public class UserController {
     }
 
     @PutMapping
+    @Transactional
     public User put(@RequestBody User user) {
         userService.update(user);
         return user;
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public void delete(@PathVariable Long id) {
         userService.remove(id);
     }
