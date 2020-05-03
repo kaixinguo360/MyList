@@ -42,6 +42,27 @@ CREATE TABLE `options` (
                            UNIQUE KEY `option_name` (`option_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE `tags` (
+                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                          `user` bigint(20) unsigned NOT NULL,
+
+                          `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',
+                          `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modify Time',
+
+                          `title` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+                          `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+
+                          PRIMARY KEY (`id`),
+                          UNIQUE KEY `tag_title` (`title`),
+                          KEY `ctime` (`ctime`),
+                          KEY `mtime` (`mtime`),
+                          KEY `user` (`user`),
+
+                          CONSTRAINT `tags_users` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
