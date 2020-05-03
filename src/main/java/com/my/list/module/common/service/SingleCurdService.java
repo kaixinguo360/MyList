@@ -3,8 +3,6 @@ package com.my.list.module.common.service;
 import com.my.list.module.common.Resource;
 import com.my.list.system.mapper.User;
 
-import java.util.List;
-
 public interface SingleCurdService<T extends Resource> {
 
     /**
@@ -15,12 +13,7 @@ public interface SingleCurdService<T extends Resource> {
     /**
      * GET /{resource}/{id}
      */
-    T read(User user, Long id);
-
-    /**
-     * GET /{resource}
-     */
-    List<T> readAll(User user, Integer limit, Integer offset);
+    T get(User user, Long id);
 
     /**
      * PUT /{resource}

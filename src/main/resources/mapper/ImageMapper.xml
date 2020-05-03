@@ -40,12 +40,6 @@
     from images
     where id = #{resource.id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select *
-    from images
-    where user = #{user.id,jdbcType=BIGINT}
-    limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
-  </select>
   <update id="update">
     update images
     set id              = #{resource.id,jdbcType=BIGINT},
@@ -63,9 +57,39 @@
     where id = #{id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </delete>
 
-<!--  &lt;!&ndash; Batch Crud &ndash;&gt;-->
-<!--  <delete id="batchDelete">-->
-<!--    delete from images where id in-->
-<!--    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>-->
-<!--  </delete>-->
+  <!-- Search -->
+  <select id="search" resultMap="BaseResultMap">
+    select distinct images.*
+    from images
+    <where>
+      <if test="includeText!=null and includeText.size()!=0">
+        and
+        <foreach collection="includeText" item="text" separator="and">
+          (
+          images.page_title like "%${text}%"
+          or
+          images.image_title like "%${text}%"
+          )
+        </foreach>
+      </if>
+      <if test="excludeText!=null and excludeText.size()!=0">
+        and
+        <foreach collection="excludeText" item="text" separator="and">
+          (
+          images.page_title not like "%${text}%"
+          and
+          images.image_title not like "%${text}%"
+          )
+        </foreach>
+      </if>
+    </where>
+    limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
+  </select>
+  
 </mapper>
+
+  <!--  &lt;!&ndash; Batch Crud &ndash;&gt;-->
+  <!--  <delete id="batchDelete">-->
+  <!--    delete from images where id in-->
+  <!--    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>-->
+  <!--  </delete>-->

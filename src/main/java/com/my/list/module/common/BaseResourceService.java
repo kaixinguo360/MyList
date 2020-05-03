@@ -1,6 +1,8 @@
 package com.my.list.module.common;
 
 import com.my.list.exception.DataException;
+import com.my.list.module.common.mapper.ResourceMapper;
+import com.my.list.module.common.service.ResourceService;
 import com.my.list.system.mapper.User;
 
 import java.sql.Timestamp;
@@ -29,16 +31,9 @@ public abstract class BaseResourceService<T extends Resource> implements Resourc
     /**
      * GET /{resource}/{id}
      */
-    public T read(User user, Long id) {
+    public T get(User user, Long id) {
         if (id == null) throw new DataException("Input id is null");
         return mapper.select(user, id);
-    }
-
-    /**
-     * GET /{resource}
-     */
-    public List<T> readAll(User user, Integer limit, Integer offset) {
-        return mapper.selectAll(user, limit, offset);
     }
 
     /**
@@ -60,4 +55,21 @@ public abstract class BaseResourceService<T extends Resource> implements Resourc
         mapper.delete(user, id);
     }
 
+    // ----- Search ----- //
+
+    /**
+     * GET /{resource}
+     */
+    public List<T> search(
+        User user,
+        List<Long> andTags,
+        List<Long> orTags,
+        List<Long> notTags,
+        List<String> includeText,
+        List<String> excludeText,
+        Integer limit,
+        Integer offset
+    ) {
+        return mapper.search(user, andTags, orTags, notTags, includeText, excludeText, limit, offset);
+    }
 }

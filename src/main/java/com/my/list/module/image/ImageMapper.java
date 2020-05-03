@@ -1,6 +1,6 @@
 package com.my.list.module.image;
 
-import com.my.list.module.common.ResourceMapper;
+import com.my.list.module.common.mapper.ResourceMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
