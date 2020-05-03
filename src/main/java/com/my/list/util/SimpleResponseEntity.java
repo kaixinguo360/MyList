@@ -1,27 +1,29 @@
 package com.my.list.util;
 
 import com.my.list.exception.SimpleException;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Data
 public class SimpleResponseEntity {
-    
-    Object result;
-    boolean success;
-    String error;
-    String message;
-    HttpStatus status;
 
-    SimpleResponseEntity() {}
-    SimpleResponseEntity(Object result) {
+    private Object result;
+    private boolean success;
+    private String error;
+    private String message;
+    private HttpStatus status;
+
+    public SimpleResponseEntity() {}
+    public SimpleResponseEntity(Object result) {
         this.result = result;
         this.success = true;
         this.error = null;
         this.message = "OK";
         this.status = HttpStatus.OK;
     }
-    SimpleResponseEntity(Exception e) {
+    public SimpleResponseEntity(Exception e) {
         this.result = null;
         this.success = false;
         this.error = e.getClass().getSimpleName();
@@ -30,7 +32,7 @@ public class SimpleResponseEntity {
             ((SimpleException) e).getStatus() :
             HttpStatus.INTERNAL_SERVER_ERROR;
     }
-    SimpleResponseEntity(HttpServletRequest request) {
+    public SimpleResponseEntity(HttpServletRequest request) {
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         status = HttpStatus.resolve(statusCode);
         if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -41,33 +43,11 @@ public class SimpleResponseEntity {
         this.message = status.getReasonPhrase();
     }
 
-    public Object getResult() {
-        return result;
-    }
-    public boolean isSuccess() {
-        return success;
-    }
-    public String getError() {
-        return error;
-    }
-    public String getMessage() {
-        return message;
+    public HttpStatus getHttpStatus() {
+        return status;
     }
     public int getStatus() {
         return status.value();
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-    public void setError(String error) {
-        this.error = error;
-    }
-    public void setMessage(String message) {
-        this.message = message;
     }
     public void setStatus(int status) {
         this.status = HttpStatus.valueOf(status);

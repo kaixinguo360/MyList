@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.my.list.domain.ImageMapper">
-  <resultMap id="BaseResultMap" type="com.my.list.domain.Image">
+<mapper namespace="com.my.list.module.image.ImageMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.module.image.Image">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="user" jdbcType="BIGINT" property="user"/>
     <result column="ctime" jdbcType="TIMESTAMP" property="ctime"/>
@@ -60,12 +60,12 @@
   <delete id="delete">
     delete
     from images
-    where id = #{resource.id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </delete>
 
-  <!-- Batch Crud -->
-  <delete id="batchDelete">
-    delete from images where id in
-    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
-  </delete>
+<!--  &lt;!&ndash; Batch Crud &ndash;&gt;-->
+<!--  <delete id="batchDelete">-->
+<!--    delete from images where id in-->
+<!--    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>-->
+<!--  </delete>-->
 </mapper>

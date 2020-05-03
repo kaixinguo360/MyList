@@ -1,8 +1,8 @@
 package com.my.list.util;
 
 import com.my.list.Constants;
-import com.my.list.domain.User;
 import com.my.list.exception.UnauthorizedException;
+import com.my.list.system.mapper.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

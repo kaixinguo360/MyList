@@ -1,9 +1,9 @@
 package com.my.list.util;
 
 import com.my.list.Constants;
-import com.my.list.domain.User;
 import com.my.list.exception.UnauthorizedException;
-import com.my.list.service.UserService;
+import com.my.list.system.mapper.User;
+import com.my.list.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

@@ -16,8 +16,8 @@
   </settings>
 
   <typeAliases>
-<!--    <typeAlias alias="User" type="com.my.list.domain.User" />-->
-<!--    <typeAlias alias="Image" type="com.my.list.domain.Image" />-->
+<!--    <typeAlias alias="User" type="com.my.list.system.mapper.User" />-->
+<!--    <typeAlias alias="Image" type="Image" />-->
   </typeAliases>
 
 </configuration>
