@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ImageService extends BaseResourceService<Image> {
-    public ImageService(ImageMapper mapper) {
-        super(mapper);
+    public ImageService(ImageMapper mapper, ImageTagMapper tagMapper) {
+        super(mapper, tagMapper);
     }
 }

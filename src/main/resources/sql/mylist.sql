@@ -19,6 +19,8 @@ END;;
 
 DELIMITER ;
 
+ -- User module --
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -32,6 +34,8 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 insert into users(user_name, user_pass) value ('TestUser', '*6A7A490FB9DC8C33C2B025A91737077A7E9CC5E5');
+
+ -- Option module --
 
 DROP TABLE IF EXISTS `options`;
 CREATE TABLE `options` (
@@ -63,6 +67,8 @@ CREATE TABLE `tags` (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ -- Image module --
+
 DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -85,4 +91,20 @@ CREATE TABLE `images` (
                           CONSTRAINT `images_users` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `image_tags`;
+CREATE TABLE `image_tags` (
+                          `image_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                          `tag_id` bigint(20) unsigned NOT NULL,
+                          PRIMARY KEY (`image_id`, `tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+select distinct images.*, tags.name
+from images
+         left join image_tags on images.id = image_tags.image_id
+         left join tags on tags.id = image_tags.tag_id
+where (
+    tags.name = "test" or tags.name = "aaa"
+          )
 

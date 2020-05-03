@@ -12,6 +12,7 @@ public class DefaultExceptionHandler {
         SimpleException.class,
     })
     public ResponseEntity<SimpleResponseEntity> exceptionHandler(Exception e) {
+        e.printStackTrace();
         SimpleResponseEntity response = new SimpleResponseEntity(e);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }

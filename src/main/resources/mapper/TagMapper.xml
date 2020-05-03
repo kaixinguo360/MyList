@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.my.list.module.tag.TagMapper">
-  <resultMap id="BaseResultMap" type="com.my.list.module.tag.Tag">
+<mapper namespace="com.my.list.system.mapper.TagMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.system.mapper.Tag">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="user" jdbcType="BIGINT" property="user"/>
     <result column="ctime" jdbcType="TIMESTAMP" property="ctime"/>
     <result column="mtime" jdbcType="TIMESTAMP" property="mtime"/>
-    <result column="title" jdbcType="VARCHAR" property="title"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
     <result column="description" jdbcType="VARCHAR" property="description"/>
   </resultMap>
 
@@ -17,7 +17,7 @@
         user,
         ctime,
         mtime,
-        title,
+        name,
         description
     )
     values (
@@ -25,28 +25,28 @@
                #{user.id,jdbcType=BIGINT},
                #{resource.ctime,jdbcType=TIMESTAMP},
                #{resource.mtime,jdbcType=TIMESTAMP},
-               #{resource.title,jdbcType=VARCHAR},
+               #{resource.name,jdbcType=VARCHAR},
                #{resource.description,jdbcType=VARCHAR}
     )
   </insert>
   <select id="select" resultMap="BaseResultMap">
     select *
     from tags
-    where id = #{resource.id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+    where name = #{name,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </select>
   <update id="update">
     update tags
     set id              = #{resource.id,jdbcType=BIGINT},
         user            = #{resource.user,jdbcType=BIGINT},
         mtime           = #{resource.mtime,jdbcType=TIMESTAMP},
-        title           = #{resource.pageTitle,jdbcType=VARCHAR},
-        description     = #{resource.pageUrl,jdbcType=VARCHAR}
+        name            = #{resource.name,jdbcType=VARCHAR},
+        description     = #{resource.description,jdbcType=VARCHAR}
     where id = #{resource.id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </update>
   <delete id="delete">
     delete
     from tags
-    where id = #{id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+    where name = #{name,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
   </delete>
 
   <!-- Search -->
@@ -58,7 +58,7 @@
         and
         <foreach collection="includeText" item="text" separator="and">
           (
-          tags.title like "%${text}%"
+          tags.name like "%${text}%"
           or
           tags.description like "%${text}%"
           )
@@ -68,7 +68,7 @@
         and
         <foreach collection="excludeText" item="text" separator="and">
           (
-          tags.title not like "%${text}%"
+          tags.name not like "%${text}%"
           and
           tags.description not like "%${text}%"
           )
@@ -77,11 +77,5 @@
     </where>
     limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
   </select>
-  
-</mapper>
 
-  <!--  &lt;!&ndash; Batch Crud &ndash;&gt;-->
-  <!--  <delete id="batchDelete">-->
-  <!--    delete from tags where id in-->
-  <!--    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>-->
-  <!--  </delete>-->
+</mapper>

@@ -13,9 +13,9 @@ public interface SearchService<T extends Resource> {
      */
     List<T> search(
         User user,
-        List<Long> andTags,
-        List<Long> orTags,
-        List<Long> notTags,
+        List<String> andTags,
+        List<String> orTags,
+        List<String> notTags,
         List<String> includeText,
         List<String> excludeText,
         Integer limit,

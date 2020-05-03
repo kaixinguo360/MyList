@@ -1,19 +1,21 @@
-package com.my.list.module.common;
+package com.my.list.system.mapper;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Timestamp;
-import java.util.List;
 
+@Builder
 @Data
-public class Resource {
+public class Tag {
 
     private Long id;
     private Long user;
 
     private Timestamp ctime;
     private Timestamp mtime;
-    
-    private List<String> tags;
-    
+
+    private String name;
+    private String description;
+
 }

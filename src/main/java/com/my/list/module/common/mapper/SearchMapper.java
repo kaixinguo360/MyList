@@ -12,9 +12,9 @@ public interface SearchMapper<T extends Resource> {
 
     List<T> search(
         @Param("user") User user,
-        @Param("andTags") List<Long> andTags,
-        @Param("orTags") List<Long> orTags,
-        @Param("notTags") List<Long> notTags,
+        @Param("andTags") List<String> andTags,
+        @Param("orTags") List<String> orTags,
+        @Param("notTags") List<String> notTags,
         @Param("includeText") List<String> includeText,
         @Param("excludeText") List<String> excludeText,
         @Param("limit") Integer limit,

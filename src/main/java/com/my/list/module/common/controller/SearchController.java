@@ -12,9 +12,9 @@ public interface SearchController<T> {
      */
     List<T> search(
         User user,
-        @RequestParam(required = false) List<Long> andTags,
-        @RequestParam(required = false) List<Long> orTags,
-        @RequestParam(required = false) List<Long> notTags,
+        @RequestParam(required = false) List<String> andTags,
+        @RequestParam(required = false) List<String> orTags,
+        @RequestParam(required = false) List<String> notTags,
         @RequestParam(required = false) List<String> includeText,
         @RequestParam(required = false) List<String> excludeText,
         @RequestParam(required = false) Integer limit,

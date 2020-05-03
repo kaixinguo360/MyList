@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.module.image.ImageTagMapper">
+  
+  <resultMap id="BaseResultMap" type="com.my.list.module.image.Image">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="user" jdbcType="BIGINT" property="user"/>
+    <result column="ctime" jdbcType="TIMESTAMP" property="ctime"/>
+    <result column="mtime" jdbcType="TIMESTAMP" property="mtime"/>
+    <result column="page_title" jdbcType="VARCHAR" property="pageTitle"/>
+    <result column="page_url" jdbcType="VARCHAR" property="pageUrl"/>
+    <result column="image_title" jdbcType="VARCHAR" property="imageTitle"/>
+    <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+    <collection property="tags" ofType="java.lang.String">
+      <result column="tags.name"/>
+    </collection>
+  </resultMap>
+  
+  <insert id="addTag">
+    insert into image_tags (
+      image_id,
+      tag_id
+    )
+    values (
+             #{resourceId,jdbcType=BIGINT},
+             #{tagId,jdbcType=BIGINT}
+           )
+  </insert>
+  
+  <delete id="removeTag">
+    delete
+    from image_tags
+    where image_id = #{resourceId,jdbcType=BIGINT} and tag_id = #{tagId,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="getTags" resultType="java.lang.String">
+    select tags.name
+    from images
+        inner join image_tags on images.id = image_tags.image_id
+        inner join tags on tags.id = image_tags.tag_id
+    where images.id = #{resourceId,jdbcType=BIGINT}
+  </select>
+
+</mapper>

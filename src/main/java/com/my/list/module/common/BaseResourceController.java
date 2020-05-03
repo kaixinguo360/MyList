@@ -5,6 +5,7 @@ import com.my.list.module.common.service.ResourceService;
 import com.my.list.system.mapper.User;
 import com.my.list.util.CurrentUser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public abstract class BaseResourceController<T extends Resource> implements Reso
      * POST /{resource}
      */
     @PostMapping("")
+    @Transactional
     public Object post(@CurrentUser User user, @RequestBody T resource) {
         log.debug("post");
         service.create(user, resource);
@@ -43,6 +45,7 @@ public abstract class BaseResourceController<T extends Resource> implements Reso
      * PUT /{resource}
      */
     @PutMapping("")
+    @Transactional
     public Object put(@CurrentUser User user, @RequestBody T resource) {
         log.debug("put");
         service.update(user, resource);
@@ -53,6 +56,7 @@ public abstract class BaseResourceController<T extends Resource> implements Reso
      * DELETE /{resource}/{id}
      */
     @DeleteMapping("/{id}")
+    @Transactional
     public void delete(@CurrentUser User user, @PathVariable Long id) {
         log.debug("delete");
         service.delete(user, id);
@@ -66,21 +70,14 @@ public abstract class BaseResourceController<T extends Resource> implements Reso
     @GetMapping("")
     public List<T> search(
         @CurrentUser User user,
-        @RequestParam(required = false) List<Long> andTags,
-        @RequestParam(required = false) List<Long> orTags,
-        @RequestParam(required = false) List<Long> notTags,
+        @RequestParam(required = false) List<String> andTags,
+        @RequestParam(required = false) List<String> orTags,
+        @RequestParam(required = false) List<String> notTags,
         @RequestParam(required = false) List<String> includeText,
         @RequestParam(required = false) List<String> excludeText,
-        @RequestParam(required = false) Integer limit,
-        @RequestParam(required = false) Integer offset
+        @RequestParam(required = false, defaultValue = "100") Integer limit,
+        @RequestParam(required = false, defaultValue = "0") Integer offset
     ) {
-        System.out.println(andTags);
-        System.out.println(orTags);
-        System.out.println(notTags);
-        System.out.println(includeText);
-        System.out.println(excludeText);
-        System.out.println(limit);
-        System.out.println(offset);
         return service.search(user, andTags, orTags, notTags, includeText, excludeText, limit, offset);
     }
 }

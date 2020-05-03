@@ -10,6 +10,9 @@
     <result column="page_url" jdbcType="VARCHAR" property="pageUrl"/>
     <result column="image_title" jdbcType="VARCHAR" property="imageTitle"/>
     <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+    <collection property="tags" ofType="java.lang.String">
+      <result column="tags.name"/>
+    </collection>
   </resultMap>
 
   <!-- Single Crud -->
@@ -36,9 +39,11 @@
     )
   </insert>
   <select id="select" resultMap="BaseResultMap">
-    select *
+    select images.*, tags.name
     from images
-    where id = #{resource.id,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+        left join image_tags on images.id = image_tags.image_id
+        left join tags on tags.id = image_tags.tag_id
+    where images.id = #{id,jdbcType=BIGINT} and images.user = #{user.id,jdbcType=BIGINT}
   </select>
   <update id="update">
     update images
@@ -59,8 +64,10 @@
 
   <!-- Search -->
   <select id="search" resultMap="BaseResultMap">
-    select distinct images.*
+    select distinct images.*, tags.name
     from images
+        left join image_tags on images.id = image_tags.image_id
+        left join tags on tags.id = image_tags.tag_id
     <where>
       <if test="includeText!=null and includeText.size()!=0">
         and
@@ -81,6 +88,44 @@
           images.image_title not like "%${text}%"
           )
         </foreach>
+      </if>
+      <if test="andTags!=null and andTags.size()!=0">
+        and images.id in (
+        select distinct images.id
+        from images
+        left join image_tags on images.id = image_tags.image_id
+        left join tags on tags.id = image_tags.tag_id
+        where
+        <foreach collection="andTags" item="tagName" separator="or">
+          tags.name = #{tagName,jdbcType=VARCHAR}
+        </foreach>
+        group by images.id
+        having count(distinct tags.id) = ${andTags.size()}
+        )
+      </if>
+      <if test="orTags!=null and orTags.size()!=0">
+        and images.id in (
+        select distinct images.id
+        from images
+        left join image_tags on images.id = image_tags.image_id
+        left join tags on tags.id = image_tags.tag_id
+        where
+        <foreach collection="orTags" item="tagName" separator="or">
+          tags.name = #{tagName,jdbcType=VARCHAR}
+        </foreach>
+        )
+      </if>
+      <if test="notTags!=null and notTags.size()!=0">
+        and images.id not in (
+        select distinct images.id
+        from images
+        left join image_tags on images.id = image_tags.image_id
+        left join tags on tags.id = image_tags.tag_id
+        where
+        <foreach collection="notTags" item="tagName" separator="or">
+          tags.name = #{tagName,jdbcType=VARCHAR}
+        </foreach>
+        )
       </if>
     </where>
     limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
