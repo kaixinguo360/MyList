@@ -8,7 +8,7 @@
     <result column="user_email" jdbcType="VARCHAR" property="email"/>
     <result column="user_status" jdbcType="VARCHAR" property="status"/>
   </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  <delete id="delete" parameterType="java.lang.Long">
     delete
     from users
     where id = #{id,jdbcType=BIGINT}
@@ -19,7 +19,7 @@
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
             #{email,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.my.list.domain.User">
+  <update id="update" parameterType="com.my.list.domain.User">
     update users
     set user_name   = #{name,jdbcType=VARCHAR},
         user_pass   = #{pass,jdbcType=VARCHAR},
@@ -27,7 +27,7 @@
         user_status = #{status,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="select" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select * from users
     where id = #{id,jdbcType=BIGINT}
   </select>

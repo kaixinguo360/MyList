@@ -26,7 +26,7 @@ public class UserService {
     }
     public User get(Long id) {
         if (id == null) throw new DataException("Input id is null");
-        return userMapper.selectByPrimaryKey(id);
+        return userMapper.select(id);
     }
     public List<User> getAll() {
         return userMapper.selectAll();
@@ -34,12 +34,12 @@ public class UserService {
     public void update(User user) {
         if (user == null) throw new DataException("Input user is null");
         if (user.getId() == null) throw new DataException("Id of input user is not set.");
-        userMapper.updateByPrimaryKey(user);
+        userMapper.update(user);
         invalidateToken(user.getId());
     }
     public void remove(Long id) {
         if (id == null) throw new DataException("Input id is null");
-        userMapper.deleteByPrimaryKey(id);
+        userMapper.delete(id);
         invalidateToken(id);
     }
 
@@ -78,7 +78,7 @@ public class UserService {
         if (!tokens.containsKey(token)) throw new UnauthorizedException("No such token, token=" + token);
         return tokens.get(token);
     }
-    
+
     // ---- Admin ---- //
     public Set<String> adminTokens = new HashSet<>();
     public String generateAdminToken(String pass) {
@@ -105,6 +105,5 @@ public class UserService {
         if (token == null) throw new DataException("Input admin token is null");
         if (!adminTokens.contains(token)) throw new UnauthorizedException("No such admin token, token=" + token);
     }
-    
 
 }

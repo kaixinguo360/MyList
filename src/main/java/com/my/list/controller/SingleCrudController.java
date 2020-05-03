@@ -1,10 +1,11 @@
 package com.my.list.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.list.ResourceServiceManager;
+import com.my.list.ResourceConfigManager;
+import com.my.list.domain.Resource;
 import com.my.list.domain.User;
 import com.my.list.exception.SimpleException;
-import com.my.list.service.interfaces.SingleCrudService;
+import com.my.list.service.SingleCrudService;
 import com.my.list.util.Authorization;
 import com.my.list.util.CurrentUser;
 import com.my.list.util.SimpleController;
@@ -22,8 +23,8 @@ import static com.my.list.Constants.API_ROOT;
 @RequestMapping(API_ROOT)
 public class SingleCrudController {
 
-    @Autowired
-    private ResourceServiceManager manager;
+    @Autowired private ResourceConfigManager manager;
+    @Autowired private SingleCrudService service;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // ----- Single CRUD ----- //
@@ -33,13 +34,13 @@ public class SingleCrudController {
      */
     @PostMapping("/{type}")
     public Object postResource(
-            @PathVariable String type,
-            @CurrentUser User user,
-            @RequestBody Map<String, Object> body
+        @PathVariable String type,
+        @CurrentUser User user,
+        @RequestBody Map<String, Object> body
     ) {
-        SingleCrudService<Object> service = manager.getService(type, SingleCrudService.class);
-        Object resource = toEntity(type, body);
-        return service.postResource(user, resource);
+        Resource resource = toEntity(type, body);
+        service.create(type, user, resource);
+        return resource;
     }
 
     /**
@@ -47,24 +48,24 @@ public class SingleCrudController {
      */
     @GetMapping("/{type}/{id}")
     public Object getResource(
-            @PathVariable String type,
-            @CurrentUser User user,
-            @PathVariable Long id
+        @PathVariable String type,
+        @CurrentUser User user,
+        @PathVariable Long id
     ) {
-        SingleCrudService<Object> service = manager.getService(type, SingleCrudService.class);
-        return service.getResource(user, id);
+        return service.read(type, user, id);
     }
 
     /**
      * GET /{type}
      */
     @GetMapping("/{type}")
-    public List<Object> getAllResources(
-            @PathVariable String type,
-            @CurrentUser User user
+    public List<Resource> getAllResources(
+        @PathVariable String type,
+        @CurrentUser User user,
+        @RequestParam(required = false, defaultValue = "100") Integer limit,
+        @RequestParam(required = false, defaultValue = "0") Integer offset
     ) {
-        SingleCrudService<Object> service = manager.getService(type, SingleCrudService.class);
-        return service.getAllResources(user);
+        return service.readAll(type, user, limit, offset);
     }
 
     /**
@@ -72,12 +73,13 @@ public class SingleCrudController {
      */
     @PutMapping("/{type}")
     public Object putResource(
-            @PathVariable String type,
-            @CurrentUser User user,
-            @RequestBody Map<String, Object> body
+        @PathVariable String type,
+        @CurrentUser User user,
+        @RequestBody Map<String, Object> body
     ) {
-        SingleCrudService<Object> service = manager.getService(type, SingleCrudService.class);
-        return service.putResource(user, body);
+        Resource resource = toEntity(type, body);
+        service.update(type, user, resource);
+        return resource;
     }
 
     /**
@@ -85,20 +87,19 @@ public class SingleCrudController {
      */
     @DeleteMapping("/{type}/{id}")
     public void deleteResource(
-            @PathVariable String type,
-            @CurrentUser User user,
-            @PathVariable Long id
+        @PathVariable String type,
+        @CurrentUser User user,
+        @PathVariable Long id
     ) {
-        SingleCrudService<Object> service = manager.getService(type, SingleCrudService.class);
-        service.deleteResource(user, id);
+        service.delete(type, user, id);
     }
 
     // ----- private ----- //
 
-    private Object toEntity(String resourceType, Map<String, Object> newResource) {
+    private Resource toEntity(String resourceType, Map<String, Object> newResource) {
         try {
             Class<?> clazz = manager.getEntityClass(resourceType);
-            return objectMapper.convertValue(newResource, clazz);
+            return (Resource) objectMapper.convertValue(newResource, clazz);
         } catch (IllegalArgumentException e) {
             throw new SimpleException(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

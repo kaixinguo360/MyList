@@ -1,6 +1,7 @@
 package com.my.list.util;
 
 import com.my.list.Constants;
+import com.my.list.domain.User;
 import com.my.list.exception.UnauthorizedException;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
@@ -16,7 +17,7 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().isAssignableFrom(String.class) &&
+        return parameter.getParameterType().isAssignableFrom(User.class) &&
             parameter.hasParameterAnnotation(CurrentUser.class);
     }
 

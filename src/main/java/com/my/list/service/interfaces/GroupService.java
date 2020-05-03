@@ -8,6 +8,7 @@ import java.util.List;
 public interface GroupService<T> {
 
     /**
+     * Get Resources By Group
      * GET /{resource}/group/{id}
      */
     List<T> getByGroup(User user, @PathVariable Long groupId);

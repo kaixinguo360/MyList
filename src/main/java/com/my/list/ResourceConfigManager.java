@@ -1,8 +1,8 @@
 package com.my.list;
 
 import com.my.list.domain.Image;
+import com.my.list.domain.ImageMapper;
 import com.my.list.exception.SimpleException;
-import com.my.list.service.ImageService;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -11,22 +11,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class ResourceServiceManager {
+public class ResourceConfigManager {
 
-    private final Map<String, ServiceConfig> configs = new HashMap<>();
+    private final Map<String, ResourceConfig> configs = new HashMap<>();
 
-    public ResourceServiceManager(ImageService imageService) {
-        registerService("image", Image.class, imageService);
+    public ResourceConfigManager(ImageMapper imageMapper) {
+        registerMapper("image", Image.class, imageMapper);
     }
 
     /**
      * register a resource service
      */
-    public void registerService(String type, Class<?> clazz, Object service) {
-        this.configs.put(type, ServiceConfig.builder()
-                .entityClass(clazz)
-                .resourceService(service)
-                .build());
+    public void registerMapper(String type, Class<?> clazz, Object service) {
+        this.configs.put(type, ResourceConfig.builder()
+            .entityClass(clazz)
+            .resourceMapper(service)
+            .build());
     }
 
     /**
@@ -37,13 +37,13 @@ public class ResourceServiceManager {
     }
 
     /**
-     * get resource service
+     * get resource mapper
      */
-    public <T> T getService(String type, Class<T> clazz) {
-        if (!configs.containsKey(type) || configs.get(type).resourceService == null) {
+    public <T> T getMapper(String type, Class<T> clazz) {
+        if (!configs.containsKey(type) || configs.get(type).resourceMapper == null) {
             throw new SimpleException("Api Not Implemented", HttpStatus.NOT_IMPLEMENTED);
         }
-        Object service = configs.get(type).resourceService;
+        Object service = configs.get(type).resourceMapper;
         if (!clazz.isInstance(service)) {
             throw new SimpleException("Api Not Implemented", HttpStatus.NOT_IMPLEMENTED);
         }
@@ -51,8 +51,8 @@ public class ResourceServiceManager {
     }
 
     @Builder
-    public static class ServiceConfig {
+    public static class ResourceConfig {
         private final Class<?> entityClass;
-        private final Object resourceService;
+        private final Object resourceMapper;
     }
 }

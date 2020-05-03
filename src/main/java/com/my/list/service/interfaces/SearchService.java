@@ -9,6 +9,7 @@ import java.util.List;
 public interface SearchService<T> {
     
     /**
+     * Search Resources
      * GET /{resource}/search?text={text}&tags={tags}
      */
     List<T> search(User user, @RequestParam @Nullable String text, @RequestParam @Nullable String tags);

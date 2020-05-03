@@ -10,22 +10,26 @@ import java.util.List;
 public interface BatchCrudService<T> {
 
     /**
+     * Batch Create Resources
      * POST /{resource}/batch
      */
-    List<T> postResources(User user, @RequestBody List<T> newResources);
+    List<T> batchCreate(User user, @RequestBody List<T> newResources);
 
     /**
+     * Batch Read Resources
      * GET /{resource}/batch/{ids}
      */
-    List<T> getResources(User user, List<Long> resourceIds, @RequestParam @Nullable Integer limit, @RequestParam @Nullable Integer offset);
+    List<T> batchRead(User user, List<Long> resourceIds, @RequestParam @Nullable Integer limit, @RequestParam @Nullable Integer offset);
 
     /**
+     * Batch Update Resources
      * PUT /{resource}/batch
      */
-    List<T> putResources(User user, @RequestBody List<T> updatedResources);
+    List<T> batchUpdate(User user, @RequestBody List<T> updatedResources);
 
     /**
+     * Batch Delete Resources
      * DELETE /{resource}/batch
      */
-    void deleteResources(User user, @RequestBody List<Long> resourceIds);
+    void batchDelete(User user, @RequestBody List<Long> resourceIds);
 }
