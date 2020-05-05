@@ -6,17 +6,21 @@ import java.util.List;
 
 public interface TagEditMapper {
 
-    void addTag(
-        @Param("resourceId") Long resourceId,
-        @Param("tagId") Long tagId
+    void addTags(
+        @Param("id") Long id,
+        @Param("tagIds") List<Long> tagIds
     );
 
-    void removeTag(
-        @Param("resourceId") Long resourceId,
-        @Param("tagId") Long tagId
+    void removeTags(
+        @Param("id") Long id,
+        @Param("tagIds") List<Long> tagIds
     );
-    
+
     List<String> getTags(
-        @Param("resourceId") Long resourceId
+        @Param("id") Long id
+    );
+
+    void clearTags(
+        @Param("id") Long id
     );
 }

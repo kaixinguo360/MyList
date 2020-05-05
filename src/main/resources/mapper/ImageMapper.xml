@@ -73,9 +73,9 @@
         and
         <foreach collection="includeText" item="text" separator="and">
           (
-          images.page_title like "%${text}%"
+          images.page_title like concat('%', #{text}, '%')
           or
-          images.image_title like "%${text}%"
+          images.image_title like concat('%', #{text}, '%')
           )
         </foreach>
       </if>
@@ -83,9 +83,9 @@
         and
         <foreach collection="excludeText" item="text" separator="and">
           (
-          images.page_title not like "%${text}%"
+          images.page_title not like concat('%', #{text}, '%')
           and
-          images.image_title not like "%${text}%"
+          images.image_title not like concat('%', #{text}, '%')
           )
         </foreach>
       </if>
@@ -133,27 +133,33 @@
   </select>
 
   <!-- Tag -->
-  <insert id="addTag">
-    insert into image_tags (
-      image_id,
-      tag_id
-    )
-    values (
-             #{resourceId,jdbcType=BIGINT},
-             #{tagId,jdbcType=BIGINT}
-           )
+  <insert id="addTags">
+    insert ignore into image_tags(image_id, tag_id)
+    values
+    <foreach collection="tagIds" item="tagId" separator=",">
+      (#{id,jdbcType=BIGINT}, #{tagId,jdbcType=BIGINT})
+    </foreach>
   </insert>
-  <delete id="removeTag">
+  <delete id="removeTags">
     delete
     from image_tags
-    where image_id = #{resourceId,jdbcType=BIGINT} and tag_id = #{tagId,jdbcType=BIGINT}
+    where image_id = #{id,jdbcType=BIGINT}
+      and tag_id in 
+          <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
+            #{tagId,jdbcType=BIGINT}
+          </foreach>
   </delete>
   <select id="getTags" resultType="java.lang.String">
     select tags.name
     from images
            inner join image_tags on images.id = image_tags.image_id
            inner join tags on tags.id = image_tags.tag_id
-    where images.id = #{resourceId,jdbcType=BIGINT}
+    where images.id = #{id,jdbcType=BIGINT}
   </select>
+  <delete id="clearTags">
+    delete
+    from image_tags
+    where image_id = #{id,jdbcType=BIGINT}
+  </delete>
 
 </mapper>

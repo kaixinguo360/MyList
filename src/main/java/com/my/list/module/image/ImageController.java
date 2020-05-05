@@ -1,9 +1,9 @@
 package com.my.list.module.image;
 
 import com.my.list.exception.NotImplementedException;
-import com.my.list.module.common.controller.BatchCrudController;
+import com.my.list.module.common.controller.CrudController;
 import com.my.list.module.common.controller.SearchController;
-import com.my.list.module.common.controller.SingleCrudController;
+import com.my.list.module.common.controller.TagEditController;
 import com.my.list.module.common.service.BatchCrudService;
 import com.my.list.module.common.service.SearchService;
 import com.my.list.module.common.service.SingleCurdService;
@@ -18,7 +18,7 @@ import static com.my.list.Constants.API_ROOT;
 @Authorization
 @SimpleController
 @RequestMapping(API_ROOT + "/image")
-public class ImageController implements SingleCrudController<Image>, BatchCrudController<Image>, SearchController<Image> {
+public class ImageController implements CrudController<Image>, SearchController<Image>, TagEditController<Image> {
 
     @Autowired private ImageService service;
 

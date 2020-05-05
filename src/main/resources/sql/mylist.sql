@@ -58,7 +58,6 @@ CREATE TABLE `tags` (
                           `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 
                           PRIMARY KEY (`id`),
-                          UNIQUE KEY `tag_title` (`title`),
                           KEY `ctime` (`ctime`),
                           KEY `mtime` (`mtime`),
                           KEY `user` (`user`),

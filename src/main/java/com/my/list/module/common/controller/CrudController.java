@@ -10,9 +10,48 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface BatchCrudController<T extends Resource> extends SingleCrudController<T> {
+public interface CrudController<T extends Resource> extends BaseController<T> {
+    
+    // ----- Single ----- //
 
-    // ----- Batch CRUD ----- //
+    /**
+     * POST /{resource}
+     */
+    @PostMapping("")
+    @Transactional
+    default T post(@CurrentUser User user, @RequestBody T resource) {
+        getSingleCurdService().create(user, resource);
+        return resource;
+    }
+
+    /**
+     * GET /{resource}/{id}
+     */
+    @GetMapping("/{id}")
+    default T get(@CurrentUser User user, @PathVariable Long id) {
+        return getSingleCurdService().get(user, id);
+    }
+
+    /**
+     * PUT /{resource}
+     */
+    @PutMapping("")
+    @Transactional
+    default T put(@CurrentUser User user, @RequestBody T resource) {
+        getSingleCurdService().update(user, resource);
+        return resource;
+    }
+
+    /**
+     * DELETE /{resource}/{id}
+     */
+    @DeleteMapping("/{id}")
+    @Transactional
+    default void delete(@CurrentUser User user, @PathVariable Long id) {
+        getSingleCurdService().delete(user, id);
+    }
+
+    // ----- Batch ----- //
 
     /**
      * POST /{resource}/batch
