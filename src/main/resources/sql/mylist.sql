@@ -98,13 +98,3 @@ CREATE TABLE `image_tags` (
                           `tag_id` bigint(20) unsigned NOT NULL,
                           PRIMARY KEY (`image_id`, `tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-select distinct images.*, tags.name
-from images
-         left join image_tags on images.id = image_tags.image_id
-         left join tags on tags.id = image_tags.tag_id
-where (
-    tags.name = "test" or tags.name = "aaa"
-          )
-

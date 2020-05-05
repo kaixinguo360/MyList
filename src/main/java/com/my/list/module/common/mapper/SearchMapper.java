@@ -18,7 +18,9 @@ public interface SearchMapper<T extends Resource> {
         @Param("includeText") List<String> includeText,
         @Param("excludeText") List<String> excludeText,
         @Param("limit") Integer limit,
-        @Param("offset") Integer offset
+        @Param("offset") Integer offset,
+        @Param("orderBy") String orderBy,
+        @Param("orderDirection") String orderDirection
     );
 
 }

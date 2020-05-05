@@ -18,31 +18,31 @@
   <!-- Single Crud -->
   <insert id="insert" keyColumn="id" keyProperty="resource.id" useGeneratedKeys="true">
     insert into images (
-        id,
-        user,
-        ctime,
-        mtime,
-        page_title,
-        page_url,
-        image_title,
-        image_url
+      id,
+      user,
+      ctime,
+      mtime,
+      page_title,
+      page_url,
+      image_title,
+      image_url
     )
     values (
-               #{resource.id,jdbcType=BIGINT},
-               #{user.id,jdbcType=BIGINT},
-               #{resource.ctime,jdbcType=TIMESTAMP},
-               #{resource.mtime,jdbcType=TIMESTAMP},
-               #{resource.pageTitle,jdbcType=VARCHAR},
-               #{resource.pageUrl,jdbcType=VARCHAR},
-               #{resource.imageTitle,jdbcType=VARCHAR},
-               #{resource.imageUrl,jdbcType=VARCHAR}
-    )
+             #{resource.id,jdbcType=BIGINT},
+             #{user.id,jdbcType=BIGINT},
+             #{resource.ctime,jdbcType=TIMESTAMP},
+             #{resource.mtime,jdbcType=TIMESTAMP},
+             #{resource.pageTitle,jdbcType=VARCHAR},
+             #{resource.pageUrl,jdbcType=VARCHAR},
+             #{resource.imageTitle,jdbcType=VARCHAR},
+             #{resource.imageUrl,jdbcType=VARCHAR}
+           )
   </insert>
   <select id="select" resultMap="BaseResultMap">
     select images.*, tags.name
     from images
-        left join image_tags on images.id = image_tags.image_id
-        left join tags on tags.id = image_tags.tag_id
+           left join image_tags on images.id = image_tags.image_id
+           left join tags on tags.id = image_tags.tag_id
     where images.id = #{id,jdbcType=BIGINT} and images.user = #{user.id,jdbcType=BIGINT}
   </select>
   <update id="update">
@@ -66,8 +66,8 @@
   <select id="search" resultMap="BaseResultMap">
     select distinct images.*, tags.name
     from images
-        left join image_tags on images.id = image_tags.image_id
-        left join tags on tags.id = image_tags.tag_id
+    left join image_tags on images.id = image_tags.image_id
+    left join tags on tags.id = image_tags.tag_id
     <where>
       <if test="includeText!=null and includeText.size()!=0">
         and
@@ -128,13 +128,32 @@
         )
       </if>
     </where>
+    order by ${orderBy} ${orderDirection}
     limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
   </select>
-  
-</mapper>
 
-  <!--  &lt;!&ndash; Batch Crud &ndash;&gt;-->
-  <!--  <delete id="batchDelete">-->
-  <!--    delete from images where id in-->
-  <!--    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>-->
-  <!--  </delete>-->
+  <!-- Tag -->
+  <insert id="addTag">
+    insert into image_tags (
+      image_id,
+      tag_id
+    )
+    values (
+             #{resourceId,jdbcType=BIGINT},
+             #{tagId,jdbcType=BIGINT}
+           )
+  </insert>
+  <delete id="removeTag">
+    delete
+    from image_tags
+    where image_id = #{resourceId,jdbcType=BIGINT} and tag_id = #{tagId,jdbcType=BIGINT}
+  </delete>
+  <select id="getTags" resultType="java.lang.String">
+    select tags.name
+    from images
+           inner join image_tags on images.id = image_tags.image_id
+           inner join tags on tags.id = image_tags.tag_id
+    where images.id = #{resourceId,jdbcType=BIGINT}
+  </select>
+
+</mapper>

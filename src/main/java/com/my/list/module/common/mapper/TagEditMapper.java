@@ -1,13 +1,10 @@
-package com.my.list.module.image;
+package com.my.list.module.common.mapper;
 
-import com.my.list.module.common.mapper.ResourceTagMapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-@Mapper
-public interface ImageTagMapper extends ResourceTagMapper {
+public interface TagEditMapper {
 
     void addTag(
         @Param("resourceId") Long resourceId,
@@ -18,7 +15,7 @@ public interface ImageTagMapper extends ResourceTagMapper {
         @Param("resourceId") Long resourceId,
         @Param("tagId") Long tagId
     );
-
+    
     List<String> getTags(
         @Param("resourceId") Long resourceId
     );

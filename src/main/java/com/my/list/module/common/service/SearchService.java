@@ -5,13 +5,12 @@ import com.my.list.system.mapper.User;
 
 import java.util.List;
 
-public interface SearchService<T extends Resource> {
-    
+public interface SearchService<T extends Resource> extends BaseService<T> {
+
     /**
-     * Search Resources
-     * GET /{resource}?param1={param1}&param2={param2}...
+     * GET /{resource}
      */
-    List<T> search(
+    default List<T> search(
         User user,
         List<String> andTags,
         List<String> orTags,
@@ -19,6 +18,10 @@ public interface SearchService<T extends Resource> {
         List<String> includeText,
         List<String> excludeText,
         Integer limit,
-        Integer offset
-    );
+        Integer offset,
+        String orderBy,
+        String orderDirection
+    ) {
+        return getSearchMapper().search(user, andTags, orTags, notTags, includeText, excludeText, limit, offset, orderBy, orderDirection);
+    }
 }

@@ -1,29 +1,48 @@
 package com.my.list.module.common.controller;
 
+import com.my.list.module.common.Resource;
 import com.my.list.system.mapper.User;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.my.list.util.CurrentUser;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
-public interface SingleCrudController<T> {
+public interface SingleCrudController<T extends Resource> extends BaseController<T> {
 
     /**
      * POST /{resource}
      */
-    Object post(User user, @RequestBody T resource);
+    @PostMapping("")
+    @Transactional
+    default T post(@CurrentUser User user, @RequestBody T resource) {
+        getSingleCurdService().create(user, resource);
+        return resource;
+    }
 
     /**
      * GET /{resource}/{id}
      */
-    Object get(User user, @PathVariable Long id);
+    @GetMapping("/{id}")
+    default T get(@CurrentUser User user, @PathVariable Long id) {
+        return getSingleCurdService().get(user, id);
+    }
 
     /**
      * PUT /{resource}
      */
-    Object put(User user, @RequestBody T resource);
+    @PutMapping("")
+    @Transactional
+    default T put(@CurrentUser User user, @RequestBody T resource) {
+        getSingleCurdService().update(user, resource);
+        return resource;
+    }
 
     /**
      * DELETE /{resource}/{id}
      */
-    void delete(User user, @PathVariable Long id);
-    
+    @DeleteMapping("/{id}")
+    @Transactional
+    default void delete(@CurrentUser User user, @PathVariable Long id) {
+        getSingleCurdService().delete(user, id);
+    }
+
 }
