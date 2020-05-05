@@ -54,7 +54,7 @@ CREATE TABLE `tags` (
                           `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',
                           `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modify Time',
 
-                          `title` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+                          `name` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
                           `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 
                           PRIMARY KEY (`id`),
