@@ -96,9 +96,10 @@
         left join image_tags on images.id = image_tags.image_id
         left join tags on tags.id = image_tags.tag_id
         where
-        <foreach collection="andTags" item="tagName" separator="or">
+        <foreach collection="andTags" item="tagName" open="(" separator="or" close=")">
           tags.name = #{tagName,jdbcType=VARCHAR}
         </foreach>
+        and tags.user = #{user.id,jdbcType=BIGINT}
         group by images.id
         having count(distinct tags.id) = ${andTags.size()}
         )
@@ -110,9 +111,10 @@
         left join image_tags on images.id = image_tags.image_id
         left join tags on tags.id = image_tags.tag_id
         where
-        <foreach collection="orTags" item="tagName" separator="or">
+        <foreach collection="orTags" item="tagName" open="(" separator="or" close=")">
           tags.name = #{tagName,jdbcType=VARCHAR}
         </foreach>
+        and tags.user = #{user.id,jdbcType=BIGINT}
         )
       </if>
       <if test="notTags!=null and notTags.size()!=0">
@@ -122,11 +124,13 @@
         left join image_tags on images.id = image_tags.image_id
         left join tags on tags.id = image_tags.tag_id
         where
-        <foreach collection="notTags" item="tagName" separator="or">
+        <foreach collection="notTags" item="tagName" open="(" separator="or" close=")">
           tags.name = #{tagName,jdbcType=VARCHAR}
         </foreach>
+        and tags.user = #{user.id,jdbcType=BIGINT}
         )
       </if>
+      and images.user = #{user.id,jdbcType=BIGINT}
     </where>
     order by ${orderBy} ${orderDirection}
     limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
