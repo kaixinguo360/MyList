@@ -68,72 +68,83 @@
     from images
     left join image_tags on images.id = image_tags.image_id
     left join tags on tags.id = image_tags.tag_id
-    <where>
-      <if test="includeText!=null and includeText.size()!=0">
-        and
-        <foreach collection="includeText" item="text" separator="and">
-          (
-          images.page_title like concat('%', #{text}, '%')
-          or
-          images.image_title like concat('%', #{text}, '%')
-          )
-        </foreach>
-      </if>
-      <if test="excludeText!=null and excludeText.size()!=0">
-        and
-        <foreach collection="excludeText" item="text" separator="and">
-          (
-          images.page_title not like concat('%', #{text}, '%')
-          and
-          images.image_title not like concat('%', #{text}, '%')
-          )
-        </foreach>
-      </if>
-      <if test="andTags!=null and andTags.size()!=0">
-        and images.id in (
-        select distinct images.id
+    where images.id in
+    (
+      select fuck_mysql.id from
+      (
+        select images.id
         from images
-        left join image_tags on images.id = image_tags.image_id
-        left join tags on tags.id = image_tags.tag_id
-        where
-        <foreach collection="andTags" item="tagName" open="(" separator="or" close=")">
-          tags.name = #{tagName,jdbcType=VARCHAR}
-        </foreach>
-        and tags.user = #{user.id,jdbcType=BIGINT}
-        group by images.id
-        having count(distinct tags.id) = ${andTags.size()}
-        )
-      </if>
-      <if test="orTags!=null and orTags.size()!=0">
-        and images.id in (
-        select distinct images.id
-        from images
-        left join image_tags on images.id = image_tags.image_id
-        left join tags on tags.id = image_tags.tag_id
-        where
-        <foreach collection="orTags" item="tagName" open="(" separator="or" close=")">
-          tags.name = #{tagName,jdbcType=VARCHAR}
-        </foreach>
-        and tags.user = #{user.id,jdbcType=BIGINT}
-        )
-      </if>
-      <if test="notTags!=null and notTags.size()!=0">
-        and images.id not in (
-        select distinct images.id
-        from images
-        left join image_tags on images.id = image_tags.image_id
-        left join tags on tags.id = image_tags.tag_id
-        where
-        <foreach collection="notTags" item="tagName" open="(" separator="or" close=")">
-          tags.name = #{tagName,jdbcType=VARCHAR}
-        </foreach>
-        and tags.user = #{user.id,jdbcType=BIGINT}
-        )
-      </if>
-      and images.user = #{user.id,jdbcType=BIGINT}
-    </where>
-    order by ${orderBy} ${orderDirection}
-    limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
+        <where>
+          <if test="includeText!=null and includeText.size()!=0">
+            and
+            <foreach collection="includeText" item="text" separator="and">
+            (
+              images.page_title like concat('%', #{text}, '%')
+              or
+              images.image_title like concat('%', #{text}, '%')
+            )
+            </foreach>
+          </if>
+          <if test="excludeText!=null and excludeText.size()!=0">
+            and
+            <foreach collection="excludeText" item="text" separator="and">
+            (
+              images.page_title not like concat('%', #{text}, '%')
+              and
+              images.image_title not like concat('%', #{text}, '%')
+            )
+            </foreach>
+          </if>
+          <if test="andTags!=null and andTags.size()!=0">
+            and images.id in
+            (
+              select distinct images.id
+              from images
+              left join image_tags on images.id = image_tags.image_id
+              left join tags on tags.id = image_tags.tag_id
+              where
+              <foreach collection="andTags" item="tagName" open="(" separator="or" close=")">
+                tags.name = #{tagName,jdbcType=VARCHAR}
+              </foreach>
+              and tags.user = #{user.id,jdbcType=BIGINT}
+              group by images.id
+              having count(distinct tags.id) = ${andTags.size()}
+            )
+          </if>
+          <if test="orTags!=null and orTags.size()!=0">
+            and images.id in
+            (
+              select distinct images.id
+              from images
+              left join image_tags on images.id = image_tags.image_id
+              left join tags on tags.id = image_tags.tag_id
+              where
+              <foreach collection="orTags" item="tagName" open="(" separator="or" close=")">
+                tags.name = #{tagName,jdbcType=VARCHAR}
+              </foreach>
+              and tags.user = #{user.id,jdbcType=BIGINT}
+            )
+          </if>
+          <if test="notTags!=null and notTags.size()!=0">
+            and images.id not in
+            (
+              select distinct images.id
+              from images
+              left join image_tags on images.id = image_tags.image_id
+              left join tags on tags.id = image_tags.tag_id
+              where
+              <foreach collection="notTags" item="tagName" open="(" separator="or" close=")">
+                tags.name = #{tagName,jdbcType=VARCHAR}
+              </foreach>
+              and tags.user = #{user.id,jdbcType=BIGINT}
+            )
+          </if>
+          and images.user = #{user.id,jdbcType=BIGINT}
+        </where>
+        order by ${orderBy} ${orderDirection}
+        limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
+      ) as fuck_mysql
+    )
   </select>
 
   <!-- Tag -->
