@@ -32,7 +32,7 @@
   <select id="select" resultMap="BaseResultMap">
     select *
     from tags
-    where name = #{name,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+    where name = #{name,jdbcType=VARCHAR} and user = #{user.id,jdbcType=BIGINT}
   </select>
   <update id="update">
     update tags
@@ -46,7 +46,7 @@
   <delete id="delete">
     delete
     from tags
-    where name = #{name,jdbcType=BIGINT} and user = #{user.id,jdbcType=BIGINT}
+    where name = #{name,jdbcType=VARCHAR} and user = #{user.id,jdbcType=BIGINT}
   </delete>
 
   <!-- Search -->

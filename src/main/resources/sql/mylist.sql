@@ -66,6 +66,30 @@ CREATE TABLE `tags` (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `groups`;
+CREATE TABLE `groups` (
+                          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                          `user` bigint(20) unsigned NOT NULL,
+
+                          `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',
+                          `mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modify Time',
+
+                          `name` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+                          `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+
+                          `type` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+                          `value` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+
+                          PRIMARY KEY (`id`),
+                          KEY `ctime` (`ctime`),
+                          KEY `mtime` (`mtime`),
+                          KEY `user` (`user`),
+                          KEY `type` (`type`),
+
+                          CONSTRAINT `groups_users` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
  -- Image module --
 
 DROP TABLE IF EXISTS `images`;

@@ -2,12 +2,14 @@ package com.my.list.module.image;
 
 import com.my.list.exception.NotImplementedException;
 import com.my.list.module.common.controller.CrudController;
+import com.my.list.module.common.controller.GroupController;
 import com.my.list.module.common.controller.SearchController;
 import com.my.list.module.common.controller.TagEditController;
 import com.my.list.module.common.service.BatchCrudService;
 import com.my.list.module.common.service.SearchService;
 import com.my.list.module.common.service.SingleCurdService;
 import com.my.list.module.common.service.TagEditService;
+import com.my.list.system.service.GroupService;
 import com.my.list.util.Authorization;
 import com.my.list.util.SimpleController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,20 @@ import static com.my.list.Constants.API_ROOT;
 @Authorization
 @SimpleController
 @RequestMapping(API_ROOT + "/image")
-public class ImageController implements CrudController<Image>, SearchController<Image>, TagEditController<Image> {
+public class ImageController implements CrudController<Image>, SearchController<Image>, TagEditController<Image>, GroupController {
 
+    @Autowired private GroupService groupService;
     @Autowired private ImageService service;
+
+    @Override
+    public String getTypeName() {
+        return "image";
+    }
+
+    @Override
+    public GroupService getGroupService() {
+        return groupService;
+    }
 
     @Override
     public SingleCurdService<Image> getSingleCurdService() {
