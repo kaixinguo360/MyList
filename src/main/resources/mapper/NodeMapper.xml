@@ -65,7 +65,7 @@
   </select>
   <delete id="deleteAll">
     delete from nodes where id in
-    <foreach collection="list" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
   </delete>
 
   <select id="selectAllHangingIds" resultType="java.lang.Long">

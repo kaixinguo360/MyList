@@ -92,14 +92,10 @@
       <if test="filter.andTags!=null and filter.andTags.size()!=0">
         and content.id in (
         <include refid="selectMap"/>
-        <where>
-          <include refid="tagCheck"/>
-          and (
-          <foreach collection="filter.andTags" item="tag" separator="or">
-            <include refid="tagChoose"/>
-          </foreach>
-          )
-        </where>
+        where
+        <foreach collection="filter.andTags" item="tag" open="(" separator="or" close=")">
+          <include refid="tagChoose"/>
+        </foreach>
         group by content.id
         having count(distinct parent.id) = ${filter.andTags.size()}
         )
@@ -107,29 +103,23 @@
       
       <!-- tags or -->
       <if test="filter.orTags!=null and filter.orTags.size()!=0">
-        and
-        <include refid="tagCheck"/>
-        <if test="filter.orTags!=null">
-          and (
-          <foreach collection="filter.orTags" item="tag" separator="or">
-            <include refid="tagChoose"/>
-          </foreach>
-          )
-        </if>
+        and content.id in (
+        <include refid="selectMap"/>
+      where
+        <foreach collection="filter.orTags" item="tag" open="(" separator="or" close=")">
+          <include refid="tagChoose"/>
+        </foreach>
+        )
       </if>
       
       <!-- tags not -->
       <if test="filter.notTags!=null and filter.notTags.size()!=0">
         and content.id not in (
         <include refid="selectMap"/>
-        <where>
-          <include refid="tagCheck"/>
-          and (
-          <foreach collection="filter.notTags" item="tag" separator="or">
-            <include refid="tagChoose"/>
-          </foreach>
-          )
-        </where>
+        where
+        <foreach collection="filter.notTags" item="tag" open="(" separator="or" close=")">
+          <include refid="tagChoose"/>
+        </foreach>
         )
       </if>
       
