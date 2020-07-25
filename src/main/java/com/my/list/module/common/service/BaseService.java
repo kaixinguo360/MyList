@@ -5,7 +5,7 @@ import com.my.list.module.common.mapper.BatchCrudMapper;
 import com.my.list.module.common.mapper.SearchMapper;
 import com.my.list.module.common.mapper.SingleCrudMapper;
 import com.my.list.module.common.mapper.TagEditMapper;
-import com.my.list.system.service.TagService;
+import com.my.list.modules.tag.TagService;
 
 public interface BaseService<T extends Resource> {
 

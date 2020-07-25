@@ -1,7 +1,7 @@
 package com.my.list.module.common.service;
 
 import com.my.list.module.common.Resource;
-import com.my.list.system.mapper.User;
+import com.my.list.modules.user.User;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;

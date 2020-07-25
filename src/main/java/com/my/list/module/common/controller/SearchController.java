@@ -2,7 +2,7 @@ package com.my.list.module.common.controller;
 
 import com.my.list.exception.NotImplementedException;
 import com.my.list.module.common.Resource;
-import com.my.list.system.mapper.User;
+import com.my.list.modules.user.User;
 import com.my.list.util.CurrentUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

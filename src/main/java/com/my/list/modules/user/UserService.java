@@ -1,12 +1,10 @@
-package com.my.list.system.service;
+package com.my.list.modules.user;
 
 import com.my.list.Constants;
 import com.my.list.exception.DataException;
 import com.my.list.exception.ForbiddenException;
 import com.my.list.exception.UnauthorizedException;
-import com.my.list.system.mapper.OptionMapper;
-import com.my.list.system.mapper.User;
-import com.my.list.system.mapper.UserMapper;
+import com.my.list.modules.option.OptionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

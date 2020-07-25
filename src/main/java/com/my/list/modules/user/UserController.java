@@ -1,7 +1,5 @@
-package com.my.list.system.controller;
+package com.my.list.modules.user;
 
-import com.my.list.system.mapper.User;
-import com.my.list.system.service.UserService;
 import com.my.list.util.Authorization;
 import com.my.list.util.SimpleController;
 import org.springframework.transaction.annotation.Transactional;

@@ -2,8 +2,8 @@ package com.my.list.module.common.service;
 
 import com.my.list.exception.DataException;
 import com.my.list.module.common.Resource;
-import com.my.list.system.mapper.Tag;
-import com.my.list.system.mapper.User;
+import com.my.list.modules.tag.Tag;
+import com.my.list.modules.user.User;
 import com.my.list.util.CurrentUser;
 
 import java.sql.Timestamp;

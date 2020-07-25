@@ -1,9 +1,7 @@
-package com.my.list.system.service;
+package com.my.list.modules.tag;
 
 import com.my.list.exception.DataException;
-import com.my.list.system.mapper.Tag;
-import com.my.list.system.mapper.TagMapper;
-import com.my.list.system.mapper.User;
+import com.my.list.modules.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

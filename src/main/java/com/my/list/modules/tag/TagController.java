@@ -1,8 +1,6 @@
-package com.my.list.system.controller;
+package com.my.list.modules.tag;
 
-import com.my.list.system.mapper.Tag;
-import com.my.list.system.mapper.User;
-import com.my.list.system.service.TagService;
+import com.my.list.modules.user.User;
 import com.my.list.util.Authorization;
 import com.my.list.util.CurrentUser;
 import com.my.list.util.SimpleController;

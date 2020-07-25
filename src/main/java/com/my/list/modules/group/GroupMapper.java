@@ -1,5 +1,7 @@
-package com.my.list.system.mapper;
+package com.my.list.modules.group;
 
+import com.my.list.modules.group.Group;
+import com.my.list.modules.user.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

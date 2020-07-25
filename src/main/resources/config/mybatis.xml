@@ -16,7 +16,7 @@
   </settings>
 
   <typeAliases>
-<!--    <typeAlias alias="User" type="com.my.list.system.mapper.User" />-->
+<!--    <typeAlias alias="User" type="com.my.list.modules.user.User" />-->
 <!--    <typeAlias alias="Image" type="Image" />-->
   </typeAliases>
 

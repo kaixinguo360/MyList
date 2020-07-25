@@ -1,4 +1,4 @@
-package com.my.list.system.mapper;
+package com.my.list.modules.tag;
 
 import lombok.Builder;
 import lombok.Data;

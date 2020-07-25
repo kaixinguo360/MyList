@@ -1,4 +1,4 @@
-package com.my.list.system.mapper;
+package com.my.list.modules.option;
 
 import org.apache.ibatis.annotations.Mapper;
 
