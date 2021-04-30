@@ -36,7 +36,6 @@
     update nodes
     set node_user         = #{node.user,jdbcType=BIGINT},
         node_type         = #{node.type,jdbcType=VARCHAR},
-        node_ctime        = #{node.ctime,jdbcType=TIMESTAMP},
         node_mtime        = #{node.mtime,jdbcType=TIMESTAMP},
         node_part         = #{node.part,jdbcType=BIT},
         node_collection   = #{node.collection,jdbcType=BIT},
