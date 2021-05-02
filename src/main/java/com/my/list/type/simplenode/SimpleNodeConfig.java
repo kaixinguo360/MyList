@@ -1,7 +1,8 @@
-package com.my.list.type;
+package com.my.list.type.simplenode;
 
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
+import com.my.list.type.MyStringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;

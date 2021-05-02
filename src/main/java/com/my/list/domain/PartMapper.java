@@ -15,7 +15,7 @@ public interface PartMapper {
     Integer countChildren(@Param("parentId") Long parentId);
 
     void insertParents(@Param("childId") Long childId, @Param("parentIds") List<Long> parentIds); // TODO: Add userId check, Add order setting
-    void deleteParents(@Param("userId") Long userId, @Param("parentIds") Long childId, List<Long> parentIds);
+    void deleteParents(@Param("userId") Long userId, @Param("childId") Long childId, @Param("parentIds") List<Long> parentIds);
     void deleteAllParent(@Param("userId") Long userId, @Param("childId") Long childId);
     List<Node> selectAllParent(@Param("userId") Long userId, @Param("childId") Long childId);
     Integer countParent(@Param("userId") Long userId, @Param("childId") Long childId);

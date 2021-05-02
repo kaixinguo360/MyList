@@ -1,4 +1,4 @@
-package com.my.list.type;
+package com.my.list.type.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,7 @@ import com.my.list.dto.ListItem;
 import com.my.list.dto.Node;
 import com.my.list.dto.Type;
 import com.my.list.dto.TypeConfig;
+import com.my.list.type.MyStringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
