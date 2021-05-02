@@ -54,6 +54,9 @@ public class NodeService {
                 if (type.getExtraListRequired()) throw new DataException("Input extraList is null.");
             }
         }
+
+        updateExcerpts(partService.getParents(node.getMainData().getId()).stream()
+            .map(n -> n.getMainData().getId()).collect(Collectors.toList()));
     }
     public Node get(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
@@ -107,10 +110,16 @@ public class NodeService {
                     if (type.getExtraListRequired()) throw new DataException("Input extraList is null.");
                 }
             }
+
+            updateExcerpts(partService.getParents(node.getMainData().getId()).stream()
+                .map(n -> n.getMainData().getId()).collect(Collectors.toList()));
         }
     }
     public void remove(Long nodeId) {
         if (nodeId == null) throw new DataException("Input nodeId is null.");
+
+        List<Long> parentIds = partService.getParents(nodeId).stream()
+            .map(n -> n.getMainData().getId()).collect(Collectors.toList());
         
         MainData mainData = mainDataService.get(nodeId);
         permissionChecker.check(mainData, true);
@@ -118,6 +127,18 @@ public class NodeService {
         
         if (type.getHasExtraList()) partService.removeAllChildren(nodeId);
         mainDataService.remove(nodeId);
+
+        updateExcerpts(parentIds);
+    }
+
+    public void updateExcerpts(List<Long> nodeIds) {
+        for (Long nodeId : nodeIds) {
+            Node node = get(nodeId);
+            Type type = typeConfig.getType(node.getMainData().getType());
+            String excerpt = type.getExcerptGenerator().generate(node);
+            node.getMainData().setExcerpt(excerpt);
+            update(node, true);
+        }
     }
     
     private void save(Long listId, List<ListItem> extraList) {
