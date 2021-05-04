@@ -66,7 +66,7 @@
       <if test="filter.conditions!=null and filter.conditions.size()!=0">
         and
         <foreach collection="filter.conditions" item="cond" separator="and">
-          content.${cond.column} ${cond.oper} ${cond.value}
+          ${cond.column} ${cond.oper} ${cond.value}
         </foreach>
       </if>
 
