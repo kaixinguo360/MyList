@@ -1,134 +1,109 @@
--- Adminer 4.6.2 MySQL dump
 
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+DROP TABLE IF EXISTS "images";
+DROP TABLE IF EXISTS "musics";
+DROP TABLE IF EXISTS "texts";
+DROP TABLE IF EXISTS "videos";
+DROP TABLE IF EXISTS "parts";
+DROP TABLE IF EXISTS "nodes";
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "options";
 
-SET NAMES utf8mb4;
+CREATE TABLE "users" (
+                         "id" bigserial,
+                         "user_name" varchar(60) NOT NULL DEFAULT '',
+                         "user_pass" varchar(255) NOT NULL DEFAULT '',
+                         "user_email" varchar(100) DEFAULT NULL,
+                         "user_status" varchar(20) NOT NULL DEFAULT 'activated',
+                         PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX "user_name" ON "users" ("user_name");
+CREATE INDEX "user_name_2" ON "users" ("user_name","user_pass");
 
-DELIMITER ;;
+CREATE TABLE "options" (
+                           "option_id" bigserial,
+                           "option_name" varchar(255) NOT NULL,
+                           "option_value" text,
+                           PRIMARY KEY ("option_id")
+);
+CREATE UNIQUE INDEX "option_name" ON "options" ("option_name");
 
-DROP PROCEDURE IF EXISTS `clean_all`;;
-CREATE PROCEDURE `clean_all`()
-BEGIN
+CREATE TABLE "nodes" (
+                         "id" bigserial,
+                         "node_user" bigint NOT NULL,
+                         "node_type" varchar(20) NOT NULL DEFAULT 'list',
+                         "node_ctime" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         "node_mtime" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         "node_title" text,
+                         "node_excerpt" text,
+                         "node_part" boolean NOT NULL DEFAULT '0',
+                         "node_collection" boolean NOT NULL DEFAULT '0',
+                         "node_permission" varchar(20) NOT NULL DEFAULT 'private',
+                         "node_nsfw" boolean NOT NULL DEFAULT '0',
+                         "node_like" boolean NOT NULL DEFAULT '0',
+                         "node_hide" boolean NOT NULL DEFAULT '0',
+                         "node_source" varchar(1024) DEFAULT NULL,
+                         "node_description" text,
+                         "node_comment" text,
+                         PRIMARY KEY ("id"),
+                         CONSTRAINT "nodes_ibfk_1" FOREIGN KEY ("node_user") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE INDEX "node_ctime" ON "nodes" ("node_ctime");
+CREATE INDEX "node_mtime" ON "nodes" ("node_mtime");
+CREATE INDEX "node_user" ON "nodes" ("node_user");
+COMMENT ON COLUMN "nodes"."node_ctime" IS 'Create Time';
+COMMENT ON COLUMN "nodes"."node_mtime" IS 'Modify Time';
+COMMENT ON COLUMN "nodes"."node_part" IS 'Is a part';
+COMMENT ON COLUMN "nodes"."node_collection" IS 'Is a collection';
 
-    DELETE FROM users WHERE true;
-    DELETE FROM nodes WHERE true;
-    DELETE FROM texts WHERE true;
-    DELETE FROM images WHERE true;
-    DELETE FROM musics WHERE true;
-    DELETE FROM videos WHERE true;
-    DELETE FROM parts WHERE true;
-    DELETE FROM options WHERE true;
+CREATE TABLE "parts" (
+                         "part_id" bigserial,
+                         "part_parent_id" bigint NOT NULL,
+                         "part_content_id" bigint NOT NULL,
+                         "part_content_order" integer NOT NULL DEFAULT '0',
+                         PRIMARY KEY ("part_id"),
+                         CONSTRAINT "parts_ibfk_2" FOREIGN KEY ("part_parent_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+                         CONSTRAINT "parts_ibfk_3" FOREIGN KEY ("part_content_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE INDEX "part_node_id" ON "parts" ("part_parent_id");
+CREATE INDEX "part_content_id" ON "parts" ("part_content_id");
+COMMENT ON COLUMN "parts"."part_parent_id" IS 'ID of parent node';
+COMMENT ON COLUMN "parts"."part_content_id" IS 'ID of content node';
+COMMENT ON COLUMN "parts"."part_content_order" IS 'Order of content node';
 
-END;;
+CREATE TABLE "images" (
+                          "id" bigint NOT NULL,
+                          "image_url" varchar(1024) NOT NULL,
+                          "image_type" varchar(20) DEFAULT NULL,
+                          "image_author" text DEFAULT NULL,
+                          "image_gallery" text DEFAULT NULL,
+                          "image_source" varchar(1024) DEFAULT NULL,
+                          PRIMARY KEY ("id"),
+                          CONSTRAINT "images_ibfk_3" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 
-DELIMITER ;
+CREATE TABLE "musics" (
+                          "id" bigint NOT NULL,
+                          "music_url" varchar(1024) NOT NULL,
+                          "music_format" varchar(20) NOT NULL,
+                          PRIMARY KEY ("id"),
+                          CONSTRAINT "musics_ibfk_2" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 
-DROP TABLE IF EXISTS `images`;
-CREATE TABLE `images` (
-                          `id` bigint(20) unsigned NOT NULL,
-                          `image_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          `image_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `image_author` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `image_gallery` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          `image_source` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                          PRIMARY KEY (`id`),
-                          CONSTRAINT `images_ibfk_3` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE "texts" (
+                         "id" bigint NOT NULL,
+                         "text_content" text NOT NULL,
+                         PRIMARY KEY ("id"),
+                         CONSTRAINT "texts_ibfk_4" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 
+CREATE TABLE "videos" (
+                          "id" bigint NOT NULL,
+                          "video_url" varchar(1024) NOT NULL,
+                          "video_format" varchar(20) NOT NULL,
+                          PRIMARY KEY ("id"),
+                          CONSTRAINT "videos_ibfk_2" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
 
-DROP TABLE IF EXISTS `musics`;
-CREATE TABLE `musics` (
-                          `id` bigint(20) unsigned NOT NULL,
-                          `music_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          `music_format` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          PRIMARY KEY (`id`),
-                          CONSTRAINT `musics_ibfk_2` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- INSERT INTO "users" VALUES (1,'test','test','','activated');
 
-
-DROP TABLE IF EXISTS `nodes`;
-CREATE TABLE `nodes` (
-                         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                         `node_user` bigint(20) unsigned NOT NULL,
-                         `node_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'list',
-                         `node_ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',
-                         `node_mtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modify Time',
-                         `node_title` text COLLATE utf8mb4_unicode_ci,
-                         `node_excerpt` text COLLATE utf8mb4_unicode_ci,
-                         `node_part` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Is a part',
-                         `node_collection` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Ts a collection',
-                         `node_permission` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
-                         `node_nsfw` tinyint(1) NOT NULL DEFAULT '0',
-                         `node_like` tinyint(1) NOT NULL DEFAULT '0',
-                         `node_hide` tinyint(1) NOT NULL DEFAULT '0',
-                         `node_source` varchar(511) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                         `node_description` text COLLATE utf8mb4_unicode_ci,
-                         `node_comment` text COLLATE utf8mb4_unicode_ci,
-                         PRIMARY KEY (`id`),
-                         KEY `node_ctime` (`node_ctime`),
-                         KEY `node_mtime` (`node_mtime`),
-                         KEY `node_user` (`node_user`),
-                         CONSTRAINT `nodes_ibfk_1` FOREIGN KEY (`node_user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `parts`;
-CREATE TABLE `parts` (
-                         `part_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                         `part_parent_id` bigint(20) unsigned NOT NULL COMMENT 'ID of parent node',
-                         `part_content_id` bigint(20) unsigned NOT NULL COMMENT 'ID of content node',
-                         `part_content_order` int(15) unsigned NOT NULL DEFAULT '0' COMMENT 'Order of content node',
-                         PRIMARY KEY (`part_id`),
-                         KEY `part_node_id` (`part_parent_id`),
-                         KEY `part_content_id` (`part_content_id`),
-                         CONSTRAINT `parts_ibfk_2` FOREIGN KEY (`part_parent_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-                         CONSTRAINT `parts_ibfk_3` FOREIGN KEY (`part_content_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `texts`;
-CREATE TABLE `texts` (
-                         `id` bigint(20) unsigned NOT NULL,
-                         `text_content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                         PRIMARY KEY (`id`),
-                         CONSTRAINT `texts_ibfk_4` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-                         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                         `user_name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                         `user_pass` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-                         `user_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                         `user_status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'activated',
-                         PRIMARY KEY (`id`),
-                         UNIQUE KEY `user_name` (`user_name`),
-                         KEY `user_name_2` (`user_name`,`user_pass`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `videos`;
-CREATE TABLE `videos` (
-                          `id` bigint(20) unsigned NOT NULL,
-                          `video_url` varchar(511) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          `video_format` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-                          PRIMARY KEY (`id`),
-                          CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `options`;
-CREATE TABLE `options` (
-                           `option_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                           `option_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-                           `option_value` longtext COLLATE utf8mb4_unicode_ci,
-                           PRIMARY KEY (`option_id`),
-                           UNIQUE KEY `option_name` (`option_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
--- 2020-01-20 06:14:48
+-- 2021-05-19 15:54:48
