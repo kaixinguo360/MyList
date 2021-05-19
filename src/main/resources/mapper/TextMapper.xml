@@ -9,7 +9,7 @@
     delete from texts
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.type.text.Text" keyColumn="text_id" keyProperty="id" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.my.list.type.text.Text" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into texts (id, text_content
       )
     values (#{id,jdbcType=BIGINT}, #{content,jdbcType=LONGVARCHAR}

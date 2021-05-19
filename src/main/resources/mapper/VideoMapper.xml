@@ -10,7 +10,7 @@
     delete from videos
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.type.video.Video" keyColumn="video_id" keyProperty="id" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.my.list.type.video.Video" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into videos (id, video_url, video_format)
     values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR})
   </insert>

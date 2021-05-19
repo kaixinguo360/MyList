@@ -63,8 +63,8 @@
     </foreach>
   </insert>
   <delete id="deleteParents">
-    delete parts
-    from parts, nodes parent
+    delete from parts
+    using nodes parent
     where part_parent_id = parent.id
       and part_content_id = #{childId,jdbcType=BIGINT}
       and part_parent_id in (<foreach collection="parentIds" item="parentId" separator=",">#{parentId,jdbcType=BIGINT}</foreach>)
@@ -76,8 +76,8 @@
       )
   </delete>
   <delete id="deleteAllParent">
-    delete parts
-    from parts, nodes parent
+    delete from parts
+    using nodes parent
     where part_parent_id = parent.id
       and part_content_id = #{childId,jdbcType=BIGINT}
     <!-- EDITABLE -->

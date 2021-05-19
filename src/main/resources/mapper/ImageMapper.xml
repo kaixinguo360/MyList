@@ -13,7 +13,7 @@
     delete from images
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.type.image.Image" keyColumn="image_id" keyProperty="id" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.my.list.type.image.Image" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into images (
       id, 
       image_url,

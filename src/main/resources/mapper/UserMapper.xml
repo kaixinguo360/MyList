@@ -14,9 +14,9 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.my.list.domain.User" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
-    insert into users (id, user_name, user_pass,
+    insert into users (user_name, user_pass,
                        user_email, user_status)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
+    values (#{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
             #{email,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.my.list.domain.User">

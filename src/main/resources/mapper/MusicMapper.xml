@@ -10,7 +10,7 @@
     delete from musics
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.type.music.Music" keyColumn="music_id" keyProperty="id" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.my.list.type.music.Music" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into musics (id, music_url, 
       music_format)
     values (#{id,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
