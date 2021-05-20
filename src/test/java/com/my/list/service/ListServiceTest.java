@@ -353,7 +353,7 @@ public class ListServiceTest {
     }
 
     private Node newNode(String title) {
-        Node node = new NodeDTO(com.my.list.domain.Node.Companion.defaultNode());
+        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType("node");
         mainData.setTitle(title);

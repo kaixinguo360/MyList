@@ -1,6 +1,6 @@
 package com.my.list;
 
-import org.jetbrains.annotations.NotNull;
+import com.sun.istack.internal.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;

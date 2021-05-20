@@ -417,7 +417,7 @@ public class ControllerTest {
         return user;
     }
     private Node newNode(String type, String title, ExtraData extraData) {
-        Node node = new NodeDTO(com.my.list.domain.Node.Companion.defaultNode());
+        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType(type);
         mainData.setTitle(title);

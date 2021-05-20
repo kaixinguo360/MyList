@@ -2,7 +2,7 @@ package com.my.list.controller.util;
 
 import com.my.list.Constants;
 import com.my.list.exception.UnauthorizedException;
-import org.jetbrains.annotations.NotNull;
+import com.sun.istack.internal.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

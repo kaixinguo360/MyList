@@ -6,7 +6,7 @@ import com.my.list.service.UserContext;
 import com.my.list.service.data.ListService;
 import com.my.list.service.data.NodeService;
 import com.my.list.service.data.PartService;
-import org.jetbrains.annotations.NotNull;
+import com.sun.istack.internal.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

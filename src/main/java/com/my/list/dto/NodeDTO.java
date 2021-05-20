@@ -17,7 +17,7 @@ public class NodeDTO implements Node {
         this.node = new com.my.list.domain.Node();
     }
     public NodeDTO(MainData mainData) {
-        this.node = com.my.list.domain.Node.Companion.fromSingleNode(mainData);
+        this.node = com.my.list.domain.Node.fromSingleNode(mainData);
     }
 
     // ---- Getter & Setter of SingleNode ---- //

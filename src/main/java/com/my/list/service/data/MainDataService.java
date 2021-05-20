@@ -18,7 +18,7 @@ class MainDataService {
     }
     
     void add(MainData mainData) {
-        Node node = Node.Companion.fromSingleNode(mainData);
+        Node node = Node.fromSingleNode(mainData);
         if (node == null) throw new DataException("Input mainData is null.");
         if (mainData.getId() != null) throw new DataException("Id of input mainData has already set.");
 
@@ -46,7 +46,7 @@ class MainDataService {
 
         mainData.setMtime(new Timestamp(System.currentTimeMillis()));
         
-        nodeMapper.update(Node.Companion.fromSingleNode(mainData), isSimple);
+        nodeMapper.update(Node.fromSingleNode(mainData), isSimple);
     }
     void remove(Long mainDataId) {
         if (mainDataId == null) throw new DataException("Input mainDataId is null.");

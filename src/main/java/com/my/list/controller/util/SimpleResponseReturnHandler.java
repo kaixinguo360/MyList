@@ -1,7 +1,7 @@
 package com.my.list.controller.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
+import com.sun.istack.internal.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.MediaType;
