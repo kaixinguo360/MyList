@@ -115,6 +115,25 @@ public class Filter {
         notTags.add(tag);
         return this;
     }
+
+    Set<String> andWords = null;
+    Set<String> orWords = null;
+    Set<String> notWords = null;
+    public Filter addAndWord(String word) {
+        if (andWords == null) andWords = new HashSet<>();
+        andWords.add(word);
+        return this;
+    }
+    public Filter addOrWord(String word) {
+        if (orWords == null) orWords = new HashSet<>();
+        orWords.add(word);
+        return this;
+    }
+    public Filter addNotWord(String word) {
+        if (notWords == null) notWords = new HashSet<>();
+        notWords.add(word);
+        return this;
+    }
     
     public List<Node> getAll(ListService listService) {
         return listService.getAll(this);
@@ -162,5 +181,23 @@ public class Filter {
     }
     public void setNotTags(Set<Tag> notTags) {
         this.notTags = notTags;
+    }
+    public Set<String> getAndWords() {
+        return andWords;
+    }
+    public void setAndWords(Set<String> andWords) {
+        this.andWords = andWords;
+    }
+    public Set<String> getOrWords() {
+        return orWords;
+    }
+    public void setOrWords(Set<String> orWords) {
+        this.orWords = orWords;
+    }
+    public Set<String> getNotWords() {
+        return notWords;
+    }
+    public void setNotWords(Set<String> notWords) {
+        this.notWords = notWords;
     }
 }

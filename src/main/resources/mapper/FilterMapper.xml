@@ -51,6 +51,9 @@
     </choose>
     )
   </sql>
+  <sql id="allString">
+    CONCAT(COALESCE(content.node_title, ''), COALESCE(content.node_description, ''), COALESCE(content.node_comment, ''), COALESCE(content.node_source, ''))
+  </sql>
   
   <select id="getAll" resultMap="BaseResultMap">
     select distinct content.*
@@ -87,6 +90,26 @@
       <if test="filter.collection!=null">
         and content.node_collection = ${filter.collection}
       </if>
+
+      <!-- words and -->
+      <if test="filter.andWords!=null and filter.andWords.size()!=0">
+        and
+        <foreach collection="filter.andWords" item="word" separator="and">
+          <include refid="allString"/> ~* '${word}'
+        </foreach>
+      </if>
+      <!-- words or -->
+      <if test="filter.orWords!=null and filter.orWords.size()!=0">
+        and
+        <include refid="allString"/> ~*
+        <foreach collection="filter.orWords" item="word" separator="|" open="'" close="'">${word}</foreach>
+      </if>
+      <!-- words not -->
+      <if test="filter.notWords!=null and filter.notWords.size()!=0">
+        and
+        <include refid="allString"/> !~*
+        <foreach collection="filter.notWords" item="word" separator="|" open="'" close="'">${word}</foreach>
+      </if>
       
       <!-- tags and -->
       <if test="filter.andTags!=null and filter.andTags.size()!=0">
@@ -100,7 +123,6 @@
         having count(distinct parent.id) = ${filter.andTags.size()}
         )
       </if>
-      
       <!-- tags or -->
       <if test="filter.orTags!=null and filter.orTags.size()!=0">
         and content.id in (
@@ -111,7 +133,6 @@
         </foreach>
         )
       </if>
-      
       <!-- tags not -->
       <if test="filter.notTags!=null and filter.notTags.size()!=0">
         and content.id not in (
