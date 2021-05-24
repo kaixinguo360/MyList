@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.list.type.dlist.DListMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.type.dlist.DList">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="dlist_filter" jdbcType="VARCHAR" property="filter" />
+    <result column="dlist_config" jdbcType="VARCHAR" property="config" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from dlists
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.my.list.type.dlist.DList" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into dlists (id, dlist_filter, dlist_config)
+    values (#{id,jdbcType=BIGINT}, #{filter,jdbcType=VARCHAR}, #{config,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.my.list.type.dlist.DList">
+    update dlists
+    set
+      dlist_filter = #{filter,jdbcType=VARCHAR},
+      dlist_config = #{config,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select *
+    from dlists
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select *
+    from dlists
+  </select>
+</mapper>

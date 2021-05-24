@@ -104,6 +104,14 @@ CREATE TABLE "videos" (
                           CONSTRAINT "videos_ibfk_2" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE "dlists" (
+                          "id" bigint NOT NULL,
+                          "dlist_filter" text NOT NULL,
+                          "dlist_config" text NOT NULL,
+                          PRIMARY KEY ("id"),
+                          CONSTRAINT "dlists_ibfk_2" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- INSERT INTO "users" VALUES (1,'test','test','','activated');
 
 -- 2021-05-19 15:54:48

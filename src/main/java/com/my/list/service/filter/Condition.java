@@ -1,6 +1,6 @@
 package com.my.list.service.filter;
 
-class Condition {
+public class Condition {
 
     private String column;
     private String oper;
