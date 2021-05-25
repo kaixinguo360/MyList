@@ -2,12 +2,12 @@ package com.my.list.type.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.list.domain.MainData;
-import com.my.list.dto.ListItem;
-import com.my.list.dto.Node;
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
-import com.my.list.type.MyStringUtils;
+import com.my.list.entity.ListItem;
+import com.my.list.entity.MainData;
+import com.my.list.entity.Node;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
+import com.my.list.util.MyStringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -27,17 +27,17 @@ public class ListConfig {
     }
 
     @Bean("ListType")
-    public Type config(TypeConfig typeConfig) {
-        Type type = new Type(TYPE_NAME);
+    public TypeDefinition config(TypeManager typeManager) {
+        TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
 
-        type.setHasExtraList(true);
-        type.setExtraListUnique(true);
-        type.setExtraListRequired(true);
-        type.setNodeNormalizer(node -> node.getMainData().setCollection(true));
-        type.setExcerptGenerator(this::generateExcerpt);
+        typeDefinition.setHasExtraList(true);
+        typeDefinition.setExtraListUnique(true);
+        typeDefinition.setExtraListRequired(true);
+        typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(true));
+        typeDefinition.setExcerptGenerator(this::generateExcerpt);
         
-        typeConfig.addType(type);
-        return type;
+        typeManager.addType(typeDefinition);
+        return typeDefinition;
     }
 
     private String generateExcerpt(Node node) {
@@ -46,7 +46,7 @@ public class ListConfig {
         if (list.size() == 0) {
             String text = node.getMainData().getTitle();
             if (StringUtils.isEmpty(text)) text = node.getMainData().getDescription();
-            text = MyStringUtils.limit(text, 36);
+            text = MyStringUtil.limit(text, 36);
             excerpt.put("type", "node");
             excerpt.put("excerpt", text);
             excerpt.put("count", 0);

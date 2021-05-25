@@ -1,8 +1,8 @@
 package com.my.list.type.tag;
 
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
-import com.my.list.type.MyStringUtils;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
+import com.my.list.util.MyStringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -13,21 +13,21 @@ public class TagConfig {
     public static final String TYPE_NAME = "tag";
 
     @Bean("TagType")
-    public Type config(TypeConfig typeConfig) {
-        Type type = new Type(TYPE_NAME);
+    public TypeDefinition config(TypeManager typeManager) {
+        TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
         
-        type.setHasExtraList(true);
-        type.setExtraListUnique(true);
-        type.setExtraListRequired(false);
-        type.setNodeNormalizer(node -> node.getMainData().setCollection(true));
-        type.setExcerptGenerator(node -> {
+        typeDefinition.setHasExtraList(true);
+        typeDefinition.setExtraListUnique(true);
+        typeDefinition.setExtraListRequired(false);
+        typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(true));
+        typeDefinition.setExcerptGenerator(node -> {
             String text = node.getMainData().getDescription();
             if (StringUtils.isEmpty(text)) text = node.getMainData().getTitle();
-            return MyStringUtils.limit(text, 100);
+            return MyStringUtil.limit(text, 100);
         });
         
-        typeConfig.addType(type);
-        return type;
+        typeManager.addType(typeDefinition);
+        return typeDefinition;
     }
     
 }

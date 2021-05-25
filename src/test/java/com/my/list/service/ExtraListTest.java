@@ -1,14 +1,8 @@
 package com.my.list.service;
 
 import com.my.list.TestUtil;
-import com.my.list.domain.ExtraData;
-import com.my.list.domain.MainData;
-import com.my.list.domain.NodeMapper;
-import com.my.list.domain.User;
-import com.my.list.dto.ListItem;
-import com.my.list.dto.Node;
-import com.my.list.dto.NodeDTO;
-import com.my.list.service.data.NodeService;
+import com.my.list.entity.*;
+import com.my.list.mapper.MainDataMapper;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageConfig;
 import com.my.list.type.music.Music;
@@ -32,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ExtraListTest {
 
     @Autowired private TestUtil testUtil;
-    @Autowired private NodeMapper nodeMapper;
+    @Autowired private MainDataMapper mainDataMapper;
     @Autowired private UserService userService;
 
     private String token;
@@ -125,7 +119,7 @@ public class ExtraListTest {
         assertEquals(textNode.getMainData().getTitle(), list.get(0).node.getMainData().getTitle());
         assertEquals(imageNode.getMainData().getTitle(), list.get(1).node.getMainData().getTitle());
         assertEquals(musicNode.getMainData().getTitle(), list.get(2).node.getMainData().getTitle());
-        assertEquals(4, nodeMapper.selectAll().size());
+        assertEquals(4, mainDataMapper.selectAll().size());
 
         // update list
         //
@@ -158,7 +152,7 @@ public class ExtraListTest {
         assertEquals(musicNode.getMainData().getTitle(), list.get(1).node.getMainData().getTitle());
         assertEquals(videoNode.getMainData().getTitle(), list.get(2).node.getMainData().getTitle());
         assertEquals(updatedImageNode.getMainData().getTitle(), list.get(3).node.getMainData().getTitle());
-        assertEquals(4, nodeMapper.selectAll().size());
+        assertEquals(4, mainDataMapper.selectAll().size());
         
         // delete list
         //
@@ -169,11 +163,11 @@ public class ExtraListTest {
         //    [=]    musicNode  1 -> 0  alone
         //    [=]    videoNode  1 -> 0  alone
         nodeService.remove(listNode.getMainData().getId());
-        assertEquals(2, nodeMapper.selectAll().size());
+        assertEquals(2, mainDataMapper.selectAll().size());
     }
 
     private Node newNode(String type, String title, ExtraData extraData) {
-        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
+        Node node = new NodeImpl(MainData.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType(type);
         mainData.setTitle(title);

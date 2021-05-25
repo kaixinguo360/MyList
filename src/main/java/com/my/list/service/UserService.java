@@ -1,12 +1,12 @@
 package com.my.list.service;
 
 import com.my.list.Constants;
-import com.my.list.domain.OptionMapper;
-import com.my.list.domain.User;
-import com.my.list.domain.UserMapper;
+import com.my.list.entity.User;
 import com.my.list.exception.DataException;
 import com.my.list.exception.ForbiddenException;
 import com.my.list.exception.UnauthorizedException;
+import com.my.list.mapper.OptionMapper;
+import com.my.list.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

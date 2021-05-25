@@ -1,9 +1,9 @@
 package com.my.list;
 
-import com.my.list.controller.util.AuthorizationInterceptor;
-import com.my.list.controller.util.CurrentContextArgumentResolver;
-import com.my.list.controller.util.CurrentTokenArgumentResolver;
-import com.my.list.controller.util.SimpleResponseReturnHandler;
+import com.my.list.aop.AuthorizationInterceptor;
+import com.my.list.aop.CurrentContextArgumentResolver;
+import com.my.list.aop.CurrentTokenArgumentResolver;
+import com.my.list.aop.SimpleResponseReturnHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

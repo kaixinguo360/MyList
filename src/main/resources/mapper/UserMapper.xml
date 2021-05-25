@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.my.list.domain.UserMapper">
-  <resultMap id="BaseResultMap" type="com.my.list.domain.User">
+<mapper namespace="com.my.list.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.my.list.entity.User">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="user_name" jdbcType="VARCHAR" property="name"/>
     <result column="user_pass" jdbcType="VARCHAR" property="pass"/>
@@ -13,13 +13,13 @@
     from users
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.my.list.domain.User" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.my.list.entity.User" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into users (user_name, user_pass,
                        user_email, user_status)
     values (#{name,jdbcType=VARCHAR}, #{pass,jdbcType=VARCHAR},
             #{email,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.my.list.domain.User">
+  <update id="updateByPrimaryKey" parameterType="com.my.list.entity.User">
     update users
     set user_name   = #{name,jdbcType=VARCHAR},
         user_pass   = #{pass,jdbcType=VARCHAR},

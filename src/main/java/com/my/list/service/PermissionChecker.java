@@ -1,7 +1,7 @@
 package com.my.list.service;
 
-import com.my.list.domain.MainData;
-import com.my.list.domain.User;
+import com.my.list.entity.MainData;
+import com.my.list.entity.User;
 import com.my.list.exception.DataException;
 import com.my.list.exception.ForbiddenException;
 

@@ -1,45 +1,42 @@
 package com.my.list.service;
 
-import com.my.list.domain.User;
-import com.my.list.service.data.ListService;
-import com.my.list.service.data.NodeService;
-import com.my.list.service.data.PartService;
+import com.my.list.entity.User;
 import org.springframework.stereotype.Service;
 
 public class UserContext {
 
     public final User user;
     public final NodeService nodeService;
-    public final ListService listService;
-    public final PartService partService;
+    public final SearchService searchService;
+    public final LinkService linkService;
 
-    public UserContext(User user, NodeService nodeService, ListService listService, PartService partService) {
+    public UserContext(User user, NodeService nodeService, SearchService searchService, LinkService linkService) {
         this.user = user;
         this.nodeService = nodeService;
-        this.listService = listService;
-        this.partService = partService;
+        this.searchService = searchService;
+        this.linkService = linkService;
     }
 
     @Service
     public static class UserContextFactory {
 
-        private final PartService.PartServiceFactory partServiceFactory;
+        private final LinkService.LinkServiceFactory linkServiceFactory;
         private final NodeService.NodeServiceFactory nodeServiceFactory;
-        private final ListService.ListServiceFactory listServiceFactory;
+        private final SearchService.SearchServiceFactory searchServiceFactory;
 
-        public UserContextFactory(PartService.PartServiceFactory partServiceFactory, NodeService.NodeServiceFactory nodeServiceFactory, ListService.ListServiceFactory listServiceFactory) {
-            this.partServiceFactory = partServiceFactory;
+        public UserContextFactory(LinkService.LinkServiceFactory linkServiceFactory, NodeService.NodeServiceFactory nodeServiceFactory, SearchService.SearchServiceFactory searchServiceFactory) {
+            this.linkServiceFactory = linkServiceFactory;
             this.nodeServiceFactory = nodeServiceFactory;
-            this.listServiceFactory = listServiceFactory;
+            this.searchServiceFactory = searchServiceFactory;
         }
 
 
         public UserContext create(User user) {
             PermissionChecker permissionChecker = new PermissionChecker(user);
-            PartService partService = partServiceFactory.create(permissionChecker);
-            NodeService nodeService = nodeServiceFactory.create(permissionChecker, partService);
-            ListService listService = listServiceFactory.create(permissionChecker);
-            return new UserContext(user, nodeService, listService, partService);
+            LinkService linkService = linkServiceFactory.create(permissionChecker);
+            NodeService nodeService = nodeServiceFactory.create(permissionChecker, linkService);
+            SearchService searchService = searchServiceFactory.create(permissionChecker);
+            return new UserContext(user, nodeService, searchService, linkService);
         }
         
     }

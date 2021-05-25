@@ -1,7 +1,7 @@
 package com.my.list.type.image;
 
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,20 +11,20 @@ public class ImageConfig {
     public static final String TYPE_NAME = "image";
 
     @Bean("ImageType")
-    public Type config(
-        TypeConfig typeConfig,
+    public TypeDefinition config(
+        TypeManager typeManager,
         ImageMapper imageMapper
     ) {
-        Type type = new Type(TYPE_NAME);
+        TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
         
-        type.setHasExtraData(true);
-        type.setExtraDataClass(Image.class);
-        type.setExtraDataMapper(imageMapper);
-        type.setNodeNormalizer(node -> node.getMainData().setCollection(false));
-        type.setExcerptGenerator(node -> node.getExtraData(Image.class).getUrl());
+        typeDefinition.setHasExtraData(true);
+        typeDefinition.setExtraDataClass(Image.class);
+        typeDefinition.setExtraDataMapper(imageMapper);
+        typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(false));
+        typeDefinition.setExcerptGenerator(node -> node.getExtraData(Image.class).getUrl());
 
-        typeConfig.addType(type);
-        return type;
+        typeManager.addType(typeDefinition);
+        return typeDefinition;
     }
     
 }

@@ -16,8 +16,8 @@
   </settings>
 
   <typeAliases>
-    <typeAlias alias="User" type="com.my.list.domain.User" />
-    <typeAlias alias="Node" type="com.my.list.domain.Node" />
+    <typeAlias alias="User" type="com.my.list.entity.User" />
+    <typeAlias alias="Node" type="com.my.list.entity.MainData" />
     <typeAlias alias="Text" type="com.my.list.type.text.Text" />
     <typeAlias alias="Image" type="com.my.list.type.image.Image" />
     <typeAlias alias="Music" type="com.my.list.type.music.Music" />

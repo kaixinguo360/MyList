@@ -1,52 +1,52 @@
 package com.my.list.service.data;
 
-import com.my.list.domain.ExtraData;
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
+import com.my.list.entity.ExtraData;
 import com.my.list.exception.DataException;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
 import org.springframework.stereotype.Service;
 
 @Service
-class ExtraDataService {
+public class ExtraDataService {
 
-    private final TypeConfig typeConfig;
+    private final TypeManager typeManager;
 
-    ExtraDataService(TypeConfig typeConfig) {
-        this.typeConfig = typeConfig;
+    ExtraDataService(TypeManager typeManager) {
+        this.typeManager = typeManager;
     }
 
-    void add(ExtraData extraData) {
+    public void add(ExtraData extraData) {
         if (extraData == null) throw new DataException("Input extraData is null.");
-        if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
+        if (extraData.getId() == null) throw new DataException("Id of input extraData is not set.");
 
-        Type type = typeConfig.getType(extraData);
-        type.getExtraDataMapper().insert(extraData);
+        TypeDefinition typeDefinition = typeManager.getType(extraData);
+        typeDefinition.getExtraDataMapper().insert(extraData);
     }
-    <T extends ExtraData> T get(Long extraDataId, Class<T> extraDataClass) {
+    public <T extends ExtraData> T get(Long extraDataId, Class<T> extraDataClass) {
         if (extraDataId == null) throw new DataException("Input extraDataId is null.");
 
-        Type type = typeConfig.getType(extraDataClass);
-        ExtraData extraData = type.getExtraDataMapper().selectByPrimaryKey(extraDataId);
+        TypeDefinition typeDefinition = typeManager.getType(extraDataClass);
+        ExtraData extraData = typeDefinition.getExtraDataMapper().selectByPrimaryKey(extraDataId);
         if (extraData == null) throw new DataException("Can't find extraData for node with id=" + extraDataId);
 
         @SuppressWarnings("unchecked") T t = (T) extraData;
         return t;
     }
-    void update(ExtraData extraData) {
+    public void update(ExtraData extraData) {
         if (extraData == null) throw new DataException("Input extraData is null.");
-        if (extraData.getExtraId() == null) throw new DataException("Id of input extraData is not set.");
-        Type type = typeConfig.getType(extraData);
+        if (extraData.getId() == null) throw new DataException("Id of input extraData is not set.");
+        TypeDefinition typeDefinition = typeManager.getType(extraData);
         
-        ExtraData old = type.getExtraDataMapper().selectByPrimaryKey(extraData.getExtraId());
-        if (old == null) throw new DataException("Can't find extra data with id=" + extraData.getExtraId());
-        extraData.setExtraId(old.getExtraId());
+        ExtraData old = typeDefinition.getExtraDataMapper().selectByPrimaryKey(extraData.getId());
+        if (old == null) throw new DataException("Can't find extra data with id=" + extraData.getId());
+        extraData.setId(old.getId());
         
-        type.getExtraDataMapper().updateByPrimaryKey(extraData);
+        typeDefinition.getExtraDataMapper().updateByPrimaryKey(extraData);
     }
-    void remove(Long extraDataId, Class<? extends ExtraData> extraDataClass) {
+    public void remove(Long extraDataId, Class<? extends ExtraData> extraDataClass) {
         if (extraDataId == null) throw new DataException("Input extraDataId id is null.");
 
-        Type type = typeConfig.getType(extraDataClass);
-        type.getExtraDataMapper().deleteByPrimaryKey(extraDataId);
+        TypeDefinition typeDefinition = typeManager.getType(extraDataClass);
+        typeDefinition.getExtraDataMapper().deleteByPrimaryKey(extraDataId);
     }
 }

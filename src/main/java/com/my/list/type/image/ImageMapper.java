@@ -1,6 +1,6 @@
 package com.my.list.type.image;
 
-import com.my.list.domain.ExtraDataMapper;
+import com.my.list.mapper.common.ExtraDataMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

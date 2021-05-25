@@ -1,8 +1,8 @@
 package com.my.list.type.simplenode;
 
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
-import com.my.list.type.MyStringUtils;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
+import com.my.list.util.MyStringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -13,17 +13,17 @@ public class SimpleNodeConfig {
     public static final String TYPE_NAME = "node";
 
     @Bean("SimpleNodeType")
-    public Type config(TypeConfig typeConfig) {
-        Type type = new Type(TYPE_NAME);
+    public TypeDefinition config(TypeManager typeManager) {
+        TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
         
-        type.setExcerptGenerator(node -> {
+        typeDefinition.setExcerptGenerator(node -> {
             String text = node.getMainData().getTitle();
             if (StringUtils.isEmpty(text)) text = node.getMainData().getDescription();
-            return MyStringUtils.limit(text, 36);
+            return MyStringUtil.limit(text, 36);
         });
         
-        typeConfig.addType(type);
-        return type;
+        typeManager.addType(typeDefinition);
+        return typeDefinition;
     }
     
 }

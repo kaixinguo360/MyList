@@ -4,18 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.list.Constants;
 import com.my.list.TestUtil;
-import com.my.list.controller.util.SimpleResponseEntity;
-import com.my.list.domain.ExtraData;
-import com.my.list.domain.MainData;
-import com.my.list.domain.User;
-import com.my.list.dto.ListItem;
-import com.my.list.dto.Node;
-import com.my.list.dto.NodeDTO;
+import com.my.list.aop.SimpleResponseEntity;
+import com.my.list.entity.*;
+import com.my.list.entity.filter.Filter;
+import com.my.list.entity.filter.Permission;
+import com.my.list.entity.filter.Sort;
+import com.my.list.entity.filter.Tag;
 import com.my.list.service.UserService;
-import com.my.list.service.filter.Filter;
-import com.my.list.service.filter.Permission;
-import com.my.list.service.filter.Sort;
-import com.my.list.service.filter.Tag;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageConfig;
 import com.my.list.type.music.Music;
@@ -334,21 +329,21 @@ public class ControllerTest {
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
-                    .addCondition("node_title", "=", "'Text Node'")
+                    .addCondition("content.node_title", "=", "'Text Node'")
                 ))
             )));
         assertNodes("'%Text%'", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
-                    .addCondition("node_title", "like", "'%Text%'")
+                    .addCondition("content.node_title", "like", "'%Text%'")
                 ))
             )));
         assertNodes("'%Text%', ctime asc", 1, assertList(
             mvc.perform(MockMvcRequestBuilders
                 .post("/api/node/search").header(Constants.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(new Filter()
-                    .addCondition("node_title", "like", "'%Text%'")
+                    .addCondition("content.node_title", "like", "'%Text%'")
                     .addSort("node_ctime", Sort.Direction.ASC)
                 ))
             )));
@@ -417,7 +412,7 @@ public class ControllerTest {
         return user;
     }
     private Node newNode(String type, String title, ExtraData extraData) {
-        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
+        Node node = new NodeImpl(MainData.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType(type);
         mainData.setTitle(title);

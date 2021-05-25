@@ -1,13 +1,12 @@
 package com.my.list.type.video;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.my.list.domain.ExtraData;
+import com.my.list.entity.ExtraData;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
+import lombok.ToString;
 
 @Data
+@ToString
 @JsonTypeName(value = "video")
 public class Video implements ExtraData {
 
@@ -15,31 +14,4 @@ public class Video implements ExtraData {
     private String url = null;
     private String format = null;
 
-    @Override
-    public Long getExtraId() {
-        return id;
-    }
-
-    @Override
-    public void setExtraId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("music_id", id);
-        map.put("music_url", url);
-        map.put("music_format", format);
-        return map;
-    }
-
-    @Override
-    public String toString() {
-        return "Video{" +
-            "id=" + id +
-            ", url='" + url + '\'' +
-            ", format='" + format + '\'' +
-            '}';
-    }
 }

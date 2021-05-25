@@ -1,13 +1,8 @@
 package com.my.list.service;
 
 import com.my.list.TestUtil;
-import com.my.list.domain.ExtraData;
-import com.my.list.domain.MainData;
-import com.my.list.domain.NodeMapper;
-import com.my.list.domain.User;
-import com.my.list.dto.Node;
-import com.my.list.dto.NodeDTO;
-import com.my.list.service.data.NodeService;
+import com.my.list.entity.*;
+import com.my.list.mapper.MainDataMapper;
 import com.my.list.type.image.Image;
 import com.my.list.type.image.ImageConfig;
 import com.my.list.type.image.ImageMapper;
@@ -25,14 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class ExtraDataTest {
 
     @Autowired private TestUtil testUtil;
-    @Autowired private NodeMapper nodeMapper;
+    @Autowired private MainDataMapper mainDataMapper;
     @Autowired private TextMapper textMapper;
     @Autowired private ImageMapper imageMapper;
     @Autowired private MusicMapper musicMapper;
@@ -81,14 +75,14 @@ public class ExtraDataTest {
         Node node = newNode(TextConfig.TYPE_NAME, "Text Node", text);
         MainData mainData = node.getMainData();
         nodeService.add(node);
-        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, mainDataMapper.selectAll().size());
         assertEquals(1, textMapper.selectAll().size());
 
         // getNode
         Node result = nodeService.get(mainData.getId());
         assertEquals(mainData.getType(), result.getMainData().getType());
-        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
-        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
 
         // updateNode
         mainData.setComment("This is comment.");
@@ -100,7 +94,7 @@ public class ExtraDataTest {
 
         // removeNode
         nodeService.remove(mainData.getId());
-        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, mainDataMapper.selectAll().size());
         assertEquals(0, textMapper.selectAll().size());
     }
 
@@ -112,14 +106,14 @@ public class ExtraDataTest {
         Node node = newNode(ImageConfig.TYPE_NAME, "Image Node", image);
         MainData mainData = node.getMainData();
         nodeService.add(node);
-        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, mainDataMapper.selectAll().size());
         assertEquals(1, imageMapper.selectAll().size());
 
         // getNode
         Node result = nodeService.get(mainData.getId());
         assertEquals(mainData.getType(), result.getMainData().getType());
-        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
-        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
 
         // updateNode
         mainData.setComment("This is comment.");
@@ -131,7 +125,7 @@ public class ExtraDataTest {
 
         // removeNode
         nodeService.remove(mainData.getId());
-        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, mainDataMapper.selectAll().size());
         assertEquals(0, imageMapper.selectAll().size());
     }
 
@@ -143,14 +137,14 @@ public class ExtraDataTest {
         Node node = newNode(MusicConfig.TYPE_NAME, "Music Node", music);
         MainData mainData = node.getMainData();
         nodeService.add(node);
-        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, mainDataMapper.selectAll().size());
         assertEquals(1, musicMapper.selectAll().size());
 
         // getNode
         Node result = nodeService.get(mainData.getId());
         assertEquals(mainData.getType(), result.getMainData().getType());
-        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
-        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
 
         // updateNode
         mainData.setComment("This is comment.");
@@ -162,7 +156,7 @@ public class ExtraDataTest {
 
         // removeNode
         nodeService.remove(mainData.getId());
-        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, mainDataMapper.selectAll().size());
         assertEquals(0, musicMapper.selectAll().size());
     }
 
@@ -174,14 +168,14 @@ public class ExtraDataTest {
         Node node = newNode(VideoConfig.TYPE_NAME, "Video Node", video);
         MainData mainData = node.getMainData();
         nodeService.add(node);
-        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, mainDataMapper.selectAll().size());
         assertEquals(1, videoMapper.selectAll().size());
 
         // getNode
         Node result = nodeService.get(mainData.getId());
         assertEquals(mainData.getType(), result.getMainData().getType());
-        assertArrayEquals(node.getExtraData().toMap().keySet().toArray(), result.getExtraData().toMap().keySet().toArray());
-        assertArrayEquals(node.getExtraData().toMap().values().toArray(), result.getExtraData().toMap().values().toArray());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
+        assertEquals(node.getExtraData().toString(), result.getExtraData().toString());
 
         // updateNode
         mainData.setComment("This is comment.");
@@ -193,12 +187,12 @@ public class ExtraDataTest {
 
         // removeNode
         nodeService.remove(mainData.getId());
-        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, mainDataMapper.selectAll().size());
         assertEquals(0, videoMapper.selectAll().size());
     }
 
     private Node newNode(String type, String title, ExtraData extraData) {
-        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
+        Node node = new NodeImpl(MainData.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType(type);
         mainData.setTitle(title);

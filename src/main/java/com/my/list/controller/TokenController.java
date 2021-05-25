@@ -1,10 +1,10 @@
 package com.my.list.controller;
 
 import com.my.list.Constants;
-import com.my.list.controller.util.Authorization;
-import com.my.list.controller.util.CurrentToken;
-import com.my.list.controller.util.SimpleController;
-import com.my.list.domain.User;
+import com.my.list.aop.Authorization;
+import com.my.list.aop.CurrentToken;
+import com.my.list.aop.SimpleController;
+import com.my.list.entity.User;
 import com.my.list.service.UserService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

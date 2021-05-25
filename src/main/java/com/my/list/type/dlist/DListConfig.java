@@ -1,8 +1,8 @@
 package com.my.list.type.dlist;
 
-import com.my.list.dto.Type;
-import com.my.list.dto.TypeConfig;
-import com.my.list.type.MyStringUtils;
+import com.my.list.type.TypeDefinition;
+import com.my.list.type.TypeManager;
+import com.my.list.util.MyStringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -13,24 +13,24 @@ public class DListConfig {
     public static final String TYPE_NAME = "dlist";
 
     @Bean("DListType")
-    public Type config(
-        TypeConfig typeConfig,
+    public TypeDefinition config(
+        TypeManager typeManager,
         DListMapper DListMapper
     ) {
-        Type type = new Type(TYPE_NAME);
+        TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
         
-        type.setHasExtraData(true);
-        type.setExtraDataClass(DList.class);
-        type.setExtraDataMapper(DListMapper);
-        type.setNodeNormalizer(node -> node.getMainData().setCollection(false));
-        type.setExcerptGenerator(node -> {
+        typeDefinition.setHasExtraData(true);
+        typeDefinition.setExtraDataClass(DList.class);
+        typeDefinition.setExtraDataMapper(DListMapper);
+        typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(false));
+        typeDefinition.setExcerptGenerator(node -> {
             String text = node.getMainData().getDescription();
             if (StringUtils.isEmpty(text)) text = node.getMainData().getTitle();
-            return MyStringUtils.limit(text, 100);
+            return MyStringUtil.limit(text, 100);
         });
 
-        typeConfig.addType(type);
-        return type;
+        typeManager.addType(typeDefinition);
+        return typeDefinition;
     }
     
 }

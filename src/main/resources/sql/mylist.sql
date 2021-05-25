@@ -1,9 +1,10 @@
 
+DROP TABLE IF EXISTS "dlists";
 DROP TABLE IF EXISTS "images";
 DROP TABLE IF EXISTS "musics";
 DROP TABLE IF EXISTS "texts";
 DROP TABLE IF EXISTS "videos";
-DROP TABLE IF EXISTS "parts";
+DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS "nodes";
 DROP TABLE IF EXISTS "users";
 DROP TABLE IF EXISTS "options";
@@ -49,26 +50,26 @@ CREATE TABLE "nodes" (
 );
 CREATE INDEX "node_ctime" ON "nodes" ("node_ctime");
 CREATE INDEX "node_mtime" ON "nodes" ("node_mtime");
-CREATE INDEX "node_user" ON "nodes" ("node_user");
+CREATE INDEX "node_user" ON "nodes" (node_user);
 COMMENT ON COLUMN "nodes"."node_ctime" IS 'Create Time';
 COMMENT ON COLUMN "nodes"."node_mtime" IS 'Modify Time';
 COMMENT ON COLUMN "nodes"."node_part" IS 'Is a part';
 COMMENT ON COLUMN "nodes"."node_collection" IS 'Is a collection';
 
-CREATE TABLE "parts" (
-                         "part_id" bigserial,
-                         "part_parent_id" bigint NOT NULL,
-                         "part_content_id" bigint NOT NULL,
-                         "part_content_order" integer NOT NULL DEFAULT '0',
-                         PRIMARY KEY ("part_id"),
-                         CONSTRAINT "parts_ibfk_2" FOREIGN KEY ("part_parent_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-                         CONSTRAINT "parts_ibfk_3" FOREIGN KEY ("part_content_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE "links" (
+                         "id" bigserial,
+                         "parent_id" bigint NOT NULL,
+                         "content_id" bigint NOT NULL,
+                         "content_index" integer NOT NULL DEFAULT '0',
+                         PRIMARY KEY ("id"),
+                         CONSTRAINT "links_ibfk_2" FOREIGN KEY ("parent_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+                         CONSTRAINT "links_ibfk_3" FOREIGN KEY ("content_id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-CREATE INDEX "part_node_id" ON "parts" ("part_parent_id");
-CREATE INDEX "part_content_id" ON "parts" ("part_content_id");
-COMMENT ON COLUMN "parts"."part_parent_id" IS 'ID of parent node';
-COMMENT ON COLUMN "parts"."part_content_id" IS 'ID of content node';
-COMMENT ON COLUMN "parts"."part_content_order" IS 'Order of content node';
+CREATE INDEX "link_parent_id" ON links (parent_id);
+CREATE INDEX "link_content_id" ON links (content_id);
+COMMENT ON COLUMN links.parent_id IS 'ID of parent';
+COMMENT ON COLUMN links.content_id IS 'ID of content';
+COMMENT ON COLUMN links.content_index IS 'Order of content';
 
 CREATE TABLE "images" (
                           "id" bigint NOT NULL,
@@ -111,6 +112,20 @@ CREATE TABLE "dlists" (
                           PRIMARY KEY ("id"),
                           CONSTRAINT "dlists_ibfk_2" FOREIGN KEY ("id") REFERENCES "nodes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE OR REPLACE PROCEDURE "clean_all"() AS $body$
+BEGIN
+    DELETE FROM "dlists" WHERE true;
+    DELETE FROM "images" WHERE true;
+    DELETE FROM "musics" WHERE true;
+    DELETE FROM "texts" WHERE true;
+    DELETE FROM "videos" WHERE true;
+    DELETE FROM links WHERE true;
+    DELETE FROM "nodes" WHERE true;
+    DELETE FROM "users" WHERE true;
+    DELETE FROM "options" WHERE true;
+END $body$
+LANGUAGE 'plpgsql';
 
 -- INSERT INTO "users" VALUES (1,'test','test','','activated');
 

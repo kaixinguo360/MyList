@@ -1,12 +1,11 @@
 package com.my.list.service;
 
 import com.my.list.TestUtil;
-import com.my.list.domain.MainData;
-import com.my.list.domain.NodeMapper;
-import com.my.list.domain.User;
-import com.my.list.dto.Node;
-import com.my.list.dto.NodeDTO;
-import com.my.list.service.data.NodeService;
+import com.my.list.entity.MainData;
+import com.my.list.entity.Node;
+import com.my.list.entity.NodeImpl;
+import com.my.list.entity.User;
+import com.my.list.mapper.MainDataMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MainDataTest {
 
     @Autowired private TestUtil testUtil;
-    @Autowired private NodeMapper nodeMapper;
+    @Autowired private MainDataMapper mainDataMapper;
     @Autowired private UserService userService;
 
     private String token;
@@ -47,7 +46,7 @@ public class MainDataTest {
         Node node = newNode();
         MainData mainData = node.getMainData();
         nodeService.add(node);
-        assertEquals(1, nodeMapper.selectAll().size());
+        assertEquals(1, mainDataMapper.selectAll().size());
 
         // getNode
         Node node1 = nodeService.get(mainData.getId());
@@ -60,11 +59,11 @@ public class MainDataTest {
 
         // removeNode
         nodeService.remove(mainData.getId());
-        assertEquals(0, nodeMapper.selectAll().size());
+        assertEquals(0, mainDataMapper.selectAll().size());
     }
 
     private Node newNode() {
-        Node node = new NodeDTO(com.my.list.domain.Node.defaultNode());
+        Node node = new NodeImpl(MainData.defaultNode());
         MainData mainData = node.getMainData();
         mainData.setType("node");
         mainData.setTitle("Simple Node");
