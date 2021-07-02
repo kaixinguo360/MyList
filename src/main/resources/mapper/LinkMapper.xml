@@ -34,8 +34,7 @@
   <delete id="deleteChildren">
     delete from links
     where parent_id = #{parentId,jdbcType=BIGINT}
-      and content_id in
-      (<foreach collection="childIds" item="childId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
+      and content_id in (<foreach collection="childIds" item="childId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
   </delete>
   <delete id="deleteAllChildren">
     delete from links
@@ -45,7 +44,7 @@
     SELECT content.*
     FROM nodes content, links
     WHERE content_id = content.id
-      AND parent_id = #{parentId}
+      AND parent_id in (<foreach collection="parentIds" item="parentId" separator=",">#{parentId,jdbcType=BIGINT}</foreach>)
     ORDER BY content_index
   </select>
   <select id="countChildren" parameterType="java.lang.Long" resultType="java.lang.Integer">
@@ -91,7 +90,7 @@
     select parent.*
     from links, nodes parent
     where parent_id = parent.id
-      and content_id = #{childId}
+      and content_id in (<foreach collection="childIds" item="childId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
     <!-- AVAILABLE -->
       and (
         parent.node_user = #{userId}

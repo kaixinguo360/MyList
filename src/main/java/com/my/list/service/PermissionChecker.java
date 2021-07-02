@@ -21,6 +21,12 @@ public class PermissionChecker {
         return userId;
     }
     public void check(MainData mainData, boolean write) {
+        if (!isAuthorized(mainData, write)) {
+            throw new ForbiddenException("Permission denied, permission=" + mainData.getPermission() +
+                ", expectedUserId=" + userId + ", actualUserId=" + mainData.getUser());
+        }
+    }
+    public boolean isAuthorized(MainData mainData, boolean write) {
         if (mainData == null) throw new DataException("Input mainData is null.");
         String permission = mainData.getPermission();
         if (permission == null) throw new ForbiddenException("Permission is null");
@@ -38,8 +44,7 @@ public class PermissionChecker {
             default:
                 throw new ForbiddenException("Unknown permission: " + permission);
         }
-        if (!success) throw new ForbiddenException("Permission denied, permission=" + mainData.getPermission() +
-            ", expectedUserId=" + userId + ", actualUserId=" + mainData.getUser());
+        return success;
     }
     public void checkUpdate(MainData original, MainData updated) {
         this.check(original, true);

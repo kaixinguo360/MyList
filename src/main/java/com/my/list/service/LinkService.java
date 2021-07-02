@@ -9,9 +9,7 @@ import com.my.list.type.TypeDefinition;
 import com.my.list.type.TypeManager;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LinkService {
@@ -36,11 +34,11 @@ public class LinkService {
         }
     }
     public void addChildren(Long parentId, List<Long> childIds) {
-        MainData parentMainData = checkListPermission(parentId, true);
+        MainData parentMainData = checkNodePermission(parentId, true);
         TypeDefinition typeDefinition = typeManager.getType(parentMainData);
         
         if (typeDefinition.getExtraListUnique()) {
-            Set<Long> ids = linkMapper.selectAllChildren(parentId)
+            Set<Long> ids = selectAllChildren(parentId)
                 .stream().map(MainData::getId).collect(Collectors.toSet());
             childIds = (ids.size() == 0) ?
                 childIds : childIds.stream().filter(childId -> !ids.contains(childId)).collect(Collectors.toList());
@@ -55,15 +53,38 @@ public class LinkService {
         }
     }
     public void addParents(Long childId, List<Long> parentIds) {
-        checkNodePermission(childId, true);
-        
-        Set<Long> ids = linkMapper.selectAllParent(permissionChecker.getUserId(), childId)
+        MainData childMainData = checkNodePermission(childId, true);
+        TypeDefinition typeDefinition = typeManager.getType(childMainData);
+
+        List<Long> childIds = Collections.singletonList(childId);
+        if (typeDefinition.getCascade()) {
+            List<MainData> childNodes = selectAllChildren(childIds, Mode.CASCADE, parentIds);
+            childIds = childNodes.stream()
+                .filter(n -> permissionChecker.isAuthorized(n, true))
+                .map(MainData::getId)
+                .collect(Collectors.toList());
+            childIds.add(childId);
+        }
+
+        parentIds.addAll(
+            selectAllParents(parentIds, Mode.ONLY_CASCADE, childIds)
+                .stream().map(MainData::getId).collect(Collectors.toList())
+        );
+
+        List<Long> finalChildIds = childIds;
+        parentIds = parentIds.stream()
+            .filter(i -> !finalChildIds.contains(i))
+            .collect(Collectors.toList());
+
+        for (Long id : childIds) {
+            Set<Long> ids = selectAllParents(id)
                 .stream().map(MainData::getId).collect(Collectors.toSet());
-        parentIds = (ids.size() == 0) ?
+            parentIds = (ids.size() == 0) ?
                 parentIds : parentIds.stream().filter(parentId -> !ids.contains(parentId)).collect(Collectors.toList());
-        
-        if (parentIds.size() != 0) {
-            linkMapper.insertParents(childId, parentIds);
+
+            if (parentIds.size() != 0) {
+                linkMapper.insertParents(id, parentIds);
+            }
         }
     }
 
@@ -74,12 +95,12 @@ public class LinkService {
         }
     }
     public void removeChildren(Long parentId, List<Long> childIds) {
-        checkListPermission(parentId, true);
+        checkNodePermission(parentId, true);
         linkMapper.deleteChildren(parentId, childIds);
         clean();
     }
     public void removeAllChildren(Long parentId) {
-        checkListPermission(parentId, true);
+        checkNodePermission(parentId, true);
         linkMapper.deleteAllChildren(parentId);
         clean();
     }
@@ -89,8 +110,28 @@ public class LinkService {
         }
     }
     public void removeParents(Long childId, List<Long> parentIds) {
-        checkNodePermission(childId, true);
-        linkMapper.deleteParents(permissionChecker.getUserId(), childId, parentIds);
+        MainData childMainData = checkNodePermission(childId, true);
+        TypeDefinition typeDefinition = typeManager.getType(childMainData);
+
+        List<Long> childIds = Collections.singletonList(childId);
+        if (typeDefinition.getCascade()) {
+            List<MainData> childNodes = selectAllChildren(childIds, Mode.CASCADE, parentIds);
+            childIds = childNodes.stream()
+                .filter(n -> permissionChecker.isAuthorized(n, true))
+                .map(MainData::getId)
+                .collect(Collectors.toList());
+            childIds.add(childId);
+        }
+
+        parentIds.addAll(
+            selectAllChildren(parentIds, Mode.ONLY_CASCADE, childIds)
+                .stream().map(MainData::getId).collect(Collectors.toList())
+        );
+
+        for (Long id : childIds) {
+            linkMapper.deleteParents(permissionChecker.getUserId(), id, parentIds);
+        }
+
         clean();
     }
     public void removeAllParents(Long childId) {
@@ -99,9 +140,82 @@ public class LinkService {
         clean();
     }
 
+    // ---- Select ---- //
+    public List<MainData> selectAllChildren(Long parentId) {
+        return selectAllChildren(Collections.singletonList(parentId), Mode.NORMAL);
+    }
+    public List<MainData> selectAllChildren(List<Long> parentIds, Mode mode) {
+        return selectAllChildren(parentIds, mode, null);
+    }
+    public List<MainData> selectAllChildren(List<Long> parentIds, Mode mode, List<Long> excludedIds) {
+        if (mode == Mode.NORMAL) {
+            return linkMapper.selectAllChildren(parentIds);
+        } else {
+            List<MainData> allNodes = new ArrayList<>();
+            Set<Long> done = new HashSet<>();
+            while (parentIds.size() != 0) {
+                done.addAll(parentIds);
+                List<MainData> nodes = linkMapper.selectAllChildren(parentIds);
+                if (excludedIds != null) {
+                    nodes = nodes.stream().filter(n -> !excludedIds.contains(n.getId())).collect(Collectors.toList());
+                }
+                if (mode == Mode.CASCADE) {
+                    allNodes.addAll(nodes);
+                } else {
+                    allNodes.addAll(
+                        nodes.stream()
+                            .filter(n -> typeManager.getType(n).getCascade()).collect(Collectors.toList())
+                    );
+                }
+                parentIds = nodes.stream()
+                    .filter(n -> typeManager.getType(n).getCascade())
+                    .map(MainData::getId)
+                    .filter(i -> !done.contains(i))
+                    .collect(Collectors.toList());
+            }
+            return allNodes;
+        }
+    }
+    public List<MainData> selectAllParents(Long childId) {
+        return selectAllChildren(Collections.singletonList(childId), Mode.NORMAL);
+    }
+    public List<MainData> selectAllParents(List<Long> childIds, Mode mode) {
+        return selectAllParents(childIds, mode, null);
+    }
+    public List<MainData> selectAllParents(List<Long> childIds, Mode mode, List<Long> excludedIds) {
+        if (mode == Mode.NORMAL) {
+            return linkMapper.selectAllParent(permissionChecker.getUserId(), childIds);
+        } else {
+            Long userId = permissionChecker.getUserId();
+            List<MainData> allNodes = new ArrayList<>();
+            Set<Long> done = new HashSet<>();
+            while (childIds.size() != 0) {
+                done.addAll(childIds);
+                List<MainData> nodes = linkMapper.selectAllParent(userId, childIds);
+                if (excludedIds != null) {
+                    nodes = nodes.stream().filter(n -> !excludedIds.contains(n.getId())).collect(Collectors.toList());
+                }
+                if (mode == Mode.CASCADE) {
+                    allNodes.addAll(nodes);
+                } else {
+                    allNodes.addAll(
+                        nodes.stream()
+                            .filter(n -> typeManager.getType(n).getCascade()).collect(Collectors.toList())
+                    );
+                }
+                childIds = nodes.stream()
+                    .filter(n -> typeManager.getType(n).getCascade())
+                    .map(MainData::getId)
+                    .filter(i -> !done.contains(i))
+                    .collect(Collectors.toList());
+            }
+            return allNodes;
+        }
+    }
+
     // ---- Set ---- //
     public void setChildren(Long parentId, List<Long> childIds) {
-        checkListPermission(parentId, true);
+        checkNodePermission(parentId, true);
         linkMapper.deleteAllChildren(parentId);
         addChildren(parentId, childIds);
         clean();
@@ -109,36 +223,30 @@ public class LinkService {
     public void setParents(Long childId, List<Long> parentIds) {
         checkNodePermission(childId, true);
         linkMapper.deleteAllParent(permissionChecker.getUserId(), childId);
-        addChildren(parentIds, Collections.singletonList(childId));
+        addParents(childId, parentIds);
         clean();
     }
 
     // ---- Get ---- //
     public List<com.my.list.entity.Node> getChildren(Long parentId) {
-        checkListPermission(parentId, false);
-        return linkMapper.selectAllChildren(parentId)
+        checkNodePermission(parentId, false);
+        return linkMapper.selectAllChildren(Collections.singletonList(parentId))
             .stream().map(NodeImpl::new).collect(Collectors.toList());
     }
     public List<com.my.list.entity.Node> getParents(Long childId) {
         checkNodePermission(childId, false);
-        return linkMapper.selectAllParent(permissionChecker.getUserId(), childId)
+        return linkMapper.selectAllParent(permissionChecker.getUserId(), Collections.singletonList(childId))
             .stream().map(NodeImpl::new).collect(Collectors.toList());
     }
 
     // ---- Check ---- //
-    private MainData checkListPermission(Long listId, boolean write) {
-        MainData listMainData = mainDataMapper.select(listId);
-        if (listMainData == null) throw new DataException("No such list with listId=" + listId);
-        permissionChecker.check(listMainData, write);
-        return listMainData;
-    }
     private MainData checkNodePermission(Long nodeId, boolean write) {
         MainData listMainData = mainDataMapper.select(nodeId);
         if (listMainData == null) throw new DataException("No such node with nodeId=" + nodeId);
         permissionChecker.check(listMainData, write);
         return listMainData;
     }
-    
+
     // ---- Clean ---- //
     private void clean() {
         List<Long> ids = mainDataMapper.selectAllHangingIds();
@@ -164,5 +272,11 @@ public class LinkService {
         public LinkService create(PermissionChecker permissionChecker) {
             return new LinkService(permissionChecker, typeManager, mainDataMapper, linkMapper);
         }
+    }
+
+    public enum Mode {
+        NORMAL,
+        CASCADE,
+        ONLY_CASCADE,
     }
 }

@@ -19,6 +19,7 @@ public class TagConfig {
         typeDefinition.setHasExtraList(true);
         typeDefinition.setExtraListUnique(true);
         typeDefinition.setExtraListRequired(false);
+        typeDefinition.setCascade(true);
         typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(true));
         typeDefinition.setExcerptGenerator(node -> {
             String text = node.getMainData().getDescription();
