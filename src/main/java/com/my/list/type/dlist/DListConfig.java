@@ -19,9 +19,14 @@ public class DListConfig {
     ) {
         TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
 
+        typeDefinition.setAllowCascade(true);
+        typeDefinition.setSoftCascade(true);
+        typeDefinition.setSelfUpCascade(true);
+        typeDefinition.setSelfDownCascade(false);
+        typeDefinition.setOtherUpCascade(true);
+        typeDefinition.setOtherDownCascade(false);
+
         typeDefinition.setHasExtraData(true);
-        typeDefinition.setCascade(true);
-        typeDefinition.setSoft(true);
         typeDefinition.setExtraDataClass(DList.class);
         typeDefinition.setExtraDataMapper(DListMapper);
         typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(false));

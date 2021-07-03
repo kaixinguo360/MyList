@@ -48,47 +48,64 @@ public class LinkService {
     }
 
     public void addParents(Long childId, List<Long> parentIds) {
-        checkNodePermission(childId, true);
+        MainData inputChild = checkNodePermission(childId, true);
         if (parentIds == null || parentIds.size() == 0) {
             return;
         }
 
         List<MainData> inputParents = expandParents(parentIds, CascadeMode.NO_CASCADE, SoftMode.NO_SHADOW, null);
-        List<Long> noCascadeParentIds = inputParents.stream().filter(n -> !typeManager.getType(n).getCascade()).map(MainData::getId).collect(Collectors.toList());
-        List<Long> cascadeParentIds = inputParents.stream().filter(n -> typeManager.getType(n).getCascade()).map(MainData::getId).collect(Collectors.toList());
+        List<Long> noCascadeParentIds = inputParents.stream().filter(n -> !typeManager.getType(n).getOtherDownCascade()).map(MainData::getId).collect(Collectors.toList());
+        List<Long> cascadeParentIds = inputParents.stream().filter(n -> typeManager.getType(n).getOtherDownCascade()).map(MainData::getId).collect(Collectors.toList());
 
-        // 无需级联更新的父结点
+        // 不允许子节点级联更新的父结点
         if (noCascadeParentIds.size() != 0) {
-            Set<Long> ids = linkMapper.selectAllParent(permissionChecker.getUserId(), Collections.singletonList(childId)).stream()
-                .map(MainData::getId)
-                .collect(Collectors.toSet());
-            noCascadeParentIds = (ids.size() == 0)
-                ? noCascadeParentIds
-                : noCascadeParentIds.stream().filter(i -> !ids.contains(i)).collect(Collectors.toList());
-            if (noCascadeParentIds.size() != 0) {
-                linkMapper.insertParents(childId, noCascadeParentIds);
+            if (!typeManager.getType(inputChild).getOtherUpCascade()) {
+                // 不允许父节点级联更新的子结点
+                addParentsRaw(childId, noCascadeParentIds);
+            } else {
+                // 允许父节点级联更新的子结点
+                List<Long> expandParentIds = expandParents(noCascadeParentIds, CascadeMode.ONLY_ALLOW_CASCADE, SoftMode.ALL_SHADOW, Collections.singletonList(childId))
+                    .stream().map(MainData::getId).collect(Collectors.toList());
+
+                addParentsRaw(childId, expandParentIds);
             }
         }
 
-        // 需要级联更新的父结点
+        // 允许子节点级联更新的父结点
         if (cascadeParentIds.size() != 0) {
-            List<Long> expandChildIds = expandChildren(Collections.singletonList(childId), CascadeMode.ALL_CASCADE, SoftMode.CASCADE_SHADOW, cascadeParentIds)
-                .stream().map(MainData::getId).collect(Collectors.toList());
+            List<MainData> expandChilds = expandChildren(Collections.singletonList(childId), CascadeMode.ALL_CASCADE, SoftMode.CASCADE_SHADOW, cascadeParentIds);
+            List<Long> noCascadeChildIds = expandChilds.stream().filter(n -> !typeManager.getType(n).getOtherUpCascade()).map(MainData::getId).collect(Collectors.toList());
+            List<Long> cascadeChildIds = expandChilds.stream().filter(n -> typeManager.getType(n).getOtherUpCascade()).map(MainData::getId).collect(Collectors.toList());
 
-            List<Long> expandParentIds = expandParents(cascadeParentIds, CascadeMode.ONLY_CASCADE, SoftMode.ALL_SHADOW, expandChildIds)
-                .stream().map(MainData::getId).collect(Collectors.toList());
-
-            for (Long id : expandChildIds) {
-                Set<Long> ids = linkMapper.selectAllParent(permissionChecker.getUserId(), Collections.singletonList(id)).stream()
-                    .map(MainData::getId)
-                    .collect(Collectors.toSet());
-                List<Long> ids1 = (ids.size() == 0)
-                    ? expandParentIds
-                    : expandParentIds.stream().filter(parentId -> !ids.contains(parentId)).collect(Collectors.toList());
-                if (ids1.size() != 0) {
-                    linkMapper.insertParents(id, ids1);
+            // 不允许父节点级联更新的子结点
+            if (noCascadeChildIds.size() != 0) {
+                for (Long childId1 : cascadeChildIds) {
+                    addParentsRaw(childId1, cascadeParentIds);
                 }
             }
+
+            // 允许父节点级联更新的子结点
+            if (cascadeChildIds.size() != 0) {
+                List<Long> expandParentIds = expandParents(cascadeParentIds, CascadeMode.ONLY_ALLOW_CASCADE, SoftMode.ALL_SHADOW, cascadeChildIds)
+                    .stream().map(MainData::getId).collect(Collectors.toList());
+
+                for (Long childId1 : cascadeChildIds) {
+                    addParentsRaw(childId1, expandParentIds);
+                }
+            }
+
+        }
+    }
+
+    private void addParentsRaw(Long childId, List<Long> parentIds) {
+        Set<Long> ids = linkMapper.selectAllParent(permissionChecker.getUserId(), Collections.singletonList(childId)).stream()
+            .map(MainData::getId)
+            .collect(Collectors.toSet());
+        List<Long> ids1 = (ids.size() == 0)
+            ? parentIds
+            : parentIds.stream().filter(parentId -> !ids.contains(parentId)).collect(Collectors.toList());
+        if (ids1.size() != 0) {
+            linkMapper.insertParents(childId, ids1);
         }
     }
 
@@ -109,36 +126,61 @@ public class LinkService {
     }
 
     public void removeParents(Long childId, List<Long> parentIds) {
-        checkNodePermission(childId, true);
+        MainData inputChild = checkNodePermission(childId, true);
         if (parentIds == null || parentIds.size() == 0) {
             return;
         }
 
         List<MainData> inputParents = expandParents(parentIds, CascadeMode.NO_CASCADE, SoftMode.NO_SHADOW, null);
-        List<Long> noCascadeParentIds = inputParents.stream().filter(n -> !typeManager.getType(n).getCascade()).map(MainData::getId).collect(Collectors.toList());
-        List<Long> cascadeParentIds = inputParents.stream().filter(n -> typeManager.getType(n).getCascade()).map(MainData::getId).collect(Collectors.toList());
+        List<Long> noCascadeParentIds = inputParents.stream().filter(n -> !typeManager.getType(n).getOtherDownCascade()).map(MainData::getId).collect(Collectors.toList());
+        List<Long> cascadeParentIds = inputParents.stream().filter(n -> typeManager.getType(n).getOtherDownCascade()).map(MainData::getId).collect(Collectors.toList());
 
-        // 无需级联更新的父结点
+        // 不允许子节点级联更新的父结点
         if (noCascadeParentIds.size() != 0) {
+            if (!typeManager.getType(inputChild).getOtherUpCascade()) {
+                // 不允许父节点级联更新的子结点
+                removeParentsRaw(childId, noCascadeParentIds);
+            } else {
+                // 允许父节点级联更新的子结点
+                List<Long> expandParentIds = expandChildren(noCascadeParentIds, CascadeMode.ONLY_ALLOW_CASCADE, SoftMode.ALL_SHADOW, Collections.singletonList(childId))
+                    .stream().map(MainData::getId).collect(Collectors.toList());
+
+                removeParentsRaw(childId, expandParentIds);
+            }
             linkMapper.deleteParents(permissionChecker.getUserId(), childId, noCascadeParentIds);
             clean();
         }
 
-        // 需要级联更新的父结点
+        // 允许子节点级联更新的父结点
         if (cascadeParentIds.size() != 0) {
-            List<Long> expandChildIds = expandChildren(Collections.singletonList(childId), CascadeMode.ALL_CASCADE, SoftMode.CASCADE_SHADOW, cascadeParentIds)
-                .stream().map(MainData::getId).collect(Collectors.toList());
+            List<MainData> expandChilds = expandChildren(Collections.singletonList(childId), CascadeMode.ALL_CASCADE, SoftMode.CASCADE_SHADOW, cascadeParentIds);
+            List<Long> noCascadeChildIds = expandChilds.stream().filter(n -> !typeManager.getType(n).getOtherUpCascade()).map(MainData::getId).collect(Collectors.toList());
+            List<Long> cascadeChildIds = expandChilds.stream().filter(n -> typeManager.getType(n).getOtherUpCascade()).map(MainData::getId).collect(Collectors.toList());
 
-            List<Long> expandParentIds = expandChildren(cascadeParentIds, CascadeMode.ONLY_CASCADE, SoftMode.ALL_SHADOW, expandChildIds)
-                .stream().map(MainData::getId).collect(Collectors.toList());
-
-            if (expandParentIds.size() != 0) {
-                for (Long id : expandChildIds) {
-                    linkMapper.deleteParents(permissionChecker.getUserId(), id, expandParentIds);
+            // 不允许父节点级联更新的子结点
+            if (noCascadeChildIds.size() != 0) {
+                for (Long childId1 : cascadeChildIds) {
+                    removeParentsRaw(childId1, cascadeParentIds);
                 }
-                clean();
+            }
+
+            // 允许父节点级联更新的子结点
+            if (cascadeChildIds.size() != 0) {
+                List<Long> expandParentIds = expandChildren(cascadeParentIds, CascadeMode.ONLY_ALLOW_CASCADE, SoftMode.ALL_SHADOW, cascadeChildIds)
+                    .stream().map(MainData::getId).collect(Collectors.toList());
+
+                if (expandParentIds.size() != 0) {
+                    for (Long childId1 : cascadeChildIds) {
+                        removeParentsRaw(childId1, expandParentIds);
+                    }
+                    clean();
+                }
             }
         }
+    }
+
+    private void removeParentsRaw(Long childId, List<Long> parentIds) {
+        linkMapper.deleteParents(permissionChecker.getUserId(), childId, parentIds);
     }
 
     public void removeAllParents(Long childId) {
@@ -160,7 +202,7 @@ public class LinkService {
         if (cascadeMode != CascadeMode.NO_CASCADE) {
 
             List<Long> cascadeIds = allNodes.stream()
-                .filter(n -> typeManager.getType(n).getCascade())
+                .filter(n -> typeManager.getType(n).getSelfDownCascade())
                 .map(MainData::getId)
                 .collect(Collectors.toList());
 
@@ -180,23 +222,23 @@ public class LinkService {
                         case ALL_CASCADE:
                             cascadeNodes.addAll(nodes);
                             break;
-                        case ONLY_CASCADE:
+                        case ONLY_ALLOW_CASCADE:
                             cascadeNodes.addAll(
                                 nodes.stream()
-                                    .filter(n -> typeManager.getType(n).getCascade())
+                                    .filter(n -> typeManager.getType(n).getAllowCascade())
                                     .collect(Collectors.toList())
                             );
                             break;
-                        case ONLY_NO_CASCADE:
+                        case ONLY_NOT_ALLOW_CASCADE:
                             cascadeNodes.addAll(
                                 nodes.stream()
-                                    .filter(n -> !typeManager.getType(n).getCascade())
+                                    .filter(n -> !typeManager.getType(n).getAllowCascade())
                                     .collect(Collectors.toList())
                             );
                             break;
                     }
                     cascadeIds = nodes.stream()
-                        .filter(n -> typeManager.getType(n).getCascade())
+                        .filter(n -> typeManager.getType(n).getSelfDownCascade())
                         .map(MainData::getId)
                         .filter(i -> !done.contains(i))
                         .collect(Collectors.toList());
@@ -204,7 +246,7 @@ public class LinkService {
 
                 if (softMode == SoftMode.CASCADE_SHADOW) {
                     cascadeNodes = cascadeNodes.stream()
-                        .filter(i -> !typeManager.getType(i).getSoft())
+                        .filter(i -> !typeManager.getType(i).getSoftCascade())
                         .collect(Collectors.toList());
                 }
 
@@ -216,7 +258,7 @@ public class LinkService {
 
         if (softMode == SoftMode.ALL_SHADOW) {
             allNodes = allNodes.stream()
-                .filter(i -> !typeManager.getType(i).getSoft())
+                .filter(i -> !typeManager.getType(i).getSoftCascade())
                 .collect(Collectors.toList());
         }
 
@@ -239,7 +281,7 @@ public class LinkService {
         if (cascadeMode != CascadeMode.NO_CASCADE) {
 
             List<Long> cascadeIds = allNodes.stream()
-                .filter(n -> typeManager.getType(n).getCascade())
+                .filter(n -> typeManager.getType(n).getSelfUpCascade())
                 .map(MainData::getId)
                 .collect(Collectors.toList());
 
@@ -260,23 +302,23 @@ public class LinkService {
                         case ALL_CASCADE:
                             cascadeNodes.addAll(nodes);
                             break;
-                        case ONLY_CASCADE:
+                        case ONLY_ALLOW_CASCADE:
                             cascadeNodes.addAll(
                                 nodes.stream()
-                                    .filter(n -> typeManager.getType(n).getCascade())
+                                    .filter(n -> typeManager.getType(n).getAllowCascade())
                                     .collect(Collectors.toList())
                             );
                             break;
-                        case ONLY_NO_CASCADE:
+                        case ONLY_NOT_ALLOW_CASCADE:
                             cascadeNodes.addAll(
                                 nodes.stream()
-                                    .filter(n -> !typeManager.getType(n).getCascade())
+                                    .filter(n -> !typeManager.getType(n).getAllowCascade())
                                     .collect(Collectors.toList())
                             );
                             break;
                     }
                     cascadeIds = nodes.stream()
-                        .filter(n -> typeManager.getType(n).getCascade())
+                        .filter(n -> typeManager.getType(n).getSelfUpCascade())
                         .map(MainData::getId)
                         .filter(i -> !done.contains(i))
                         .collect(Collectors.toList());
@@ -284,7 +326,7 @@ public class LinkService {
 
                 if (softMode == SoftMode.CASCADE_SHADOW) {
                     cascadeNodes = cascadeNodes.stream()
-                        .filter(i -> !typeManager.getType(i).getSoft())
+                        .filter(i -> !typeManager.getType(i).getSoftCascade())
                         .collect(Collectors.toList());
                 }
 
@@ -296,7 +338,7 @@ public class LinkService {
 
         if (softMode == SoftMode.ALL_SHADOW) {
             allNodes = allNodes.stream()
-                .filter(i -> !typeManager.getType(i).getSoft())
+                .filter(i -> !typeManager.getType(i).getSoftCascade())
                 .collect(Collectors.toList());
         }
 
@@ -373,8 +415,8 @@ public class LinkService {
     public enum CascadeMode {
         NO_CASCADE,
         ALL_CASCADE,
-        ONLY_CASCADE,
-        ONLY_NO_CASCADE,
+        ONLY_ALLOW_CASCADE,
+        ONLY_NOT_ALLOW_CASCADE,
     }
 
     public enum SoftMode {

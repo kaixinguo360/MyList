@@ -15,11 +15,16 @@ public class TagConfig {
     @Bean("TagType")
     public TypeDefinition config(TypeManager typeManager) {
         TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
+
+        typeDefinition.setAllowCascade(true);
+        typeDefinition.setSelfUpCascade(true);
+        typeDefinition.setSelfDownCascade(true);
+        typeDefinition.setOtherUpCascade(true);
+        typeDefinition.setOtherDownCascade(true);
         
         typeDefinition.setHasExtraList(true);
         typeDefinition.setExtraListUnique(true);
         typeDefinition.setExtraListRequired(false);
-        typeDefinition.setCascade(true);
         typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(true));
         typeDefinition.setExcerptGenerator(node -> {
             String text = node.getMainData().getDescription();

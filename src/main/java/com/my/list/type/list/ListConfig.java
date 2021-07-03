@@ -30,6 +30,7 @@ public class ListConfig {
     public TypeDefinition config(TypeManager typeManager) {
         TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
 
+        typeDefinition.setAllowCascade(true);
         typeDefinition.setHasExtraList(true);
         typeDefinition.setExtraListUnique(true);
         typeDefinition.setExtraListRequired(true);
