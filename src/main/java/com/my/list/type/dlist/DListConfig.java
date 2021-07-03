@@ -18,8 +18,10 @@ public class DListConfig {
         DListMapper DListMapper
     ) {
         TypeDefinition typeDefinition = new TypeDefinition(TYPE_NAME);
-        
+
         typeDefinition.setHasExtraData(true);
+        typeDefinition.setCascade(true);
+        typeDefinition.setSoft(true);
         typeDefinition.setExtraDataClass(DList.class);
         typeDefinition.setExtraDataMapper(DListMapper);
         typeDefinition.setNodeNormalizer(node -> node.getMainData().setCollection(false));

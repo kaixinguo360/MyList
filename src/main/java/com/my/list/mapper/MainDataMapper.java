@@ -18,5 +18,7 @@ public interface MainDataMapper {
 
     MainData select(@Param("id") Long id);
     List<MainData> selectAll();
+
+    List<MainData> selectByIds(@Param("ids") List<Long> ids);
     List<Long> selectAllHangingIds();
 }

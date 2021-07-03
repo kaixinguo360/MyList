@@ -67,6 +67,12 @@
     <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
   </delete>
 
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select *
+    from nodes
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+  </select>
   <select id="selectAllHangingIds" resultType="java.lang.Long">
     select content.id from (select * from nodes) content
                              left join links p on content.id = p.content_id

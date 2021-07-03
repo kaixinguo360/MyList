@@ -16,6 +16,7 @@ public class TypeDefinition {
     private Boolean extraListUnique = false;
     private Boolean extraListRequired = false;
     private Boolean cascade = false;
+    private Boolean soft = false;
     private NodeNormalizer nodeNormalizer = null;
     private ExcerptGenerator excerptGenerator = null;
 

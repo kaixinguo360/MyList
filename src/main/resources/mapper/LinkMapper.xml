@@ -41,11 +41,10 @@
     where parent_id = #{parentId,jdbcType=BIGINT}
   </delete>
   <select id="selectAllChildren" resultMap="Node">
-    SELECT content.*
+    SELECT distinct content.*
     FROM nodes content, links
     WHERE content_id = content.id
       AND parent_id in (<foreach collection="parentIds" item="parentId" separator=",">#{parentId,jdbcType=BIGINT}</foreach>)
-    ORDER BY content_index
   </select>
   <select id="countChildren" parameterType="java.lang.Long" resultType="java.lang.Integer">
     select count(id) from links
@@ -87,7 +86,7 @@
       )
   </delete>
   <select id="selectAllParent" resultMap="Node">
-    select parent.*
+    select distinct parent.*
     from links, nodes parent
     where parent_id = parent.id
       and content_id in (<foreach collection="childIds" item="childId" separator=",">#{childId,jdbcType=BIGINT}</foreach>)
